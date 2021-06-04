@@ -38,11 +38,13 @@
     "mobx-state-tree": "5.0.1",
     "ramda": "0.27.1",
     "react": "17.0.1",
+    "react-async": "^10.0.1",
     "react-native": "0.64.0",
     "react-native-gesture-handler": "1.10.3",
     "react-native-keychain": "6.2.0",
     "react-native-safe-area-context": "3.1.8",
     "react-native-screens": "2.18.1",
+    "react-native-simple-toast": "^1.1.3",
     "react-native-size-matters": "^0.4.0",
     "react-native-splash-screen": "3.2.0",
     "react-native-status-bar-height": "^2.6.0",
@@ -183,7 +185,11 @@
       "@typescript-eslint/explicit-function-return-type": 0,
       "@typescript-eslint/explicit-member-accessibility": 0,
       "@typescript-eslint/explicit-module-boundary-types": 0,
-      "@typescript-eslint/indent": 0,
+      "@typescript-eslint/indent": [
+        "error",
+        4
+      ],
+      "indent": "off",
       "@typescript-eslint/member-delimiter-style": 0,
       "@typescript-eslint/no-empty-interface": 0,
       "@typescript-eslint/no-explicit-any": 0,
@@ -198,7 +204,19 @@
       "react-native/no-raw-text": 0,
       "react/no-unescaped-entities": 0,
       "react/prop-types": "off",
-      "space-before-function-paren": 0
+      "space-before-function-paren": 0,
+      "space-in-parens": [
+        "error",
+        "always"
+      ],
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "array-bracket-spacing": [
+        "error",
+        "always"
+      ]
     }
   }
 }
