@@ -10,6 +10,13 @@ module.exports = {
         legacy: true,
       },
     ],
+    [
+      "module-resolver",
+      {
+          root: ["./app"],
+          extensions: [".ts", ".tsx", ".js"],
+      },
+    ],
     ["@babel/plugin-proposal-optional-catch-binding"],
   ],
 }

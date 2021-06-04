@@ -1,21 +1,49 @@
 {
   "compilerOptions": {
-    "allowJs": false,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "jsx": "react-native",
-    "module": "es2015",
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "sourceMap": true,
-    "target": "esnext",
-    "lib": ["esnext"],
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+      "allowJs": false,
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true,
+      "jsx": "react-native",
+      "module": "es2015",
+      "moduleResolution": "node",
+      "noImplicitAny": false,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "noUnusedLocals": true,
+      "sourceMap": true,
+      "target": "esnext",
+      "lib": [
+          "esnext"
+      ],
+      "skipLibCheck": true,
+      "baseUrl": "./app",
+      "paths": {
+          "screens": ["screens"],
+          "config": ["config"],
+          "components": ["components"],
+          "models": ["models"],
+          "services": ["services"],
+          "theme": ["theme"],
+          "navigation": ["navigation"],
+          "utils": ["utils"],
+          "screens/*": ["screens/*"],
+          "config/*": ["config/*"],
+          "components/*": ["components/*"],
+          "models/*": ["models/*"],
+          "services/*": ["services/*"],
+          "theme/*": ["theme/*"],
+          "navigation/*": ["navigation/*"],
+          "utils/*": ["utils/*"]
+      }
   },
-  "exclude": ["node_modules"],
-  "include": ["index.js", "app", "test", "storybook"]
+  "exclude": [
+      "node_modules"
+  ],
+  "include": [
+      "index.js",
+      "app",
+      "test",
+      "storybook",
+      "scripts"
+  ]
 }
