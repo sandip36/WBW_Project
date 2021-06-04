@@ -7,25 +7,6 @@ export const BASE_FONT_SIZE = 12
 export const STATUS_BAR_HEIGHT = getStatusBarHeight()
 
 export const assets = {
-    placeholderAvatarImage: require( '../../assets/images/avatar/male-avatar-01.png' ),
-    Captainsec: require( '../../assets/images/avatar/cap1.png' ),
-    Captainone: require( '../../assets/images/avatar/cap2.png' ),
-    teamtwo: require( '../../assets/images/avatar/team1.jpg' ),
-    teamone: require( '../../assets/images/avatar/team2.png' ),
-
-    playerAvatar1: require( '../../assets/images/avatar/Virat-removebg-preview.png' ),
-    playerAvatar2: require( '../../assets/images/avatar/KL_rahul-removebg-preview.png' ),
-    placeholderImage: require( '../../assets/images/default-placeholder-image.png' ),
-    onboarding: {
-        screen1: require( '../../assets/images/onboarding/01-01.png' ),
-        screen2: require( '../../assets/images/onboarding/02-01.jpg' ),
-        screen3: require( '../../assets/images/onboarding/03-01.png' ),
-    },
-    BOP_LOGO: require( '../../assets/images/bop-logo.png' ),
-    logo: require( '../../assets/images/logo.png' ),
-    card_slice_bg: require( '../../assets/images/onfield_slice_bg.png' ),
-    card_slice_bg_disabled: require( '../../assets/images/onfield_slice_bg_disabled.png' ),
-    ground: require( '../../assets/images/onfield11-ground-01.png' )
 }
 
 export const NORMALIZED_FONT_SIZE = scale( BASE_FONT_SIZE )

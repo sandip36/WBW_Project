@@ -11,26 +11,30 @@
  */
 import "./i18n"
 import "./utils/ignore-warnings"
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useRef, useCallback } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context"
 import * as storage from "./utils/storage"
 import {
-  useBackButtonHandler,
-  RootNavigator,
-  canExit,
-  setRootNavigation,
-  useNavigationPersistence,
+    useBackButtonHandler,
+    RootNavigator,
+    canExit,
+    setRootNavigation,
+    useNavigationPersistence,
 } from "./navigators"
 import { RootStore, RootStoreProvider, setupRootStore } from "./models"
-import { ToggleStorybook } from "../storybook/toggle-storybook"
-import { theme } from "./theme/theme"
+import { theme } from "theme"
 
 // This puts screens in a native ViewController or Activity. If you want fully native
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
 // https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 import { enableScreens } from "react-native-screens"
 import { ThemeProvider } from "@shopify/restyle"
+import { Async } from "react-async"
+import { Box, Text } from "./components"
+import { ActivityIndicator } from "react-native"
+import Toast from "react-native-simple-toast"
+
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
@@ -39,45 +43,57 @@ export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
  * This is the root component of our app.
  */
 function App() {
-  const navigationRef = useRef<NavigationContainerRef>()
-  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
+    const navigationRef = useRef<NavigationContainerRef>()
+    const [ rootStore, setRootStore ] = useState<RootStore | undefined>( undefined )
 
-  setRootNavigation(navigationRef)
-  useBackButtonHandler(navigationRef, canExit)
-  const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
-    storage,
-    NAVIGATION_PERSISTENCE_KEY,
-  )
+    setRootNavigation( navigationRef )
+    useBackButtonHandler( navigationRef, canExit )
+    const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
+        storage,
+        NAVIGATION_PERSISTENCE_KEY,
+    )
 
-  // Kick off initial async loading actions, like loading fonts and RootStore
-  useEffect(() => {
-    ;(async () => {
-      setupRootStore().then(setRootStore)
-    })()
-  }, [])
+    const bootstrapApplication = useCallback( async ( ) => {
+        try {
+            const rootStore = await setupRootStore()
+            setRootStore( rootStore )
+        } catch ( error ) {
+            Toast.showWithGravity( error.message || 'Something went wrong while setting up root store', Toast.LONG, Toast.CENTER )
+        }
+    }, [] )
 
-  // Before we show the app, we have to wait for our state to be ready.
-  // In the meantime, don't render anything. This will be the background
-  // color set in native by rootView's background color. You can replace
-  // with your own loading component if you wish.
-  if (!rootStore) return null
-
-  // otherwise, we're ready to render the app
-  return (
-    <ToggleStorybook>
-      <ThemeProvider {...{ theme }}>
-        <RootStoreProvider value={rootStore}>
-          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <RootNavigator
-              ref={navigationRef}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-          </SafeAreaProvider>
-        </RootStoreProvider>
-      </ThemeProvider>
-    </ToggleStorybook>
-  )
+    // otherwise, we're ready to render the app
+    return (
+        <Async promiseFn={bootstrapApplication}>
+            <Async.Pending>
+                { ( ) => (
+                    <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                        <ActivityIndicator size={32} color="red" />
+                    </Box>
+                ) }
+            </Async.Pending>
+            <Async.Rejected>
+                { ( error: any ) => (
+                    <Box justifyContent="center" alignItems="center" flex={1}>
+                        <Text>{error.reason || error.message || 'Something went wrong'}</Text>
+                    </Box>
+                ) }
+            </Async.Rejected>
+            <Async.Resolved>
+                <ThemeProvider {...{ theme }}>
+                    <RootStoreProvider value={rootStore}>
+                        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+                            <RootNavigator
+                                ref={navigationRef}
+                                initialState={initialNavigationState}
+                                onStateChange={onNavigationStateChange}
+                            />
+                        </SafeAreaProvider>
+                    </RootStoreProvider>
+                </ThemeProvider>
+            </Async.Resolved>
+        </Async>
+    )
 }
 
 export default App
