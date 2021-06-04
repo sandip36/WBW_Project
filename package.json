@@ -196,7 +196,7 @@
         "error",
         4
       ],
-      "indent": "off",
+      "indent": ["error", 4],
       "@typescript-eslint/member-delimiter-style": 0,
       "@typescript-eslint/no-empty-interface": 0,
       "@typescript-eslint/no-explicit-any": 0,
@@ -211,7 +211,10 @@
       "react-native/no-raw-text": 0,
       "react/no-unescaped-entities": 0,
       "react/prop-types": "off",
-      "space-before-function-paren": 0,
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ],
       "space-in-parens": [
         "error",
         "always"

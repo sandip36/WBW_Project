@@ -7,7 +7,8 @@
 import React from "react"
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
 import { createStackNavigator } from "@react-navigation/stack"
-import { MainNavigator } from "./main-navigator"
+import { AuthNavigator } from "./auth-navigator"
+import { RootNavigationRoutes } from "./navigator-types"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -19,39 +20,37 @@ import { MainNavigator } from "./main-navigator"
  *   https://reactnavigation.org/docs/params/
  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
  */
-export type RootParamList = {
-  mainStack: undefined
-}
 
-const Stack = createStackNavigator<RootParamList>()
+
+const Stack = createStackNavigator<RootNavigationRoutes>()
 
 const RootStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen
-        name="mainStack"
-        component={MainNavigator}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack.Navigator>
-  )
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <Stack.Screen
+                name="AuthStack"
+                component={AuthNavigator}
+                options={{
+                    headerShown: false,
+                }}
+            />
+        </Stack.Navigator>
+    )
 }
 
 export const RootNavigator = React.forwardRef<
-  NavigationContainerRef,
-  Partial<React.ComponentProps<typeof NavigationContainer>>
->((props, ref) => {
-  return (
-    <NavigationContainer {...props} ref={ref}>
-      <RootStack />
-    </NavigationContainer>
-  )
-})
+NavigationContainerRef,
+Partial<React.ComponentProps<typeof NavigationContainer>>
+>( ( props, ref ) => {
+    return (
+        <NavigationContainer {...props} ref={ref}>
+            <RootStack />
+        </NavigationContainer>
+    )
+} )
 
 RootNavigator.displayName = "RootNavigator"

@@ -1,13 +1,13 @@
 import React from "react"
 import { Box, Text } from "components"
 
-export type WelcomeScreenProps = {
+export type LoginScreenProps = {
 
 }
-export const WelcomeScreen: React.FunctionComponent<WelcomeScreenProps> = ( ) => {
+export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( ) => {
     return (
         <Box flex={1} justifyContent="center" alignItems="center">
-            <Text>Welcome Home Screen</Text>
+            <Text>Login Screen</Text>
         </Box>
     )
 }
