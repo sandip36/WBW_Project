@@ -1,9 +1,9 @@
 import { GeneralApiProblem } from "./api-problem"
-import { Character } from "../../models/character/character"
+import { Character } from "../../models/models/character-model/character-model"
 
 export interface User {
-  id: number
-  name: string
+    id: number
+    name: string
 }
 
 export type GetUsersResult = { kind: "ok"; users: User[] } | GeneralApiProblem
