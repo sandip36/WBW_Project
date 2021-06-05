@@ -1,18 +1,31 @@
-import React, { useState, forwardRef } from "react"
-import { Input, InputProps } from "./input"
+import React, { useState } from "react"
+import { Input, CustomInputProps } from "./input"
 
-export type SecureInputProps = InputProps
+export type SecureInputProps = CustomInputProps
 
-export const SecureInput = forwardRef<any, SecureInputProps>( ( { onRightIconPress, ...rest }, ref ) => {
-    const [isSecured, setIsSecured] = useState<boolean>( true )
-    const rightIcon = isSecured ? "eye" : "eye-off"
-    const _onRightIconPress = ( e ) => {
-        if ( onRightIconPress ) {
-            onRightIconPress( e )
-        }
-        setIsSecured( !isSecured )
+export const SecureInput: React.FunctionComponent<SecureInputProps> = ( props ) => {
+    const {
+        ...rest
+    } = props
+    const [ isSecured, setIsSecured ] = useState<boolean>( true )
+    const secureIcon = isSecured ? "eye" : "eye-off"
+
+    const onRightIconPress = ( ) => {
+        setIsSecured( isSecured => !isSecured )
     }
-    return <Input ref={ref} secureTextEntry={isSecured} {...{ rightIcon }} onRightIconPress={_onRightIconPress} {...rest} />
-} )
+
+    const rightIcon = { 
+        name: secureIcon,
+        type: 'feather',
+        onPress: onRightIconPress
+    }
+    return (
+        <Input
+            secureTextEntry={isSecured} 
+            rightIcon={rightIcon}
+            {...rest}
+        />
+    )
+}
 
 SecureInput.displayName = 'SecureInput'
