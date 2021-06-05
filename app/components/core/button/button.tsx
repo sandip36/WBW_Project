@@ -1,56 +1,66 @@
-import React, { FC } from "react"
-import { ActivityIndicator } from "react-native"
-import { TouchableBox, TouchableBoxProps } from "../box"
-import { Text } from "../text"
-import { Theme, useTheme } from "theme"
+import React from 'react'
+import { StyleProp, TextProps, TextStyle, ViewStyle } from 'react-native'
+import { Button as RNEButton, ButtonProps } from "react-native-elements"
+import { makeStyles } from 'theme'
 
-export type ButtonProps = {
-    label: string;
-    outline?: boolean;
-    loading?: boolean;
-    bg?: keyof Theme['colors'],
-    size?: 'small' | 'medium',
-    textColor?: keyof Theme['colors'],
-} & TouchableBoxProps
-
-export const Button: FC<ButtonProps> = ( {
-    label,
-    disabled,
-    outline,
-    loading,
-    size = 'medium',
-    textColor,
-    bg,
-    ...rest
-} ) => {
-    const theme = useTheme()
-    const height = size === 'small' ? 26 : 46
-    const backgroundColor = bg || ( outline ? "background" : disabled ? "lightGrey" : "primary" )
-    const _textColor: keyof Theme['colors'] = textColor ?? ( disabled ? "grey" : outline ? "darkGrey" : "white" )
-    const borderColor: keyof Theme['colors'] = disabled ? "grey" : "darkGrey"
-    const borderWith = outline ? 1 : 0
-    return (
-        <TouchableBox
-            disabled={disabled}
-            height={height}
-            width="100%"
-            borderRadius="medium"
-            alignItems="center"
-            justifyContent="center"
-            borderWidth={outline ? 1 : 0}
-            mb="medium"
-            {...{ bg: backgroundColor, borderColor, borderWith }}
-            {...rest}>
-            {!loading && label && <Text variant="body" color={_textColor}>{label}</Text>}
-            {loading && <ActivityIndicator size={height / 2} color={theme.colors[_textColor]} />}
-        </TouchableBox>
-    )
+export type ButtonStyleProps = {
+    containerStyle?: StyleProp<ViewStyle>,
+    buttonStyle?: StyleProp<ViewStyle>,
+    titleStyle?: StyleProp<TextStyle>
 }
 
-Button.defaultProps = {
-    outline: false,
-    disabled: false,
-    loading: false,
-    width: "100%",
-    size: 'medium'
+const useStyles = makeStyles<ButtonStyleProps>( ( theme ) => ( {
+    containerStyle: {
+        marginHorizontal: theme.spacing.regular,
+        marginVertical: theme.spacing.regular,
+        borderRadius: theme.spacing.medium
+    },
+    buttonStyle: {
+        padding: theme.typography.default,
+        backgroundColor: theme.colors.primary
+    },
+    titleStyle: {
+        fontSize: theme.typography.semiMedium,
+        fontWeight: 'bold'
+    }
+} ) )
+export type CustomButtonProps = {
+    title: string
+    titleStyle?: StyleProp<TextStyle>,
+    titleProps?: TextProps,
+    onPress?: ( ) => void,
+    loading?: boolean,
+    disabled?: boolean,
+    containerStyle?: StyleProp<ViewStyle>,
+    buttonStyle?: StyleProp<ViewStyle>
+} & ButtonProps
+
+export const Button: React.FunctionComponent<CustomButtonProps> = ( props ) => {  
+    const {
+        title,
+        titleStyle,
+        titleProps,
+        onPress,
+        loading,
+        disabled,
+        containerStyle,
+        buttonStyle,
+        ...rest
+    } = props
+
+    const STYLES = useStyles()
+
+    return (
+        <RNEButton 
+            title={title}
+            titleStyle={[ STYLES.titleStyle, titleStyle ]}
+            titleProps={titleProps}
+            onPress={onPress}
+            loading={loading}
+            disabled={disabled}
+            containerStyle={[ STYLES.containerStyle, containerStyle ]}
+            buttonStyle={[ STYLES.buttonStyle, buttonStyle ]}
+            { ...rest }
+        />
+    )
 }
