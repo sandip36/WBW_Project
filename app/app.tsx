@@ -14,6 +14,7 @@ import "./utils/ignore-warnings"
 import React, { useState, useRef, useCallback } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context"
+import { SafeAreaView , ActivityIndicator, StyleSheet } from "react-native"
 import * as storage from "./utils/storage"
 import {
     useBackButtonHandler,
@@ -32,17 +33,20 @@ import { enableScreens } from "react-native-screens"
 import { ThemeProvider } from "@shopify/restyle"
 import { Async } from "react-async"
 import { Box, Text } from "./components"
-import { ActivityIndicator } from "react-native"
 import Toast from "react-native-simple-toast"
 
 enableScreens()
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
+const styles = StyleSheet.create( {
+    rootContainer: { backgroundColor: theme.colors.primary, flex: 1 }
+} )
+
 /**
  * This is the root component of our app.
  */
-function App() {
+function App () {
     const navigationRef = useRef<NavigationContainerRef>()
     const [ rootStore, setRootStore ] = useState<RootStore | undefined>( undefined )
 
@@ -83,11 +87,13 @@ function App() {
                 <ThemeProvider {...{ theme }}>
                     <RootStoreProvider value={rootStore}>
                         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-                            <RootNavigator
-                                ref={navigationRef}
-                                initialState={initialNavigationState}
-                                onStateChange={onNavigationStateChange}
-                            />
+                            <SafeAreaView style={styles.rootContainer}>
+                                <RootNavigator
+                                    ref={navigationRef}
+                                    initialState={initialNavigationState}
+                                    onStateChange={onNavigationStateChange}
+                                />
+                            </SafeAreaView>
                         </SafeAreaProvider>
                     </RootStoreProvider>
                 </ThemeProvider>

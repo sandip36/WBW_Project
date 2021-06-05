@@ -9,36 +9,29 @@ import { NavigationContainer, NavigationContainerRef } from "@react-navigation/n
 import { createStackNavigator } from "@react-navigation/stack"
 import { AuthNavigator } from "./auth-navigator"
 import { RootNavigationRoutes } from "./navigator-types"
+import { Box, Text } from "components"
 
-/**
- * This type allows TypeScript to know what routes are defined in this navigator
- * as well as what properties (if any) they might take when navigating to them.
- *
- * We recommend using MobX-State-Tree store(s) to handle state rather than navigation params.
- *
- * For more information, see this documentation:
- *   https://reactnavigation.org/docs/params/
- *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
- */
+const { Navigator, Screen } = createStackNavigator<RootNavigationRoutes>()
 
-
-const Stack = createStackNavigator<RootNavigationRoutes>()
-
+const screenOptions = { 
+    headerShown: false
+}
 const RootStack = () => {
     return (
-        <Stack.Navigator
-            screenOptions={{
-                headerShown: false,
-            }}
-        >
-            <Stack.Screen
-                name="AuthStack"
-                component={AuthNavigator}
-                options={{
-                    headerShown: false,
-                }}
-            />
-        </Stack.Navigator>
+        <Box flex={1}>
+            <Box flex={0.95}>
+                <Navigator screenOptions={screenOptions}>
+                    <Screen
+                        name="AuthStack"
+                        component={AuthNavigator}
+                        options={screenOptions}
+                    />
+                </Navigator>
+            </Box>
+            <Box flex={0.05} bg="primary" justifyContent="center" alignItems="center">
+                <Text color="white">Copyright © Wise Businessware. All rights reserved.</Text>
+            </Box>
+        </Box>
     )
 }
 

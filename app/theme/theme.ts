@@ -2,17 +2,20 @@ import { createTheme, useTheme as useReTheme } from "@shopify/restyle"
 import { TextStyle, ViewStyle, ImageStyle, StyleProp } from "react-native"
 import { scale } from 'react-native-size-matters'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import { images } from "./images"
 
 export const BASE_FONT_SIZE = 12
 export const STATUS_BAR_HEIGHT = getStatusBarHeight()
 
 export const assets = {
+    wbwLogo: images.WBW_Logo
 }
 
 export const NORMALIZED_FONT_SIZE = scale( BASE_FONT_SIZE )
 
 const colors = {
-    primary: "#003049",
+    primary: "#1e5873",
+    placeholder: '#9EA0A4',
     secondary: "#E55812",
     tertiary: "#0f6e9f",
     error: "#e11b1b",
@@ -57,6 +60,17 @@ const colors = {
 export const theme = createTheme( {
     colors,
     breakpoints: {},
+    typography: {
+        mini: 4,
+        small: 8,
+        medium: 12,
+        semiMedium: 14,
+        default: 16,
+        large: 24,
+        extraLarge: 36,
+        huge: 48,
+        massive: 64  
+    },
     spacing: {
         small: NORMALIZED_FONT_SIZE / 4,
         mini: NORMALIZED_FONT_SIZE / 3,
@@ -157,6 +171,6 @@ type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle | Sty
 export const makeStyles = <T extends NamedStyles<T>, U = unknown>(
     styles: ( theme: Theme, data: U ) => T
 ) => ( data?: U ) => {
-    const currentTheme = useTheme()
-    return styles( currentTheme, data )
-}
+        const currentTheme = useTheme()
+        return styles( currentTheme, data )
+    }
