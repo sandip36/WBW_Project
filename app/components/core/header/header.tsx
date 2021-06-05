@@ -1,52 +1,48 @@
-import React, { FC } from "react"
-import { StatusBar } from "react-native"
-import { renderComponent, renderIcon } from "../../utils"
-import { AvatarProps, Avatar } from "../avatar"
-import { Box, BoxProps } from "../box"
-import { IconProps } from "../icon"
-import { Text, TextProps } from "../text"
-import { useTheme } from "theme"
+import { Box } from "components"
+import React, { FunctionComponent } from "react"
+import { StyleProp, TextStyle, ViewStyle } from "react-native"
+import { Header as RNEHeader } from "react-native-elements"
+import { makeStyles, useTheme } from "theme"
+
+const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle: StyleProp<TextStyle> }>( ( theme ) => ( {
+    containerStyle: {
+        height: 48 + theme.STATUS_BAR_HEIGHT,
+        paddingTop: 0,
+    },
+    centerStyle: {
+        color: theme.colors.white,
+        fontSize: theme.spacing.large,
+        fontWeight: 'bold',
+        marginTop: 5
+    }
+} ) )
 
 export type HeaderProps = {
-    leftIcon?: string | IconProps;
-    title?: string;
-    rightIcon?: string | IconProps;
-    rightText?: string | TextProps | Text;
-    rightAvatar?: string | AvatarProps;
-    onLeftIconPress?: ( ) => void;
-    onRightIconPress?: ( ) => void;
-    onRightAvatarPress?: ( ) => void;
-} & BoxProps
+    title: string,
+    containerStyle?: StyleProp<ViewStyle>,
+    centerStyle?: StyleProp<TextStyle>,
+    rightComponent?: any;
+}
 
-export const Header: FC<HeaderProps> = ( {
-    leftIcon,
-    onLeftIconPress,
-    rightText,
-    rightIcon,
-    onRightIconPress,
-    rightAvatar,
-    onRightAvatarPress,
-    title,
-    ...rest
-} ) => {
-    const { STATUS_BAR_HEIGHT } = useTheme()
-    const height = 56
+export const Header: FunctionComponent<HeaderProps> = props => {
+    const {
+        title,
+        containerStyle,
+        centerStyle,
+        rightComponent
+    } = props
+    const STYLES = useStyles()
+    const theme = useTheme()
     return (
-        <Box flexDirection="row" alignItems="center" justifyContent="space-between" height={height + STATUS_BAR_HEIGHT} pt="large" px="large" {...rest}>
-            <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-            <Box flex={1}>
-                { leftIcon && renderIcon( leftIcon, { size: height / 2.24, onPress: onLeftIconPress } as any ) }
-            </Box>
-            { title && (
-                <Box flex={3} alignItems="center">
-                    <Text variant="headline">{ title }</Text>
-                </Box>
-            ) }
-            <Box flex={1} alignItems="flex-end">
-                { rightIcon && renderIcon( rightIcon, { size: height / 2.24, onPress: onRightIconPress } as any ) }
-                { rightAvatar && renderComponent( Avatar, typeof rightAvatar === 'string' ? { source: { uri: rightAvatar } } : { size: height / 2.24, onPress: onRightAvatarPress, ...rightAvatar } ) }
-                { rightText && renderComponent( Text, rightText ) }
-            </Box>
+        <Box>
+            <RNEHeader
+                statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
+                leftComponent={{ icon: 'menu', color: '#fff' }}
+                placement="center"
+                centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
+                rightComponent={rightComponent}
+                backgroundColor={theme.colors.primary}
+                containerStyle={STYLES.containerStyle} />
         </Box>
     )
 }
