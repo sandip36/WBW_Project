@@ -1,11 +1,11 @@
 import React from "react"
-import { Box, Text, Input, SecureInput, InputWithIcon, TextAreaInput, Header, Button } from "components"
+import { Box, Text, Input, SecureInput, Button } from "components"
 import { Image, ImageStyle, ScrollView, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, useTheme } from "theme"
 import { useFormik } from "formik"
 import { string, object } from 'yup'
-import { useNavigation } from "@react-navigation/core"
-import { ButtonWithIcon } from "components/core/button/button-with-icon"
+import { useStores } from "models"
+import { ILoginPayload } from "services/api"
 
 export type LoginScreenProps = {
 
@@ -33,6 +33,7 @@ const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerS
 export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) => {
     const theme = useTheme()
     const STYLES = useStyles()
+    const { AuthStore } = useStores()
 
     const {
         touched,
@@ -57,14 +58,18 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
                 .required()
                 .min( 6 )
         } ),
-        async onSubmit ( ) {
-            // 
+        async onSubmit ( values ) {
+            const payload = {
+                UserName: values.username,
+                Password: values.password
+            }
+            await AuthStore.login( payload as ILoginPayload )
         },
     } )
 
     return (
         <Box flex={1} bg="white">
-            <ScrollView contentContainerStyle={STYLES.contentContainerStyle} showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
                 <Box mt="huge" mb="large" alignItems="center">
                     <Image 
                         source={theme.assets.wbwLogo}

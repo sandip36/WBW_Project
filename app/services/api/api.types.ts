@@ -1,13 +1,44 @@
+import { ApiOkResponse } from "apisauce"
 import { GeneralApiProblem } from "./api-problem"
-import { Character } from "../../models/models/character-model/character-model"
 
-export interface User {
-    id: number
-    name: string
+export interface IUser {
+    UserID: string;
+    AccessToken: string;
+    FirstName?: string | null,
+    LastName?: string | null;
+    FullName?: string | null;
+    EmailAddress?: string | null;
+    UserName?: string | null,
+    Password?: string | null,
+    LevelID?: string | null,
+    CompanyID?: string | null,
+    CompanyName?: string | null,
+    LevelName?: string | null
 }
 
-export type GetUsersResult = { kind: "ok"; users: User[] } | GeneralApiProblem
-export type GetUserResult = { kind: "ok"; user: User } | GeneralApiProblem
+export type GetUsersResult = { kind: "ok"; users: IUser[] } | GeneralApiProblem;
+export type GetUserResult = { kind: "ok"; user: IUser } | GeneralApiProblem;
 
-export type GetCharactersResult = { kind: "ok"; characters: Character[] } | GeneralApiProblem
-export type GetCharacterResult = { kind: "ok"; character: Character } | GeneralApiProblem
+export type GeneralResponse<T = any> = ApiOkResponse<T> & {
+    kind: 'ok',
+    data: T
+};
+
+export interface ILoginPayload {
+    UserName: string,
+    Password: string
+}
+export interface ILoginResponse {
+    UserID: string;
+    AccessToken: string;
+    FirstName?: string | null,
+    LastName?: string | null;
+    FullName?: string | null;
+    EmailAddress?: string | null;
+    UserName?: string | null,
+    Password?: string | null,
+    LevelID?: string | null,
+    CompanyID?: string | null,
+    CompanyName?: string | null,
+    LevelName?: string | null
+}

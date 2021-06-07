@@ -1,12 +1,22 @@
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
-import { CharacterStoreModel } from "../stores/character-store/character-store"
+import { Instance, SnapshotOut, types, applySnapshot, flow } from "mobx-state-tree"
+import { UserStore } from "models/stores"
+import { AuthStoreModel } from "models/stores/auth-store"
 
 /**
  * A RootStore model.
  */
 // prettier-ignore
 export const RootStoreModel = types.model( "RootStore" ).props( {
-    characterStore: types.optional( CharacterStoreModel, {} as any ),
+    AuthStore: types.optional( AuthStoreModel, {} ),
+    UserStore: types.optional( UserStore, {} ),
+} ).actions( self => {
+    const resetStore = flow( function * () {
+        applySnapshot( self, {} )
+    } )
+
+    return {
+        resetStore,
+    }
 } )
 
 /**

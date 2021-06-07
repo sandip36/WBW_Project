@@ -9,11 +9,7 @@ export const createModel =
         types
             .model()
             .extend( withEnvironment )
-            .props( {
-                id: types.identifier,
-                createdAt: types.maybeNull( types.string ),
-                ...props
-            } )
+            .props( { ...props } )
             .actions( self => {
                 addMiddleware( self, atomic )
                 return {} as ModelActions

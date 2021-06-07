@@ -16,10 +16,7 @@ import {
 } from 'mobx-state-tree'
 
 export type BaseModelPropertiesDeclarations<P extends ModelPropertiesDeclaration> =
-    ModelPropertiesDeclarationToProperties<{
-        id: ISimpleType<string>,
-        createdAt?: IMaybeNull<ISimpleType<string>>
-    } & P>
+    ModelPropertiesDeclarationToProperties<P>
 
 export type AbstractModelType<P extends ModelPropertiesDeclaration, OTHERS> = IModelType<BaseModelPropertiesDeclarations<P>, OTHERS>
 
