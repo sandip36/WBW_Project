@@ -26,6 +26,7 @@
     "build-android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
+    "@nestjsx/crud-request": "^5.0.0-alpha.3",
     "@react-native-async-storage/async-storage": "^1.14.1",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "0.1.10",
@@ -46,6 +47,7 @@
     "react": "17.0.1",
     "react-async": "^10.0.1",
     "react-native": "0.64.0",
+    "react-native-dotenv": "^2.5.5",
     "react-native-elements": "^3.4.1",
     "react-native-fast-image": "^8.3.4",
     "react-native-gesture-handler": "1.10.3",
