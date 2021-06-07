@@ -4,6 +4,7 @@ module.exports = {
     production: {},
   },
   plugins: [
+    "module:react-native-dotenv",
     [
       "@babel/plugin-proposal-decorators",
       {
