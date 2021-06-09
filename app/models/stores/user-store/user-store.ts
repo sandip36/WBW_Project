@@ -1,5 +1,5 @@
 import { Instance } from "mobx-state-tree"
-import { UserModel } from "models"
+import { UserModel } from "models/models/user-model/user-model"
 import { createModelCollection } from '../../factories/model-collection.factory'
 
 
