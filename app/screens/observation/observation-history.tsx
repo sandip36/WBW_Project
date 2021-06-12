@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
 import { FormHeader } from "components/core/header/form-header"
 import { makeStyles, useTheme } from "theme"
+import { Avatar } from "react-native-elements"
 
 
 export type ObservationHistoryScreenProps = {
@@ -15,13 +16,17 @@ export type ObservationHistoryScreenProps = {
 }
 
 export type ObservationHistoryStyleProps = {
-    contentContainerStyle: StyleProp<ViewStyle>
+    contentContainerStyle: StyleProp<ViewStyle>,
+    avatarContainerStyle: StyleProp<ViewStyle>
 }
 
 
 const useStyles = makeStyles<ObservationHistoryStyleProps>( ( theme ) => ( {
     contentContainerStyle: {
         paddingBottom: theme.spacing.massive * 2
+    },
+    avatarContainerStyle: {
+        backgroundColor: theme.colors.primary
     }
 } ) )
 
@@ -75,6 +80,10 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
         )
     }
 
+    const navigateToAddObservation = ( ) => {
+        navigation.navigate( 'AddObservation' )
+    }
+
     return (
         <Box flex={1}>
             <Async promiseFn={fetchObservationHistory}>
@@ -114,7 +123,10 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
                                 contentContainerStyle={STYLES.contentContainerStyle}
                                 keyExtractor={( item, index ) => String( item.id ) }
                             />
-                        </Box>     
+                        </Box>
+                        <Box position="absolute" bottom={20} right={10}>
+                            <Avatar size="medium" onPress={navigateToAddObservation} rounded icon={{ name: 'add' }} containerStyle={STYLES.avatarContainerStyle}/>
+                        </Box>
                     </Box>
                 </Async.Resolved>
             </Async>
