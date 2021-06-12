@@ -3,7 +3,7 @@ import { getGeneralApiProblem } from "./api-problem"
 import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
-import { GeneralResponse, ILoginPayload, ILoginResponse } from "./api.types"
+import { GeneralResponse, IDashboardFetchPayload, ILoginPayload, ILoginResponse } from "./api.types"
 
 /**
  * Manages all requests to the API.
@@ -73,6 +73,19 @@ export class Api {
   async login ( payload: ILoginPayload ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/User/UserLogin", payload )
 
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async fetchDashboard ( payload: IDashboardFetchPayload ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Dashboard/GetDashboardLink", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem

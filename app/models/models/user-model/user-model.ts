@@ -6,7 +6,7 @@ import { createModel } from '../../factories/model.factory'
  * User model to store user details
  */
 export const UserModel = createModel( {
-    UserID: types.maybeNull( types.string ),
+    UserID: types.identifier,
     FirstName: types.maybeNull( types.string ),
     LastName: types.maybeNull( types.string ),
     FullName: types.maybeNull( types.string ),
@@ -18,6 +18,7 @@ export const UserModel = createModel( {
     CompanyName: types.maybeNull( types.string ),
     LevelName: types.maybeNull( types.string ),
 } )
+    .named( 'UserModel' )
 
 type UserType = Instance<typeof UserModel>
 export interface IUser extends UserType {}

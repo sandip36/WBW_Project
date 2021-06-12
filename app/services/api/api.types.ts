@@ -42,3 +42,9 @@ export interface ILoginResponse {
     CompanyName?: string | null,
     LevelName?: string | null
 }
+
+export interface IDashboardFetchPayload {
+    UserID: string,
+    AccessToken: string
+}
+

@@ -23,7 +23,6 @@ export const AuthStoreModel = types
     } ) )
     .actions( self => {
         const rootStore = getRoot<{
-            RootStore: RootStore
             UserStore: UserStoreType,
         }>( self )
         const login = flow( function * ( payload: ILoginPayload ) {
@@ -40,7 +39,7 @@ export const AuthStoreModel = types
             self.token = undefined
             self.user = undefined
             self.environment.api.setToken( null )
-            rootStore.RootStore.resetStore( )
+            rootStore.resetStore()
         } )
 
         return {
@@ -58,7 +57,7 @@ export const AuthStoreModel = types
  *  .postProcessSnapshot(omit(["password", "socialSecurityNumber", "creditCardNumber"]))
  */
 
-type AuthStoreType = Instance<typeof AuthStoreModel>
+export type AuthStoreType = Instance<typeof AuthStoreModel>
 export interface IAuthStore extends AuthStoreType {}
 type AuthStoreSnapshotType = SnapshotOut<typeof AuthStoreModel>
 export interface IAuthStoreSnapshot extends AuthStoreSnapshotType {}

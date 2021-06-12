@@ -1,6 +1,7 @@
 import { Instance, SnapshotOut, types, applySnapshot, flow } from "mobx-state-tree"
 import { UserStore } from "models/stores"
 import { AuthStoreModel } from "models/stores/auth-store"
+import { DashboardStore } from "models/stores/dashboard-store"
 
 /**
  * A RootStore model.
@@ -9,6 +10,7 @@ import { AuthStoreModel } from "models/stores/auth-store"
 export const RootStoreModel = types.model( "RootStore" ).props( {
     AuthStore: types.optional( AuthStoreModel, {} ),
     UserStore: types.optional( UserStore, {} ),
+    DashboardStore: types.optional( DashboardStore, {} ),
 } ).actions( self => {
     const resetStore = flow( function * () {
         applySnapshot( self, {} )
