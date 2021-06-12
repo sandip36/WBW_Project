@@ -8,5 +8,6 @@ export type AuthNavigationRoutes = {
 }
 
 export type ApplicationNavigationRoutes = {
-    Home: undefined
+    Home: undefined,
+    ObservationHistory: undefined
 }

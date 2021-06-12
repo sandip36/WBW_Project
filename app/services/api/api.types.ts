@@ -47,4 +47,10 @@ export interface IDashboardFetchPayload {
     UserID: string,
     AccessToken: string
 }
+export interface IObservationFetchPayload {
+    UserID: string,
+    AccessToken: string,
+    LevelID: string,
+    PageNumber: string
+}
 

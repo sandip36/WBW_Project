@@ -1,5 +1,5 @@
 import { Instance, flow, getRoot, types } from "mobx-state-tree"
-import { DashboardModel, IDashboard } from "models/models/dashboard-model"
+import { DashboardModel, IDashboard } from "models/models/dashboard-model/dashboard-model"
 import { GeneralResponse, IDashboardFetchPayload } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import { AuthStoreType } from "../auth-store/auth-store"

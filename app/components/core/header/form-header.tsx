@@ -14,7 +14,8 @@ const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle:
         fontWeight: 'bold'
     },
     leftContainerStyle: {
-        marginTop: theme.spacing.mini
+        marginTop: theme.spacing.mini,
+        paddingLeft: theme.spacing.mini
     }
 } ) )
 
@@ -46,7 +47,7 @@ export const FormHeader: FunctionComponent<HeaderProps> = props => {
     return (
         <RNEHeader
             statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
-            leftComponent={{ icon: 'arrow-left', color: theme.colors.black, size: theme.spacing.regular, onPress: navigateToGoBack }}
+            leftComponent={{ icon: 'arrow-left', type: 'material-community', color: theme.colors.black, onPress: navigateToGoBack }}
             leftContainerStyle={[ STYLES.leftContainerStyle, leftContainerStyle ]}
             centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
             rightComponent={rightComponent}

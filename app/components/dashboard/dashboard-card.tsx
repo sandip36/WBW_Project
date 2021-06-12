@@ -48,7 +48,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         }else if( dashboard?.Type === "Audit-originator" ) {
             navigation.navigate( 'AuditAndInspectionScreen' )
         }else{
-            navigation.navigate( 'History' )
+            navigation.navigate( 'ObservationHistory' )
         }
     }
 
