@@ -6,7 +6,8 @@ import { createModel } from '../../factories/model.factory'
  * User model to store user details
  */
 export const UserModel = createModel( {
-    UserID: types.identifier,
+    id: types.maybeNull( types.identifier ),
+    UserID: types.maybeNull( types.string ),
     FirstName: types.maybeNull( types.string ),
     LastName: types.maybeNull( types.string ),
     FullName: types.maybeNull( types.string ),

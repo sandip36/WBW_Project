@@ -8,12 +8,13 @@ const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle:
     containerStyle: {
         height: 48 + theme.STATUS_BAR_HEIGHT,
         paddingTop: 0,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     centerStyle: {
         color: theme.colors.white,
         fontSize: theme.spacing.large,
         fontWeight: 'bold',
-        marginTop: 5
     }
 } ) )
 
@@ -42,7 +43,7 @@ export const Header: FunctionComponent<HeaderProps> = props => {
                 centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
                 rightComponent={rightComponent}
                 backgroundColor={theme.colors.primary}
-                containerStyle={STYLES.containerStyle} />
+                containerStyle={[ STYLES.containerStyle, containerStyle ]} />
         </Box>
     )
 }

@@ -6,6 +6,7 @@ import { createModel } from '../../factories/model.factory'
  * Dashboard model to store dashboard details
  */
 export const DashboardModel = createModel( {
+    id: types.maybe( types.identifier ),
     WorkflowTemplateID: types.maybeNull( types.string ),
     AuditandInspectionTemplateID: types.maybeNull( types.string ),
     CustomFormID: types.maybeNull( types.string ),

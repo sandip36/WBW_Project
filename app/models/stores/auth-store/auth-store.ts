@@ -29,7 +29,8 @@ export const AuthStoreModel = types
             const result: GeneralResponse<ILoginResponse> = yield self.environment.api.login( payload )
             if ( result?.data ) {
                 self.token = result.data.AccessToken
-                rootStore.UserStore._insertOrUpdate( result.data )
+                const user = { ...result.data, id: result.data?.UserID }
+                rootStore.UserStore._insertOrUpdate( user )
                 self.environment.api.setToken( self.token )
                 self.user = result.data?.UserID
             }

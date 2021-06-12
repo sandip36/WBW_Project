@@ -1,4 +1,4 @@
-import { Instance, flow, getRoot } from "mobx-state-tree"
+import { Instance, flow, getRoot, types } from "mobx-state-tree"
 import { DashboardModel, IDashboard } from "models/models/dashboard-model"
 import { GeneralResponse, IDashboardFetchPayload } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
@@ -9,6 +9,9 @@ export const DashboardStore = createModelCollection( DashboardModel )
     .volatile( ( ) => ( {
         bootstraping: true
     } ) )
+    .props( {
+        currentDashboardId: types.optional( types.string, '' )
+    } )
     .actions( self => {
         const rootStore = getRoot<{
             AuthStore: AuthStoreType
@@ -22,7 +25,10 @@ export const DashboardStore = createModelCollection( DashboardModel )
                 } as IDashboardFetchPayload
                 const result: GeneralResponse<IDashboard[]> = yield self.environment.api.fetchDashboard( payload )
                 if ( result?.data ) {
-                    self._insertOrUpdate( result.data )
+                    const dashboards = result.data.map( item => {
+                        return { ...item, id: item.AuditandInspectionTemplateID }
+                    } )
+                    self._insertOrUpdate( dashboards )
                 }
                 return result
             } catch( error ) {
@@ -34,8 +40,13 @@ export const DashboardStore = createModelCollection( DashboardModel )
             }
         } )
 
+        const setCurrentDashboardId = flow( function * ( id: string ) {
+            self.currentDashboardId = id
+        } )
+
         return {
-            fetch
+            fetch,
+            setCurrentDashboardId
         }
     } )
 
