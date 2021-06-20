@@ -32,7 +32,6 @@ export const DashboardStore = createModelCollection( DashboardModel )
                 }
                 return result
             } catch( error ) {
-                console.tron.log( 'error', error )
                 rootStore.AuthStore.logout()
                 return null
             } finally {

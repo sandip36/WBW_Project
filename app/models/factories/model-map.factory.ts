@@ -16,7 +16,7 @@ export const createModelMap =
         .actions( self => {
             addMiddleware( self, atomic )
 
-            const insertOrUpdate = ( items: SnapshotIn<M> | SnapshotIn<M>[] ) => {
+            const _insertOrUpdate = ( items: SnapshotIn<M> | SnapshotIn<M>[] ) => {
                 const toLoad = Array.isArray( items ) ? items : [ items ]
 
                 const instances: Instance<M>[] = []
@@ -30,17 +30,11 @@ export const createModelMap =
                 return instances
             }
 
-            const clear = () => {
+            const _clear = ( ) => {
                 self.items.clear()
             }
-
-            const remove = ( id: string ) => {
-                return self.items.delete( id )
-            }
-
             return {
-                insertOrUpdate,
-                clear,
-                remove
+                _insertOrUpdate,
+                _clear
             }
         } )

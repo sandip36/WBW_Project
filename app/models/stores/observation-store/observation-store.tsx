@@ -25,7 +25,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 }
                 return result
             } catch( error ) {
-                console.tron.log( error.message )
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
                 return null
             }

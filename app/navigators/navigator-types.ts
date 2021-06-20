@@ -11,4 +11,5 @@ export type ApplicationNavigationRoutes = {
     Home: undefined,
     ObservationHistory: undefined,
     AddObservation: undefined
+    AuditAndInspectionScreen: undefined
 }

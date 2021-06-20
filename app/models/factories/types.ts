@@ -40,5 +40,6 @@ export type AbstractModelMapProperties<M extends IAnyModelType, P extends ModelP
 
 export type AbstractModelMapType<M extends IAnyModelType, P extends ModelPropertiesDeclaration, OTHERS> =
     IModelType<AbstractModelMapProperties<M, P>, {
-        insertOrUpdate ( snapshot: SnapshotIn<M> | SnapshotIn<M>[] ): Instance<M>[]
+        _insertOrUpdate ( snapshot: SnapshotIn<M> | SnapshotIn<M>[] ): Instance<M>[]
+        _clear ( ): void
     } & OTHERS>

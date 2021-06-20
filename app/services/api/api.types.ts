@@ -53,4 +53,11 @@ export interface IObservationFetchPayload {
     LevelID: string,
     PageNumber: string
 }
+export interface IAuditHistoryFetchPayload {
+    UserID: string,
+    AccessToken: string,
+    CustomFormID: string,
+    AuditAndInspectionTemplateID: string,
+    PageNumber: string
+}
 
