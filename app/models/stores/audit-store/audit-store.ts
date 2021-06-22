@@ -3,13 +3,12 @@ import { GeneralResponse, IAuditHistoryFetchPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
-import { isEmpty } from "lodash"
+import { isEmpty, uniqBy } from "lodash"
 
 export const AuditStoreProps = {
     audit: types.optional( AuditModel, {} ),
     refreshing: types.optional( types.boolean, false ),
     page: types.optional( types.number, 0 ),
-    shouldFetch: types.optional( types.boolean, true )
 }
 
 export const AuditStore = types
@@ -23,15 +22,15 @@ export const AuditStore = types
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
             try {
-                self.shouldFetch = true
                 const result: GeneralResponse<IAudit> = yield self.environment.api.fetchAuditHistory( payload )
                 if ( result?.data && !isEmpty( result.data?.AudiAndInspectionListing ) ) {
-                    self.audit = result.data
+                    self.audit.TemplateDetails = result.data.TemplateDetails
+                    const list = uniqBy( [ ...self.audit.AudiAndInspectionListing, ...result.data.AudiAndInspectionListing ], 'AuditAndInspectionID' ) as any
+                    self.audit.AudiAndInspectionListing = list as any
                     self.refreshing = false
                     self.page = Number( payload.PageNumber )
                 }else{
                     self.refreshing = false
-                    self.shouldFetch = false
                 }
                 return result
             } catch( error ) {

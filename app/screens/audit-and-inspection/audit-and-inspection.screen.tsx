@@ -50,16 +50,14 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
     }, [] )
 
     const fetchNextAuditAndInspectionHistory = useCallback( async () => {
-        if( AuditStore.shouldFetch ) {
-            const payload = {
-                UserID: AuthStore?.user.UserID,
-                AccessToken: AuthStore?.token,
-                CustomFormID: dashboard?.CustomFormID,
-                AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
-                PageNumber: String( AuditStore.page + 1 )
-            } as IAuditHistoryFetchPayload
-            await AuditStore.fetch( payload )
-        }
+        const payload = {
+            UserID: AuthStore?.user.UserID,
+            AccessToken: AuthStore?.token,
+            CustomFormID: dashboard?.CustomFormID,
+            AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+            PageNumber: String( AuditStore.page + 1 )
+        } as IAuditHistoryFetchPayload
+        await AuditStore.fetch( payload )
     }, [] )
 
     const onRefresh = async ( ) => {
