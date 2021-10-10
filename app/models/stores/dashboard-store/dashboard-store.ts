@@ -3,6 +3,7 @@ import { DashboardModel, IDashboard } from "models/models/dashboard-model/dashbo
 import { GeneralResponse, IDashboardFetchPayload } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import { AuthStoreType } from "../auth-store/auth-store"
+import { sortBy } from "lodash"
 
 
 export const DashboardStore = createModelCollection( DashboardModel )
@@ -12,6 +13,11 @@ export const DashboardStore = createModelCollection( DashboardModel )
     .props( {
         currentDashboardId: types.optional( types.string, '' )
     } )
+    .views( self => ( {
+        get sortDashboardByPageOrder( ) {
+            return sortBy(self.items, [function(o) { return o.HomePageOrder; }]);
+        }
+    } ) )
     .actions( self => {
         const rootStore = getRoot<{
             AuthStore: AuthStoreType

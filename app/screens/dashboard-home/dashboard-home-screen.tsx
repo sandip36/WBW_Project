@@ -46,7 +46,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                         />
                         <Box mt="small">
                             <FlatList 
-                                data={DashboardStore.items.slice()}
+                                data={DashboardStore.sortDashboardByPageOrder}
                                 renderItem={renderItem}
                                 keyExtractor={( item, index ) => item.id }
                             />
