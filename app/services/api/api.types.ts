@@ -60,4 +60,10 @@ export interface IAuditHistoryFetchPayload {
     AuditAndInspectionTemplateID: string,
     PageNumber: string
 }
+export interface IFetchDataForStartInspectionPayload {
+    UserID: string,
+    AccessToken: string,
+    CustomFormID: string,
+    AuditAndInspectionTemplateID: string
+}
 
