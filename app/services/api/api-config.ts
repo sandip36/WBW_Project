@@ -3,6 +3,7 @@
 // Or just specify it directly like this:
 import { API_URL } from "@env"
 
+
 /**
  * The options used to configure the API.
  */
@@ -22,6 +23,6 @@ export interface ApiConfig {
  * The default configuration for the app.
  */
 export const DEFAULT_API_CONFIG: ApiConfig = {
-    url: API_URL || "https://jsonplaceholder.typicode.com",
+    url: API_URL || "http://198.71.63.116/MobileAPI/api",
     timeout: 10000,
 }

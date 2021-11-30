@@ -531,7 +531,7 @@ SPEC CHECKSUMS:
   EXLocalization: 8b9463c81843da214476b541a27811dd885c9a76
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
-  FBReactNativeSpec: 5e5f3d9b1c76d47d260eb82adbc8a79c75134dad
+  FBReactNativeSpec: 928717f1590befbf3518e8e4975f8c1746cbbbd6
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
