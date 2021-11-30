@@ -3,6 +3,7 @@ import { RootStore } from "models"
 import { withEnvironment } from "models/environment/with-environment"
 import { UserStoreType } from "models/stores"
 import { UserModel } from "models/models"
+import Toast from "react-native-simple-toast"
 import { GeneralResponse, ILoginPayload, ILoginResponse } from "services/api/api.types"
 
 /**
@@ -26,14 +27,20 @@ export const AuthStoreModel = types
             UserStore: UserStoreType,
         }>( self )
         const login = flow( function * ( payload: ILoginPayload ) {
-            const result: GeneralResponse<ILoginResponse> = yield self.environment.api.login( payload )
-            if ( result?.data ) {
-                self.token = result.data.AccessToken
-                const user = { ...result.data, id: result.data?.UserID }
-                rootStore.UserStore._insertOrUpdate( user )
-                self.environment.api.setToken( self.token )
-                self.user = result.data?.UserID
+            try {
+                const result: GeneralResponse<ILoginResponse> = yield self.environment.api.login( payload )
+                if ( result?.data ) {
+                    self.token = result.data.AccessToken
+                    const user = { ...result.data, id: result.data?.UserID }
+                    rootStore.UserStore._insertOrUpdate( user )
+                    self.environment.api.setToken( self.token )
+                    self.user = result.data?.UserID
+                }
+            }catch( error ) {
+                    Toast.showWithGravity( error.message || "error while loggin", Toast.LONG, Toast.CENTER )
+                    return null
             }
+            
         } )
 
         const logout = flow( function * () {
