@@ -87,13 +87,11 @@ function App () {
                 <ThemeProvider {...{ theme }}>
                     <RootStoreProvider value={rootStore}>
                         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-                            <SafeAreaView style={styles.rootContainer}>
-                                <RootNavigator
-                                    ref={navigationRef}
-                                    initialState={initialNavigationState}
-                                    onStateChange={onNavigationStateChange}
-                                />
-                            </SafeAreaView>
+                            <RootNavigator
+                                ref={navigationRef}
+                                initialState={initialNavigationState}
+                                onStateChange={onNavigationStateChange}
+                            />
                         </SafeAreaProvider>
                     </RootStoreProvider>
                 </ThemeProvider>

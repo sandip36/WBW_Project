@@ -37,7 +37,7 @@ export const Header: FunctionComponent<HeaderProps> = props => {
     return (
         <Box>
             <RNEHeader
-                statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
+                statusBarProps={{ barStyle: "light-content", translucent: false, backgroundColor: "transparent" }}
                 leftComponent={{ icon: 'menu', color: '#fff' }}
                 placement="center"
                 centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
