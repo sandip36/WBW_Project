@@ -1,7 +1,9 @@
-import { Box, Text } from "components"
+import { Box, Icon, Text, TouchableBox } from "components"
 import { AuditAndInspectionListingType } from "models/models/audit-model"
 import React from "react"
 import { isEmpty } from "lodash"
+import { useNavigation } from "@react-navigation/native"
+import { useStores } from "models"
 
 const renderAuditCardDetails = ( title: string, value: string ) => {
     return (
@@ -27,6 +29,14 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
     const {
         auditAndInspectionDetails
     } = props
+    const navigation = useNavigation()
+    const { AuditStore } = useStores()
+
+
+    const onEditInspection = async ( ) => {
+        await AuditStore.setCurrentInspectionId( auditAndInspectionDetails?.AuditAndInspectionID )
+        navigation.navigate( 'EditInspection' )
+    }
 
     return (
         <Box flex={1} mx="regular" my="medium" bg="lightGrey">
@@ -38,7 +48,7 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
                 borderTopRightRadius="large"
                 flexDirection="row"
                 bg="primary">
-                <Box flex={0.7} padding="large">
+                <Box flex={0.6} padding="large">
                     <Text variant="body" fontWeight="bold" color="white">
                         {auditAndInspectionDetails?.RecordNumber}
                     </Text>
@@ -48,6 +58,9 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
                         {auditAndInspectionDetails?.Status}
                     </Text>
                 </Box>
+                <TouchableBox flex={0.1} justifyContent="center" mx="regular" alignItems="flex-end" onPress={onEditInspection}>
+                    <Icon size={32} name="edit" color="background" type="material" />
+                </TouchableBox>
             </Box>
             <Box my="large">
                 {!isEmpty( auditAndInspectionDetails.FullName ) && renderAuditCardDetails( 'Full Name: ', auditAndInspectionDetails.FullName )}
