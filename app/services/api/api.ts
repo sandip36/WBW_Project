@@ -4,6 +4,7 @@ import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
 import { GeneralResponse, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
+import { IFetchEditInspectionDetailsPayload } from "."
 
 /**
  * Manages all requests to the API.
@@ -125,6 +126,19 @@ export class Api {
 
   async fetchDataForStartInspection ( payload: IFetchDataForStartInspectionPayload ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/GetTypes", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async fetchDataForEditInspection ( payload: IFetchEditInspectionDetailsPayload ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/GetAuditDetails", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
