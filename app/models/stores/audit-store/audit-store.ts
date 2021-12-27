@@ -3,7 +3,7 @@ import { GeneralResponse, IAuditHistoryFetchPayload, IFetchDataForStartInspectio
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
-import { isEmpty, uniqBy } from "lodash"
+import { isEmpty, uniqBy, sortBy } from "lodash"
 import { GetTypesModel } from "models/models/audit-model"
 import { InspectionModel } from "models/models/audit-model/inspection-model"
 
@@ -22,7 +22,30 @@ export const AuditStore = types
     .views( self => ( {
         get auditAndInspectionDetails () {
             return isEmpty( self.audit?.AudiAndInspectionListing ) ? [] : self.audit.AudiAndInspectionListing
-        }
+        },
+        get systemFieldsData () {
+            return isEmpty( self.inspection?.SystemFields?.SystemFields ) ? [] : sortBy( self.inspection?.SystemFields?.SystemFields, "DisplayOrder" )
+        },
+        get dynamicFieldsData () {
+            return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, "GroupOrder" )
+        },
+        groupsAndAttributesData ( groupId: string ) {
+            console.tron.log( 'groupsId',groupId)
+            const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId )
+            console.tron.log('groips-->',groupsAndAttributeData)
+            const attributeData = groupsAndAttributeData[0].Attributes
+            console.tron.log( 'attribute',attributeData)
+            return sortBy( attributeData, "AttributeOrder" )
+        },
+        getDropdownData ( data?: any, label?: string, value?: string ) {
+            return data.map( item => {
+                const dropdownRecord = {
+                    label: label  || item.Value,
+                    value: value || item.ID
+                }
+                return dropdownRecord
+            } )
+        } 
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -73,6 +96,7 @@ export const AuditStore = types
                 }
                 return result
             } catch( error ) {
+                console.tron.log( 'error is ',error.message)
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
                 return null
             }
