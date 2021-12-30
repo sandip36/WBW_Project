@@ -30,11 +30,11 @@ export const AuditStore = types
             return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, "GroupOrder" )
         },
         groupsAndAttributesData ( groupId: string ) {
-            console.tron.log( 'groupsId',groupId)
+            console.log( 'groupsId',groupId )
             const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId )
-            console.tron.log('groips-->',groupsAndAttributeData)
+            console.log( 'groips-->',JSON.stringify( groupsAndAttributeData ) )
             const attributeData = groupsAndAttributeData[0].Attributes
-            console.tron.log( 'attribute',attributeData)
+            console.log( 'attribute',JSON.stringify( attributeData ) )
             return sortBy( attributeData, "AttributeOrder" )
         },
         getDropdownData ( data?: any, label?: string, value?: string ) {
@@ -46,6 +46,23 @@ export const AuditStore = types
                 return dropdownRecord
             } )
         } 
+    } ) )
+    .views( self => ( {
+        get sourceList () {
+            const SOURCE_LIST = self.inspection.GroupsAndAttributes?.SourceList
+            console.tron.log( 'SourceList before',SOURCE_LIST )
+            const returnableSourceList = self.getDropdownData( SOURCE_LIST )
+            console.tron.log( 'returnable sorce',returnableSourceList )
+            return returnableSourceList
+        },
+        get hazardList () {
+            const HAZARD_LIST = self.inspection.GroupsAndAttributes?.HazardList
+            console.tron.log( 'SourceList before',HAZARD_LIST )
+            const returnableHazardList = self.getDropdownData( HAZARD_LIST )
+            console.tron.log( 'returnable hazard',returnableHazardList )
+            return returnableHazardList
+        },
+         
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -96,7 +113,7 @@ export const AuditStore = types
                 }
                 return result
             } catch( error ) {
-                console.tron.log( 'error is ',error.message)
+                console.tron.log( 'error is ',error.message )
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
                 return null
             }

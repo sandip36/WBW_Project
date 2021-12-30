@@ -12,7 +12,7 @@ export type InputStyleProps = {
 
 const useStyles = makeStyles<InputStyleProps>( ( theme ) => ( {
     labelStyle: {
-        marginBottom: theme.spacing.small,
+        marginBottom: theme.spacing.small
     },
     inputContainerStyle: {
         borderWidth: 1, 

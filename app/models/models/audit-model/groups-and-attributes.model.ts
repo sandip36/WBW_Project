@@ -30,7 +30,7 @@ export const AttributesModel = types.model( {
 } )
 export const GroupsModel = types.model( {
     GroupOrder: types.maybeNull( types.string ),
-    GroupID: types.maybeNull( types.string ),
+    GroupID: types.optional( types.string, "" ),
     GroupName: types.maybeNull( types.string ),
     Attributes: types.optional( types.array( AttributesModel ), [] )
 } )

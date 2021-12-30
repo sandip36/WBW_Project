@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-color-literals */
 import { Box, Icon, Text } from "components"
 import React from "react"
-import { StyleSheet, Platform } from "react-native"
+import { Platform } from "react-native"
 import RNPickerSelect, { Item } from "react-native-picker-select"
 
 export type DropdownProps = {
@@ -28,26 +28,47 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
         value
     } = props
 
-    const myPickerStyles = Platform.OS === "android" ? {
-        ...styles.inputAndroid,
-        iconContainer: { 
-            top: 10,
-            right: 12, 
+    const myPickerStyles = Platform.OS === "android" ? 
+        { 
+            inputAndroid: { 
+                borderColor: '#1e5873',
+                borderRadius: 8,
+                borderWidth: 1,
+                color: 'black',
+                fontSize: 16,
+                paddingHorizontal: 10,
+                paddingRight: 30,
+                paddingVertical: 8, 
+            },
+            iconContainer: {       
+                top: 10,
+                right: 12, 
+            } 
+        } 
+        : 
+        { 
+            inputIOS: { 
+                borderColor: '#1e5873',
+                borderRadius: 8,
+                borderWidth: 1,
+                color: 'black',
+                fontSize: 16,
+                paddingHorizontal: 10,
+                paddingRight: 30,
+                paddingVertical: 8, 
+            },
+            iconContainer: {       
+                top: 10,
+                right: 12, 
+            } 
         }
-    } : {
-        ...styles.inputIOS,
-        iconContainer: { 
-            top: 10,
-            right: 12, 
-        }
-    }
 
     const Icon = defaultIcon || customIcon
     
     return (
-        <Box flex={1} margin="large">
+        <Box flex={1} marginVertical="medium" marginHorizontal="large">
             <Box>
-                <Text color="primary" fontWeight="bold" mb="medium" variant="body">{title}</Text>
+                <Text color="primary" fontWeight="bold" mb="medium" variant="heading5">{title}</Text>
             </Box>
             <RNPickerSelect 
                 items={items}
@@ -56,7 +77,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
                 useNativeAndroidPickerStyle={false}
                 style={myPickerStyles}
                 Icon={Icon}
-                // fixAndroidTouchableBug={true}
                 onDonePress={onDonePress}
             />
         </Box>
@@ -66,25 +86,3 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
 } )
 
 
-const styles = StyleSheet.create( {
-    inputAndroid: {
-        borderColor: '#1e5873',
-        borderRadius: 8,
-        borderWidth: 1,
-        color: 'black',
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingRight: 30,
-        paddingVertical: 8,
-    },
-    inputIOS: {
-        borderColor: '#1e5873',
-        borderRadius: 4,
-        borderWidth: 1,
-        color: 'black',
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingRight: 30,
-        paddingVertical: 12,
-    },
-} )

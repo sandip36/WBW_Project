@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Input, Text } from "components"
+import { Box, Input, ScrollBox, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback } from "react"
@@ -91,7 +91,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
                         title="Edit Inspection"
                         navigation={navigation}
                     />
-                    <Box flex={1}>
+                    <ScrollBox flex={1}>
                         <Box>
                             <FlatList 
                                 data={AuditStore.systemFieldsData}
@@ -104,6 +104,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
                         <Box>
                             <FlatList 
                                 data={AuditStore.dynamicFieldsData}
+                                extraData={AuditStore.dynamicFieldsData}
                                 renderItem={( { item } ) => {
                                     return (
                                         <Box flex={1}>
@@ -121,7 +122,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
                                 ItemSeparatorComponent={ItemSeparatorComponent}
                             />
                         </Box>
-                    </Box>
+                    </ScrollBox>
                 </Async.Resolved>
             </Async>
         </Box>
