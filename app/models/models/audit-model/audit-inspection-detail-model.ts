@@ -13,7 +13,7 @@ export const AuditAndInspectionDetailsModel = types
         TypeID: types.maybeNull( types.string ),
         TypeName: types.maybeNull( types.string ),
         Notes: types.maybeNull( types.string ),
-        ReportingPeriodDueDates: types.maybeNull( types.string ),
+        ReportingPeriodDueDates: types.optional( types.array( PrimaryUserListModel ), [] ),
         ReportingPeriodDueDateSelected: types.maybeNull( types.string ),
         NextDueDate: types.maybeNull( types.string ),
         SkippedDueDate: types.maybeNull( types.string ),
