@@ -4,7 +4,7 @@ import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
 import { isEmpty, uniqBy, sortBy } from "lodash"
-import { GetTypesModel } from "models/models/audit-model"
+import { GetTypesModel, IAttributes, IGroups } from "models/models/audit-model"
 import { InspectionModel } from "models/models/audit-model/inspection-model"
 
 export const AuditStoreProps = {
@@ -30,12 +30,9 @@ export const AuditStore = types
             return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, "GroupOrder" )
         },
         groupsAndAttributesData ( groupId: string ) {
-            console.log( 'groupsId',groupId )
-            const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId )
-            console.log( 'groips-->',JSON.stringify( groupsAndAttributeData ) )
+            const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId ) as IGroups[]
             const attributeData = groupsAndAttributeData[0].Attributes
-            console.log( 'attribute',JSON.stringify( attributeData ) )
-            return sortBy( attributeData, "AttributeOrder" )
+            return sortBy( attributeData, "AttributeOrder" ) as IAttributes[]
         },
         getDropdownData ( data?: any, label?: string, value?: string ) {
             return data.map( item => {
@@ -50,16 +47,12 @@ export const AuditStore = types
     .views( self => ( {
         get sourceList () {
             const SOURCE_LIST = self.inspection.GroupsAndAttributes?.SourceList
-            console.tron.log( 'SourceList before',SOURCE_LIST )
             const returnableSourceList = self.getDropdownData( SOURCE_LIST )
-            console.tron.log( 'returnable sorce',returnableSourceList )
             return returnableSourceList
         },
         get hazardList () {
             const HAZARD_LIST = self.inspection.GroupsAndAttributes?.HazardList
-            console.tron.log( 'SourceList before',HAZARD_LIST )
             const returnableHazardList = self.getDropdownData( HAZARD_LIST )
-            console.tron.log( 'returnable hazard',returnableHazardList )
             return returnableHazardList
         },
          
@@ -106,7 +99,8 @@ export const AuditStore = types
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.fetchDataForEditInspection( payload )
                 if ( result?.data && !isEmpty( result.data ) ) {
-                    self.inspection = result.data
+                    const handledEdgeCasesResult = isEmpty( result.data?.GroupsAndAttributes?.SourceList ) ? result.data.GroupsAndAttributes.SourceList = [] : result.data?.GroupsAndAttributes?.SourceList
+                    self.inspection = { ...handledEdgeCasesResult, ...result.data }
                     self.refreshing = false
                 }else{
                     self.refreshing = false
