@@ -6,7 +6,7 @@ import React, { Fragment } from "react"
 import { createStackNavigator } from "@react-navigation/stack"
 import { StatusBar } from "react-native"
 import { ApplicationNavigationRoutes } from "./navigator-types"
-import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen } from "screens"
+import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen, CompleteOrAssignTaskScreen } from "screens"
 import { AuditAndInspectionScreen, StartInspectionScreen, EditInspectionScreen } from "screens/audit-and-inspection"
    
 const { Navigator, Screen } = createStackNavigator<ApplicationNavigationRoutes>()
@@ -22,6 +22,7 @@ export const ApplicationNavigator = ( ) => {
                 <Screen name="AuditAndInspectionScreen" component={AuditAndInspectionScreen} />
                 <Screen name="StartInspection" component={StartInspectionScreen} />
                 <Screen name="EditInspection" component={EditInspectionScreen} />
+                <Screen name="CompleteOrAssignTask" component={CompleteOrAssignTaskScreen} />
             </Navigator>
         </Fragment>
     )

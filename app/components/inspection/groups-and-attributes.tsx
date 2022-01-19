@@ -9,6 +9,7 @@ import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-ima
 import Toast from "react-native-simple-toast"
 import { observer } from "mobx-react-lite"
 import { Image } from "react-native-elements"
+import { isEmpty } from "lodash"
 
 export type GroupsAndAttributesProps = {
     groupId: string
@@ -25,8 +26,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
         paddingBottom: theme.spacing.extraLarge
     },
     imageStyle: {
-        width: '100%',
-        height: '100%',
+        width: 100,
+        height: 100,
         borderRadius: theme.borderRadii.medium,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -42,7 +43,7 @@ export type RenderImageProps = {
 export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) => {
     const { image, style } = props
     return (
-        <Box flex={1} bg="primary" flexDirection="row" width={100} height={100}>
+        <Box flex={1} bg="transparent" flexDirection="row">
             <Box>
                 <Image
                     source={{ uri: image.uri }}
@@ -88,6 +89,21 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         }
     }
 
+    const renderImageItem = ( { item } ) => {
+        return (
+            <Box flex={1} flexDirection="row" marginHorizontal="medium">
+                <RenderImage 
+                    image={item}
+                    style={STYLES.imageStyle as StyleProp<ImageStyle>}
+                />
+            </Box>
+        )
+    }
+
+    const navigateToAssignOrCompleteTask = ( ) => {
+        navigation.navigate( 'CompleteOrAssignTask' )
+    }
+
     const renderItem = ( { item }: {item:IAttributes } ) => {
         return (
             <Box flex={1} my="regular">
@@ -110,7 +126,12 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                     title="Hazard List"
                     items={AuditStore.hazardList}
                     value={item.HazardsID}
-                    onValueChange={( value )=>item.setHazardId( value )}
+                    onValueChange={( value )=>{
+                        item.setHazardId( value )
+                        if( !isEmpty( value ) ){
+                            navigateToAssignOrCompleteTask()
+                        }
+                    }}
                 />
                 <Box marginHorizontal="regular" mt="regular">
                     <TextAreaInput 
@@ -131,24 +152,15 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                     // onChangeText={handleChange( "username" )}
                     /> 
                 </TouchableBox>
-                {/* <Box flex={1} flexDirection="row" marginHorizontal="regular">
-                    {
-                        item.isAuditImagePresent
-                            ? item.auditImage.map( ( image, index ) => {
-                                return (
-                                    <Box flex={1} flexDirection="row" key={index}>
-                                        <Text>Hello</Text>
-                                        <RenderImage 
-                                            image={image}
-                                            style={STYLES.imageStyle as StyleProp<ImageStyle>}
-                                        />
-                                    </Box>
-                                )
-                            } )
-                            : null
-
-                    }
-                </Box> */}
+                <Box flex={1} flexDirection="row" marginHorizontal="regular">
+                    <FlatList 
+                        data={item.auditImage}
+                        extraData={item.auditImage}
+                        keyExtractor={( item,index ) => String( index ) }
+                        renderItem={renderImageItem}
+                        horizontal={true}
+                    />
+                </Box>
             </Box>
             
         )

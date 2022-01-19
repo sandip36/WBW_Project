@@ -54,7 +54,8 @@ const colors = {
     lightGreyBorder: '#554F4F',
     caribbeanGreenPearl: "#70D48C",
     manhattan: "#F7bEA3",
-    playerSelection: "rgba(200,255,50,0.5)"
+    playerSelection: "rgba(200,255,50,0.5)",
+    radioButton: '#86939e'
 }
 
 export const theme = createTheme( {
