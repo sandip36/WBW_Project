@@ -65,7 +65,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         includeBase64: false
     } as ImageLibraryOptions
     const STYLES = useStyles()
-    const { AuditStore } = useStores()
+    const { AuditStore, TaskStore } = useStores()
 
     
     const imagePressHandler = async ( item: IAttributes ) => {
@@ -100,7 +100,9 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         )
     }
 
-    const navigateToAssignOrCompleteTask = ( ) => {
+    const navigateToAssignOrCompleteTask = async ( item: IAttributes ) => {
+        await TaskStore.setAttributeID( item.AttributeID )
+        await TaskStore.setCustomFormResultID( item.CustomFormResultID )
         navigation.navigate( 'CompleteOrAssignTask' )
     }
 
@@ -129,7 +131,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                     onValueChange={( value )=>{
                         item.setHazardId( value )
                         if( !isEmpty( value ) ){
-                            navigateToAssignOrCompleteTask()
+                            navigateToAssignOrCompleteTask( item )
                         }
                     }}
                 />

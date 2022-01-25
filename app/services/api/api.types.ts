@@ -74,4 +74,11 @@ export interface IFetchEditInspectionDetailsPayload {
     AuditAndInspectionId: string,
     CompanyID: string
 }
+export interface IFetchTaskPayload {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string,
+    AttributeID: string,
+    CustomFormResultID: string
+}
 

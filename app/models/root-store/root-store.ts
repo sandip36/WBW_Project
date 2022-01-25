@@ -4,6 +4,7 @@ import { AuditStore } from "models/stores/audit-store"
 import { AuthStoreModel } from "models/stores/auth-store"
 import { DashboardStore } from "models/stores/dashboard-store"
 import { ObservationStore } from "models/stores/observation-store/observation-store"
+import { TaskStore } from "models/stores/task-store"
 
 /**
  * A RootStore model.
@@ -14,7 +15,8 @@ export const RootStoreModel = types.model( "RootStore" ).props( {
     UserStore: types.optional( UserStore, {} ),
     DashboardStore: types.optional( DashboardStore, {} ),
     ObservationStore: types.optional( ObservationStore, {} ),
-    AuditStore: types.optional( AuditStore, {} )
+    AuditStore: types.optional( AuditStore, {} ),
+    TaskStore: types.optional( TaskStore, {} )
 } ).actions( self => {
     const resetStore = flow( function * () {
         applySnapshot( self, {} )

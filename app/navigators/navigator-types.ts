@@ -15,4 +15,6 @@ export type ApplicationNavigationRoutes = {
     StartInspection: undefined
     EditInspection: undefined
     CompleteOrAssignTask: undefined
+    CompleteTask: undefined
+    AssignTask: undefined
 }

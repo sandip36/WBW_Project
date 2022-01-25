@@ -1,28 +1,76 @@
-import { Box, Header, Radio, Text } from "components"
+import { useNavigation } from "@react-navigation/native"
+import { Box, Radio, Text } from "components"
+import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
-import React from "react"
+import React, { useCallback } from "react"
+import { Async } from "react-async"
+import { ActivityIndicator } from "react-native"
+import { IFetchTaskPayload } from "services/api"
+import { CompleteTaskScreen, AssignTaskScreen } from "screens/complete-and-assign-task"
+import { observer } from "mobx-react-lite"
 
 export type CompleteOrAssignTaskScreenProps = {
 
 }
 
-export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProps> = ( props ) => {
-    const { AuditStore } = useStores()
+export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProps> = observer( ( props ) => {
+    const { AuditStore, AuthStore, TaskStore } = useStores()
+    const navigation = useNavigation()
 
-    const onRadioPress = ( value ) => {
-        //
+    const fetchTasks = useCallback( async () => {
+        await TaskStore.resetRadioValue()
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionID: AuditStore.inspection?.AuditAndInspectionDetails.AuditAndInspectionID,
+            AttributeID: TaskStore.attributeID,
+            CustomFormResultID: TaskStore.customFormResultID
+        } as IFetchTaskPayload
+        await TaskStore.fetch( payload )
+    }, [] )
+
+    const onRadioPress = async ( value ) => {
+        console.log( 'value is ', value )
+        await TaskStore.setRadioValue( value )
     }
 
+    console.log( TaskStore.radioValue )
     return (
         <Box flex={1}>
-            <Header 
-                title="Complete or Assign Task"
-            />
-            <Box flex={1}>
-                <Radio 
-                    onPress={onRadioPress}
-                />
-            </Box>
+            <Async promiseFn={fetchTasks}>
+                <Async.Pending>
+                    { ( ) => (
+                        <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                            <ActivityIndicator size={32} color="red" />
+                        </Box>
+                    ) }
+                </Async.Pending>
+                <Async.Rejected>
+                    { ( error: any ) => (
+                        <Box justifyContent="center" alignItems="center" flex={1}>
+                            <Text>{error.reason || error.message || 'Something went wrong'}</Text>
+                        </Box>
+                    ) }
+                </Async.Rejected>
+                <Async.Resolved>
+                    <Box flex={1}>
+                        <FormHeader 
+                            title="Complete or Assign Task"
+                            navigation={navigation}
+                        />
+                        <Box flex={1}>
+                            <Radio 
+                                onPress={onRadioPress}
+                            />
+                        </Box>
+                        {
+                            TaskStore.radioValue === "Complete Task"
+                                ? <CompleteTaskScreen />
+                                : <AssignTaskScreen />
+                        }
+                    </Box>
+                </Async.Resolved>
+            </Async>
         </Box>
     )
-}
+} )

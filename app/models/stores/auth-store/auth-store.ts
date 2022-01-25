@@ -37,8 +37,8 @@ export const AuthStoreModel = types
                     self.user = result.data?.UserID
                 }
             }catch( error ) {
-                    Toast.showWithGravity( error.message || "error while loggin", Toast.LONG, Toast.CENTER )
-                    return null
+                Toast.showWithGravity( error.message || "error while loggin", Toast.LONG, Toast.CENTER )
+                return null
             }
             
         } )

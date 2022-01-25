@@ -8,6 +8,8 @@ import { StatusBar } from "react-native"
 import { ApplicationNavigationRoutes } from "./navigator-types"
 import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen, CompleteOrAssignTaskScreen } from "screens"
 import { AuditAndInspectionScreen, StartInspectionScreen, EditInspectionScreen } from "screens/audit-and-inspection"
+import { CompleteTaskScreen } from "screens/complete-and-assign-task/complete-task"
+import { AssignTaskScreen } from "screens/complete-and-assign-task/assign-task"
    
 const { Navigator, Screen } = createStackNavigator<ApplicationNavigationRoutes>()
   
@@ -23,6 +25,8 @@ export const ApplicationNavigator = ( ) => {
                 <Screen name="StartInspection" component={StartInspectionScreen} />
                 <Screen name="EditInspection" component={EditInspectionScreen} />
                 <Screen name="CompleteOrAssignTask" component={CompleteOrAssignTaskScreen} />
+                <Screen name="CompleteTask" component={CompleteTaskScreen} />
+                <Screen name="AssignTask" component={AssignTaskScreen} />
             </Navigator>
         </Fragment>
     )

@@ -34,7 +34,7 @@ export const AuditStore = types
             const attributeData = groupsAndAttributeData[0].Attributes
             return sortBy( attributeData, "AttributeOrder" ) as IAttributes[]
         },
-        getDropdownData ( data?: any, label?: string, value?: string ) {
+        getDropdownData ( data: any = [], label?: string, value?: string ) {
             return data.map( item => {
                 const dropdownRecord = {
                     label: label  || item.Value,
