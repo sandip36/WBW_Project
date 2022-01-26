@@ -3,8 +3,8 @@ import { getGeneralApiProblem } from "./api-problem"
 import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
-import { GeneralResponse, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
-import { IFetchEditInspectionDetailsPayload } from "."
+import { GeneralResponse, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, IImageUploadPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
+import { ICompleteTaskPayload, IFetchEditInspectionDetailsPayload } from "."
 
 /**
  * Manages all requests to the API.
@@ -152,6 +152,33 @@ export class Api {
 
   async fetchTasks ( payload: IFetchTaskPayload ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/GetTask", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async completeTask ( payload: ICompleteTaskPayload ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/CompleteTask", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async imageUpload ( payload: any, userId?: string, auditAndInspectionId?: string, auditAndInspectionTaskId?: string ) {
+      const finalUploadUrl = `/AuditAndInspection/UploadCompleteImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${auditAndInspectionTaskId}`
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( finalUploadUrl, payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem

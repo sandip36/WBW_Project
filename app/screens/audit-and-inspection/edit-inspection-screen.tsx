@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Input, ScrollBox, Text } from "components"
+import { Box, Input, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback } from "react"
@@ -9,6 +9,7 @@ import { isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload } from "services/api"
 import { makeStyles } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
+import { observer } from "mobx-react-lite"
 
 export type EditInspectionScreenProps = {
 
@@ -21,9 +22,9 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>}>( ( t
 } ) )
 
 
-export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => {
+export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
-    const { DashboardStore, AuditStore, AuthStore } = useStores()
+    const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
     const STYLES = useStyles()
     const fetchEditInspectionDetails = useCallback( async () => {
         const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
@@ -52,7 +53,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
                     }
                     placeholder={item.ControlLabel}
                     value={item.SelectedValue}
-                    // onChangeText={handleChange( "username" )}
                 /> 
             )
             
@@ -63,6 +63,20 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
         } 
     }
 
+    const renderSystemFieldsData = ( ) => {
+        return(
+            <Box>
+                <FlatList 
+                    data={AuditStore.systemFieldsData}
+                    renderItem={renderItem}
+                    keyExtractor={( item ) => item.ControlID }
+                    contentContainerStyle={STYLES.contentContainerStyle}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                />
+            </Box>
+        )
+    }
+
     const ItemSeparatorComponent = ( ) => {
         return (
             <Box height={24} />
@@ -71,7 +85,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
 
     return (
         <Box flex={1}>
-            <Async promiseFn={fetchEditInspectionDetails}>
+            <Async promiseFn={fetchEditInspectionDetails} watch={TaskStore.completedTaskComments}>
                 <Async.Pending>
                     { ( ) => (
                         <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
@@ -90,41 +104,32 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = ( ) => 
                     <FormHeader 
                         title="Edit Inspection"
                         navigation={navigation}
-                    />
-                    <ScrollBox flex={1}>
-                        <Box>
-                            <FlatList 
-                                data={AuditStore.systemFieldsData}
-                                renderItem={renderItem}
-                                keyExtractor={( item ) => item.ControlID }
-                                contentContainerStyle={STYLES.contentContainerStyle}
-                                ItemSeparatorComponent={ItemSeparatorComponent}
-                            />
-                        </Box>
-                        <Box>
-                            <FlatList 
-                                data={AuditStore.dynamicFieldsData}
-                                extraData={AuditStore.dynamicFieldsData}
-                                renderItem={( { item } ) => {
-                                    return (
-                                        <Box flex={1}>
-                                            <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
-                                                <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
-                                            </Box>
-                                            <Box flex={1}>
-                                                <GroupsAndAttributes groupId={item.GroupID}/>
-                                            </Box>
+                    />                        
+                    <Box>
+                        <FlatList 
+                            data={AuditStore.dynamicFieldsData}
+                            extraData={AuditStore.dynamicFieldsData}
+                            nestedScrollEnabled
+                            ListHeaderComponent={renderSystemFieldsData}
+                            renderItem={( { item } ) => {
+                                return (
+                                    <Box flex={1}>
+                                        <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
+                                            <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
                                         </Box>
-                                    )
-                                }}
-                                keyExtractor={( item ) => item.GroupID }
-                                contentContainerStyle={STYLES.contentContainerStyle}
-                                ItemSeparatorComponent={ItemSeparatorComponent}
-                            />
-                        </Box>
-                    </ScrollBox>
+                                        <Box flex={1}>
+                                            <GroupsAndAttributes groupId={item.GroupID}/>
+                                        </Box>
+                                    </Box>
+                                )
+                            }}
+                            keyExtractor={( item ) => item.GroupID }
+                            contentContainerStyle={STYLES.contentContainerStyle}
+                            ItemSeparatorComponent={ItemSeparatorComponent}
+                        />
+                    </Box>
                 </Async.Resolved>
             </Async>
         </Box>
     )
-}
+} )

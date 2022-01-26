@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Radio, Text } from "components"
+import { Box, Radio, ScrollBox, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback } from "react"
@@ -30,7 +30,6 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
     }, [] )
 
     const onRadioPress = async ( value ) => {
-        console.log( 'value is ', value )
         await TaskStore.setRadioValue( value )
     }
 
@@ -58,16 +57,20 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
                             title="Complete or Assign Task"
                             navigation={navigation}
                         />
-                        <Box flex={1}>
-                            <Radio 
-                                onPress={onRadioPress}
-                            />
-                        </Box>
-                        {
-                            TaskStore.radioValue === "Complete Task"
-                                ? <CompleteTaskScreen />
-                                : <AssignTaskScreen />
-                        }
+                        <ScrollBox flex={1}>
+                            <Box flex={0.15}>
+                                <Radio 
+                                    onPress={onRadioPress}
+                                />
+                            </Box>
+                            <Box flex={1}>
+                                {
+                                    TaskStore.radioValue === "Complete Task"
+                                        ? <CompleteTaskScreen />
+                                        : <AssignTaskScreen />
+                                }
+                            </Box>
+                        </ScrollBox>
                     </Box>
                 </Async.Resolved>
             </Async>

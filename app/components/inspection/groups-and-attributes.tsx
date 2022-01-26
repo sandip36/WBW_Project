@@ -103,6 +103,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     const navigateToAssignOrCompleteTask = async ( item: IAttributes ) => {
         await TaskStore.setAttributeID( item.AttributeID )
         await TaskStore.setCustomFormResultID( item.CustomFormResultID )
+        await TaskStore.setCurrentHazardId( item.HazardsID )
         navigation.navigate( 'CompleteOrAssignTask' )
     }
 

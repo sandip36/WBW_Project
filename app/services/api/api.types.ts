@@ -1,4 +1,5 @@
 import { ApiOkResponse } from "apisauce"
+import { IImages } from "models";
 import { GeneralApiProblem } from "./api-problem"
 
 export interface IUser {
@@ -80,5 +81,19 @@ export interface IFetchTaskPayload {
     AuditAndInspectionID: string,
     AttributeID: string,
     CustomFormResultID: string
+}
+export interface ICompleteTaskPayload {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string,
+    TaskTitle: string,
+    Comments: string,
+    AttributeID: string,
+    HazardsID: string, 
+    CustomFormResultID: string
+}
+export interface IImageUploadPayload {
+    image: IImages,
+    url: string
 }
 
