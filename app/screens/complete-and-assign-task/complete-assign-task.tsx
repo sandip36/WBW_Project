@@ -33,7 +33,6 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
         await TaskStore.setRadioValue( value )
     }
 
-    console.log( TaskStore.radioValue )
     return (
         <Box flex={1}>
             <Async promiseFn={fetchTasks}>

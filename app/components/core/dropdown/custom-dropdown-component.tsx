@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-color-literals */
 import { Box, Icon, Text } from "components"
 import React from "react"
-import { Platform } from "react-native"
+import { Platform, StyleProp, ViewStyle } from "react-native"
 import RNPickerSelect, { Item } from "react-native-picker-select"
 
 export type DropdownProps = {
@@ -10,7 +10,8 @@ export type DropdownProps = {
     value: string,
     onValueChange: ( value: any, index: number ) => any,
     customIcon?: React.ReactNode,
-    onDonePress?: ( ) => any
+    onDonePress?: ( ) => any,
+    customContainerStyle?: StyleProp<ViewStyle>
 }
 
 const defaultIcon = () => {
@@ -25,7 +26,8 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
         onValueChange,
         customIcon,
         onDonePress,
-        value
+        value,
+        customContainerStyle
     } = props
 
     const myPickerStyles = Platform.OS === "android" ? 
@@ -66,7 +68,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
     const Icon = defaultIcon || customIcon
     
     return (
-        <Box flex={1} marginVertical="medium" marginHorizontal="large">
+        <Box flex={1} marginVertical="medium" marginHorizontal="large" style={customContainerStyle}>
             <Box>
                 <Text color="primary" fontWeight="bold" mb="medium" variant="heading5">{title}</Text>
             </Box>

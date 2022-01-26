@@ -96,4 +96,16 @@ export interface IImageUploadPayload {
     image: IImages,
     url: string
 }
+export interface IFetchTaskRatingDetailsPayload {
+    UserID: string,
+    AccessToken: string,
+    LevelID: string
+}
+export interface IFetchRiskRatingPayload {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string,
+    SeverityRateValue: string,
+    ProbabilityRateValue: string
+}
 
