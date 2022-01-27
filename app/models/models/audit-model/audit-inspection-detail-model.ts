@@ -1,5 +1,12 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree";
-import { PrimaryUserListModel } from "models/models/audit-model/primary-user-list-model";
+import { PrimaryUserListModel,ReportingPeriodDueDatesModal } from "models/models/audit-model/primary-user-list-model";
+
+// export const ReportingPeriodDueDatesModel=types.model ( {
+//     ID: types.maybeNull( types.string ),
+//     Value: types.maybeNull( types.string )
+
+// } )
+
 
 export const AuditAndInspectionDetailsModel = types 
     .model( {
@@ -13,7 +20,7 @@ export const AuditAndInspectionDetailsModel = types
         TypeID: types.maybeNull( types.string ),
         TypeName: types.maybeNull( types.string ),
         Notes: types.maybeNull( types.string ),
-        ReportingPeriodDueDates: types.optional( types.array( PrimaryUserListModel ), [] ),
+        ReportingPeriodDueDates: types.optional( types.array( ReportingPeriodDueDatesModal ), [] ),
         ReportingPeriodDueDateSelected: types.maybeNull( types.string ),
         NextDueDate: types.maybeNull( types.string ),
         SkippedDueDate: types.maybeNull( types.string ),
