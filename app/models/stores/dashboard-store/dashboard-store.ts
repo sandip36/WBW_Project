@@ -32,7 +32,7 @@ export const DashboardStore = createModelCollection( DashboardModel )
                 const result: GeneralResponse<IDashboard[]> = yield self.environment.api.fetchDashboard( payload )
                 if ( result?.data ) {
                     const dashboards = result.data.map( item => {
-                        return { ...item, id: item.AuditandInspectionTemplateID }
+                        return { ...item, id: item.HomePageOrder }
                     } )
                     self._insertOrUpdate( dashboards )
                 }
