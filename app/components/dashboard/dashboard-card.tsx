@@ -42,7 +42,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const STYLES = useStyles()
 
     const onDashboardPress = async ( ) => {
-        await DashboardStore.setCurrentDashboardId( dashboard?.AuditandInspectionTemplateID )
+        await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
         if( dashboard?.Category === "POC" ) {
             navigation.navigate( 'DynamicControls' )
         }else if( dashboard?.Type === "Audit-originator" ) {

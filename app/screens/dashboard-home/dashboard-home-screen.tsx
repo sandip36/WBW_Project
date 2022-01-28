@@ -3,14 +3,15 @@ import { DashboardCard } from "components/dashboard"
 import { useStores } from "models"
 import React, { useCallback } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, FlatList } from "react-native"
+import { ActivityIndicator, Alert, FlatList } from "react-native"
+import { theme } from "theme"
 
 export type DashboardHomeScreenProps = {
 
 }
 
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
-    const { DashboardStore } = useStores()
+    const { DashboardStore, AuthStore } = useStores()
 
     const fetchDashboard = useCallback( async () => {
         await DashboardStore.fetch()
@@ -20,6 +21,24 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         return (
             <DashboardCard dashboard={item} />
         )
+    }
+
+    const onRightIconPress = ( ) => {
+        Alert.alert(
+            "Logout?",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null
+                },
+                {
+                    text: "Yes",
+                    onPress: ( ) => AuthStore.logout()
+                }
+            ],
+        );
+        return true
     }
 
     return (
@@ -42,7 +61,8 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                 <Async.Resolved>
                     <Box flex={1}>
                         <Header 
-                            title="Dashboard"
+                            title={AuthStore.user?.CompanyName}
+                            rightComponent={{ icon: 'logout', color: '#fff', type: 'material', onPress: onRightIconPress, style: { marginHorizontal: theme.spacing.small } }}
                         />
                         <Box mt="small">
                             <FlatList 
