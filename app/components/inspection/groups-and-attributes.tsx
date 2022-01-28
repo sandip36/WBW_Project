@@ -109,7 +109,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
 
     const renderItem = ( { item }: {item:IAttributes } ) => {
         return (
-            <Box flex={1} my="regular">
+            <Box flex={1}>
                 <Box marginHorizontal="regular">
                     <Text variant="heading4" marginHorizontal="medium" fontWeight="bold">{item.AttributeOrder}. {item.Title}</Text>
                 </Box>

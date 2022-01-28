@@ -29,6 +29,9 @@ export const AuditStore = types
         get dynamicFieldsData () {
             return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, "GroupOrder" )
         },
+        get shouldDisplayWarningMessage () {
+            return !!( self.inspection?.AuditAndInspectionDetails?.IsSchedulerRequired === "True" && isEmpty( self.inspection?.AuditAndInspectionDetails?.ReportingPeriodDueDates ) )
+        },
         groupsAndAttributesData ( groupId: string ) {
             const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId ) as IGroups[]
             const attributeData = groupsAndAttributeData[0].Attributes
@@ -37,14 +40,19 @@ export const AuditStore = types
         getDropdownData ( data: any = [], label?: string, value?: string ) {
             return data.map( item => {
                 const dropdownRecord = {
-                    label: label  || item.Value,
-                    value: value || item.ID
+                    label: item[label]  || item.Value || label,
+                    value: item[value] || item.ID || value
                 }
                 return dropdownRecord
             } )
         } 
     } ) )
     .views( self => ( {
+        get shouldShowReportingPeriod () {
+            return self.shouldDisplayWarningMessage 
+                ? false 
+                : self.inspection.AuditAndInspectionDetails?.IsSchedulerRequired === "True"
+        },
         get sourceList () {
             const SOURCE_LIST = self.inspection.GroupsAndAttributes?.SourceList
             const returnableSourceList = self.getDropdownData( SOURCE_LIST )
@@ -55,7 +63,21 @@ export const AuditStore = types
             const returnableHazardList = self.getDropdownData( HAZARD_LIST )
             return returnableHazardList
         },
-         
+        get primaryUser () {
+            const PRIMARY_USER_LIST = self.inspection.AuditAndInspectionDetails?.PrimaryUserList
+            const returnablePrimaryUserList = self.getDropdownData( PRIMARY_USER_LIST, 'Name' )
+            return returnablePrimaryUserList
+        },
+        get reportingPeriodDueDates () {
+            const REPORTING_PERIOD_DUE_DATES = self.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates
+            const returnableReportingPeriodDueDate = self.getDropdownData( REPORTING_PERIOD_DUE_DATES )
+            return returnableReportingPeriodDueDate
+        },
+        get actualReportingPeriodDueDate () {
+            const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
+            const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
+            return selectedDueDate?.Value
+        }    
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -127,13 +149,29 @@ export const AuditStore = types
             self.currentInspectionId = id
         } )
 
+        const setInspectionNotes = flow( function * ( value: string ) {
+            self.inspection.AuditAndInspectionDetails.Notes = value
+        } )
+
+        const setPrimaryUserId = flow( function * ( id: string ) {
+            self.inspection.AuditAndInspectionDetails.PrimaryUserID = id
+        } )
+
+        const setReportingPeriodDueDateValue = flow( function * ( value: string ) {
+            self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected = value
+        } )
+
+
         return {
             fetch,
             fetchDataForStartInspection,
             fetchDataForEditInspection,
             setRefreshing,
             reset,
-            setCurrentInspectionId
+            setCurrentInspectionId,
+            setInspectionNotes,
+            setPrimaryUserId,
+            setReportingPeriodDueDateValue
         }
     } )
 
