@@ -1,12 +1,10 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree";
 import { PrimaryUserListModel,ReportingPeriodDueDatesModal } from "models/models/audit-model/primary-user-list-model";
 
-// export const ReportingPeriodDueDatesModel=types.model ( {
-//     ID: types.maybeNull( types.string ),
-//     Value: types.maybeNull( types.string )
-
-// } )
-
+export const ReportingPeriodDueDatesModel = types.model( {
+    ID: types.maybeNull( types.string ),
+    Value: types.maybeNull( types.string )
+} )
 
 export const AuditAndInspectionDetailsModel = types 
     .model( {

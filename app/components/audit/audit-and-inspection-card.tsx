@@ -58,9 +58,13 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
                         {auditAndInspectionDetails?.Status}
                     </Text>
                 </Box>
-                <TouchableBox flex={0.1} justifyContent="center" mx="regular" alignItems="flex-end" onPress={onEditInspection}>
-                    <Icon size={32} name="edit" color="background" type="material" />
-                </TouchableBox>
+                {
+                    auditAndInspectionDetails?.Status !== "Complete"
+                        ? <TouchableBox flex={0.1} justifyContent="center" mx="regular" alignItems="flex-end" onPress={onEditInspection}>
+                            <Icon size={32} name="edit" color="background" type="material" />
+                        </TouchableBox>
+                        : null
+                }
             </Box>
             <Box my="large">
                 {!isEmpty( auditAndInspectionDetails.FullName ) && renderAuditCardDetails( 'Full Name: ', auditAndInspectionDetails.FullName )}

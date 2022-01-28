@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Input, Text } from "components"
+import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback } from "react"
@@ -7,30 +7,36 @@ import { Async } from "react-async"
 import { ActivityIndicator, FlatList, StyleProp, ViewStyle } from "react-native"
 import { isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload } from "services/api"
-import { makeStyles } from "theme"
+import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
 import { observer } from "mobx-react-lite"
+import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
+import { Dropdown } from "components/core/dropdown"
 
 export type EditInspectionScreenProps = {
 
 }
 
-const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     contentContainerStyle: {
-        paddingBottom: theme.spacing.large
+        paddingBottom: theme.spacing.massive
+    },
+    inputContainerStyle: {
+        marginVertical: -15
     }
 } ) )
 
-
+// TODO: need to create a component for checkbox
+// TODO: check for multiple reporting period due dates list i.e, given default value and onChange value.
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
     const STYLES = useStyles()
+    const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
+    if( isEmpty( dashboard ) ) {
+        return null
+    }
     const fetchEditInspectionDetails = useCallback( async () => {
-        const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
-        if( isEmpty( dashboard ) ) {
-            return null
-        }
         const payload = {
             UserID: AuthStore?.user.UserID,
             AccessToken: AuthStore?.token,
@@ -46,14 +52,17 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         switch( item.ControlType ) {
         case 'TextBox': {    
             return (
-                <Input 
-                    label={item.IsMandatory === "True" 
-                        ? `${item.ControlLabel} *`
-                        : `${item.ControlLabel}`
-                    }
-                    placeholder={item.ControlLabel}
-                    value={item.SelectedValue}
-                /> 
+                <Box marginHorizontal="medium">
+                    <Input 
+                        label={item.IsMandatory === "True" 
+                            ? `${item.ControlLabel} *`
+                            : `${item.ControlLabel}`
+                        }
+                        placeholder={item.ControlLabel}
+                        value={item.SelectedValue}
+                        containerStyle={STYLES.inputContainerStyle}
+                    /> 
+                </Box>
             )
             
         }
@@ -66,13 +75,80 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const renderSystemFieldsData = ( ) => {
         return(
             <Box>
-                <FlatList 
-                    data={AuditStore.systemFieldsData}
-                    renderItem={renderItem}
-                    keyExtractor={( item ) => item.ControlID }
-                    contentContainerStyle={STYLES.contentContainerStyle}
-                    ItemSeparatorComponent={ItemSeparatorComponent}
-                />
+                {
+                    AuditStore.shouldDisplayWarningMessage
+                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular">
+                            <Text numberOfLines={0} color="primary" variant="heading4">
+                                {
+                                    AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
+                                }
+                            </Text>
+                        </Box>
+                        : null
+                }
+                <Box mt="small">
+                    <AuditDetailsRow 
+                        title= "Record Number: " 
+                        value={AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionNumber} 
+                    />
+                </Box>  
+                <Box>
+                    <Text>Todo Checkbox</Text>
+                </Box>                     
+                <Box>
+                    <AuditDetailsRow 
+                        title= "Action Taken By: " 
+                        value={AuthStore?.user?.FullName} 
+                    />
+                </Box>                       
+                <Box mb="large">
+                    <AuditDetailsRow 
+                        title={`Select ${AuditStore?.audit?.TemplateDetails?.Type}: `}
+                        value={AuditStore?.inspection?.AuditAndInspectionDetails?.TypeName} 
+                    />
+                </Box>
+                <Box marginHorizontal="medium">
+                    <TextAreaInput 
+                        label="Notes"
+                        labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize, marginLeft: theme.spacing.mini  }}
+                        placeholder="Type Here"
+                        defaultValue={AuditStore.inspection?.AuditAndInspectionDetails?.Notes}                       
+                        onChangeText={ ( text ) => AuditStore.setInspectionNotes( text ) }
+                    />
+                </Box>
+                {
+                    isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.PrimaryUserList )
+                        ? null
+                        :  <Box>
+                            <Dropdown
+                                title="Inspection on behalf of *"
+                                items={AuditStore.primaryUser}
+                                value={AuditStore.inspection?.AuditAndInspectionDetails?.PrimaryUserID}
+                                onValueChange={( value )=>AuditStore.setPrimaryUserId( value )}
+                            /> 
+                        </Box>
+                }
+                {
+                    AuditStore.shouldShowReportingPeriod
+                        ? <Box>
+                            <Dropdown
+                                title="Last Day of Schedule Period *"
+                                items={AuditStore.reportingPeriodDueDates}
+                                value={AuditStore.actualReportingPeriodDueDate}
+                                onValueChange={( value )=>AuditStore.setReportingPeriodDueDateValue( value )}
+                            /> 
+                        </Box>
+                        : null
+                }
+                <Box marginVertical="large" marginHorizontal="small" >
+                    <FlatList 
+                        data={AuditStore.systemFieldsData}
+                        renderItem={renderItem}
+                        keyExtractor={( item ) => item.ControlID }
+                        contentContainerStyle={STYLES.contentContainerStyle}
+                        ItemSeparatorComponent={ItemSeparatorComponent}
+                    />
+                </Box>
             </Box>
         )
     }
@@ -102,10 +178,10 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                 </Async.Rejected>
                 <Async.Resolved>
                     <FormHeader 
-                        title="Edit Inspection"
+                        title={dashboard?.Category}
                         navigation={navigation}
                     />                        
-                    <Box>
+                    <Box flex={1}>
                         <FlatList 
                             data={AuditStore.dynamicFieldsData}
                             extraData={AuditStore.dynamicFieldsData}
@@ -113,11 +189,11 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             ListHeaderComponent={renderSystemFieldsData}
                             renderItem={( { item } ) => {
                                 return (
-                                    <Box flex={1}>
+                                    <Box flex={0.85}>
                                         <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
                                             <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
                                         </Box>
-                                        <Box flex={1}>
+                                        <Box flex={0.9} mt="medium">
                                             <GroupsAndAttributes groupId={item.GroupID}/>
                                         </Box>
                                     </Box>
@@ -128,6 +204,25 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             ItemSeparatorComponent={ItemSeparatorComponent}
                         />
                     </Box>
+                    <Box flexDirection="row">
+                        <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
+                            <Button
+                                title="Submit"
+                            // onPress={handleSubmit}
+                            />
+                        </Box>
+                        {
+                            AuditStore.shouldShowReportingPeriod
+                                ? <Box width="50%">
+                                    <Button 
+                                        title="Save And Come Back"
+                                        // onPress={handleSubmit}
+                                    />
+                                </Box>
+                                : null
+                        }
+                    </Box>
+
                 </Async.Resolved>
             </Async>
         </Box>
