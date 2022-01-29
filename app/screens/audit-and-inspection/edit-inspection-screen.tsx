@@ -4,25 +4,37 @@ import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, FlatList, StyleProp, ViewStyle } from "react-native"
+import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
-import { observer } from "mobx-react-lite"
+import { observer, useObserver } from "mobx-react-lite"
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
 import { Dropdown } from "components/core/dropdown"
+import { CheckBox } from "react-native-elements"
 
 export type EditInspectionScreenProps = {
 
 }
 
-const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>, checkboxTextStyle: StyleProp<TextStyle>, checkboxContainerStyle: StyleProp<ViewStyle> }>( ( theme ) => ( {
     contentContainerStyle: {
         paddingBottom: theme.spacing.massive
     },
     inputContainerStyle: {
         marginVertical: -15
+    },
+    checkboxTextStyle: {
+        fontSize: theme.textVariants.heading5?.fontSize,
+        color: theme.colors.black,
+        fontWeight: "bold",
+    },
+    checkboxContainerStyle: {
+        padding: 0,
+        backgroundColor: theme.colors.transparent,
+        borderWidth: 0,
+        marginLeft: 3
     }
 } ) )
 
@@ -92,9 +104,20 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         value={AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionNumber} 
                     />
                 </Box>  
-                <Box>
-                    <Text>Todo Checkbox</Text>
-                </Box>                     
+                {
+                    useObserver( ( ) => (
+                        <Box>
+                            <CheckBox
+                                title="Select Passing Values for Incomplete Tasks:"
+                                checked={AuditStore.isPassingValuesSelected}
+                                onPress={AuditStore.togglePassingValueSelected}
+                                iconRight={true}
+                                textStyle={STYLES.checkboxTextStyle}
+                                containerStyle={STYLES.checkboxContainerStyle}
+                            />
+                        </Box> 
+                    ) )
+                }               
                 <Box>
                     <AuditDetailsRow 
                         title= "Action Taken By: " 

@@ -13,7 +13,8 @@ export const AuditStoreProps = {
     refreshing: types.optional( types.boolean, false ),
     page: types.optional( types.number, 0 ),
     currentInspectionId: types.optional( types.string, "" ),
-    inspection: types.optional( InspectionModel, {} )
+    inspection: types.optional( InspectionModel, {} ),
+    isPassingValuesSelected: types.optional( types.boolean, false )
 }
 
 export const AuditStore = types
@@ -161,6 +162,14 @@ export const AuditStore = types
             self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected = value
         } )
 
+        const togglePassingValueSelected = flow( function * ( ) {
+            self.isPassingValuesSelected = !self.isPassingValuesSelected
+        } )
+
+        const resetPassingValueSelected = flow( function * ( ) {
+            self.isPassingValuesSelected = false
+        } )
+
 
         return {
             fetch,
@@ -171,7 +180,9 @@ export const AuditStore = types
             setCurrentInspectionId,
             setInspectionNotes,
             setPrimaryUserId,
-            setReportingPeriodDueDateValue
+            setReportingPeriodDueDateValue,
+            togglePassingValueSelected,
+            resetPassingValueSelected
         }
     } )
 

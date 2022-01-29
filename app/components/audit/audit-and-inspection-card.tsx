@@ -35,6 +35,7 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
 
     const onEditInspection = async ( ) => {
         await AuditStore.setCurrentInspectionId( auditAndInspectionDetails?.AuditAndInspectionID )
+        await AuditStore.resetPassingValueSelected()
         navigation.navigate( 'EditInspection' )
     }
 
