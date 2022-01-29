@@ -14,7 +14,7 @@ export const AuditStoreProps = {
     page: types.optional( types.number, 0 ),
     currentInspectionId: types.optional( types.string, "" ),
     inspection: types.optional( InspectionModel, {} ),
-    isPassingValuesSelected: types.optional( types.boolean, false )
+    isPassingValuesSelected: types.optional( types.boolean, false ),
 }
 
 export const AuditStore = types
@@ -46,9 +46,15 @@ export const AuditStore = types
                 }
                 return dropdownRecord
             } )
-        } 
+        },
+        get shouldShowHazardGlobally ( ) {
+            return self.inspection.AuditAndInspectionDetails.IsDisplayHazardList === "True"
+        }
     } ) )
     .views( self => ( {
+        shouldShowHazard ( show: string ) {
+            return self.shouldShowHazardGlobally === true && show === "False"
+        },
         get shouldShowReportingPeriod () {
             return self.shouldDisplayWarningMessage 
                 ? false 
@@ -77,8 +83,8 @@ export const AuditStore = types
         get actualReportingPeriodDueDate () {
             const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
             const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
-            return selectedDueDate?.Value
-        }    
+            return selectedDueDate.ID
+        }   
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -158,8 +164,9 @@ export const AuditStore = types
             self.inspection.AuditAndInspectionDetails.PrimaryUserID = id
         } )
 
-        const setReportingPeriodDueDateValue = flow( function * ( value: string ) {
-            self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected = value
+        const setReportingPeriodDueDateValue = flow( function * ( id: string ) {
+            const currentDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === id )
+            self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected = currentDueDate.Value
         } )
 
         const togglePassingValueSelected = flow( function * ( ) {
@@ -168,6 +175,10 @@ export const AuditStore = types
 
         const resetPassingValueSelected = flow( function * ( ) {
             self.isPassingValuesSelected = false
+        } )
+
+        const setSkippedReason = flow( function * ( value: string ) {
+            self.inspection.AuditAndInspectionDetails.SkippedReason = value
         } )
 
 
@@ -182,7 +193,8 @@ export const AuditStore = types
             setPrimaryUserId,
             setReportingPeriodDueDateValue,
             togglePassingValueSelected,
-            resetPassingValueSelected
+            resetPassingValueSelected,
+            setSkippedReason
         }
     } )
 

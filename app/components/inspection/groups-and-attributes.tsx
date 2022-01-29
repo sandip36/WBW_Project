@@ -126,17 +126,21 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                     value={item.SourceID}
                     onValueChange={( value )=>item.setSourceId( value )}
                 />
-                <Dropdown
-                    title="Hazard List"
-                    items={AuditStore.hazardList}
-                    value={item.HazardsID}
-                    onValueChange={( value )=>{
-                        item.setHazardId( value )
-                        if( !isEmpty( value ) ){
-                            navigateToAssignOrCompleteTask( item )
-                        }
-                    }}
-                />
+                {
+                    AuditStore.shouldShowHazard( item.DoNotShowHazard ) 
+                        ? <Dropdown
+                            title="Hazard List"
+                            items={AuditStore.hazardList}
+                            value={item.HazardsID}
+                            onValueChange={( value )=>{
+                                item.setHazardId( value )
+                                if( !isEmpty( value ) ){
+                                    navigateToAssignOrCompleteTask( item )
+                                }
+                            }}
+                        />
+                        : null
+                }
                 <Box marginHorizontal="regular" mt="regular">
                     <TextAreaInput 
                         label="Comments"

@@ -18,7 +18,7 @@ export type EditInspectionScreenProps = {
 
 }
 
-const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>, checkboxTextStyle: StyleProp<TextStyle>, checkboxContainerStyle: StyleProp<ViewStyle> }>( ( theme ) => ( {
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>, checkboxTextStyle: StyleProp<TextStyle>, checkboxContainerStyle: StyleProp<ViewStyle>, skippedDataLabelStyle: StyleProp<TextStyle> }>( ( theme ) => ( {
     contentContainerStyle: {
         paddingBottom: theme.spacing.massive
     },
@@ -35,11 +35,16 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
         backgroundColor: theme.colors.transparent,
         borderWidth: 0,
         marginLeft: 3
+    },
+    skippedDataLabelStyle: {
+        color: theme.colors.primary,
+        fontWeight: 'bold',
+        marginHorizontal: theme.spacing.medium
     }
 } ) )
 
-// TODO: need to create a component for checkbox
-// TODO: check for multiple reporting period due dates list i.e, given default value and onChange value.
+// TODO: onValueChange called multiple times using given dropdown libraray, may need to change library
+// TODO: skipped dropdown array.
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
@@ -163,6 +168,28 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         </Box>
                         : null
                 }
+                {/* {
+                    AuditStore.shouldShowSkippedData
+                        ? <Box>
+                            <Box>
+                                <Text numberOfLines={0} style={STYLES.skippedDataLabelStyle}>
+                                    {
+                                        `By doing this, following period(s) will be skipped: ${AuditStore.skippedDueDateList}`
+                                    }
+                                </Text>
+                            </Box>
+                            <Box>
+                                <TextAreaInput 
+                                    label="Reason for Skipping the Last Day of Schedule Period *"
+                                    labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize, marginLeft: theme.spacing.mini  }}
+                                    placeholder="Type Here"
+                                    defaultValue={AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason}                       
+                                    onChangeText={ ( text ) => AuditStore.setSkippedReason( text ) }
+                                />
+                            </Box>
+                        </Box>
+                        : <Text>Other</Text>
+                } */}
                 <Box marginVertical="large" marginHorizontal="small" >
                     <FlatList 
                         data={AuditStore.systemFieldsData}
