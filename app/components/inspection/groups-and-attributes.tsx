@@ -104,6 +104,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         await TaskStore.setAttributeID( item.AttributeID )
         await TaskStore.setCustomFormResultID( item.CustomFormResultID )
         await TaskStore.setCurrentHazardId( item.HazardsID )
+        await TaskStore.setCurrentTitle( item.Title )
         navigation.navigate( 'CompleteOrAssignTask' )
     }
 
