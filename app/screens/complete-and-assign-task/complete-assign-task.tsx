@@ -30,6 +30,9 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
     }, [] )
 
     const onRadioPress = async ( value ) => {
+        if( value === "Assign Task" ) {
+            await TaskStore.resetDatePicker()
+        }
         await TaskStore.setRadioValue( value )
     }
 

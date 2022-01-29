@@ -11,12 +11,13 @@ import { IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload } from "service
 import { Async } from "react-async"
 import { Dropdown } from "components/core/dropdown"
 import { isEmpty } from "lodash"
+import { CustomDateTimePicker } from "components/core/date-time-picker/date-time-picker"
 
 export type AssignTaskScreenProps = {
 
 }
 export type RiskRatingScreenProps = {
-    riskRatingValue: string
+    riskRatingValue: string,
 }
 
 const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>, customContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
@@ -36,24 +37,40 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
     }
 } ) )
 
-export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = ( props ) => {
+const todayDate = new Date()
+export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observer( ( props ) => {
     const { 
-        riskRatingValue
+        riskRatingValue,
     } = props
+    const { TaskStore } = useStores()
     return (
         <Box flex={1} bg="transparent" flexDirection="row" marginTop="medium">
-            <Box flex={1}>
+            <Box flex={1} mt="medium">
                 <Input 
                     label="Risk Rating *"
                     placeholder="Risk Rating"
                     value={riskRatingValue}
                     editable={false}
                 />
+                <Box flex={1}>
+                    <CustomDateTimePicker
+                        label="Due Date *"
+                        onPress={TaskStore.showDatePicker}
+                        show={TaskStore.datePicker?.show}
+                        inputValue={isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value }
+                        value={TaskStore.datePicker?.datePickerValue}
+                        mode="date"
+                        minimumDate={todayDate}
+                        onConfirm={TaskStore.formatDate}
+                        onCancel={TaskStore.hideDatePicker}
+                    />
+                </Box>
             </Box>
         </Box>
     )
-}
+} )
 
+// TODO: Add autocomplete or searchable dropdown component 
 export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( props ) => {
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
@@ -93,7 +110,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                 Description: values.description,
                 AttributeID: TaskStore.attributeID,
                 AssignedToUserID: "",
-                DueDate: "",
+                DueDate: isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value,
                 SeverityRating: TaskStore.currentSeverityRating,
                 ProbabilityRating: TaskStore.currentProbabilityRating,
                 RiskRating: TaskStore.currentRatingValue,
@@ -140,7 +157,6 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
         }
     }, [] ) 
 
-
     return (
         <Box flex={1}>
             <Async promiseFn={fetchTaskRatingsDetails}>
@@ -173,7 +189,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 label="Task Title *"
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                                 placeholder="Please provide task title"
-                                value={values.taskTitle}
+                                defaultValue={TaskStore.currentTitle}
                                 onChangeText={handleChange( "taskTitle" )}
                                 onBlur={handleBlur( "taskTitle" )}
                                 error={touched.taskTitle && errors.taskTitle}
