@@ -27,7 +27,7 @@ export interface IAuditAndInspectionTaskDetailModelSnapshot extends AuditAndInsp
  * Task model to store task details(Complete or Assign Tasks)
  */
 export const TaskModel = createModel( {
-    instructions: types.maybeNull( types.string ),
+    Instructions: types.maybeNull( types.string ),
     PreviousHazard: types.maybeNull( types.string ),
     PreviousHazardsID: types.maybeNull( types.string ),
     AuditAndInspectionTaskDetails: types.optional( AuditAndInspectionTaskDetailModel, {} )

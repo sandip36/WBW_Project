@@ -70,7 +70,8 @@ export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observ
     )
 } )
 
-// TODO: Add autocomplete or searchable dropdown component 
+// TODO: Add autocomplete or searchable dropdown component
+// TODO: Add image implementation and implement Images API separately. 
 export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( props ) => {
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()

@@ -1,6 +1,6 @@
 import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { TaskModel } from "models/models/task-model/task-model"
-import { GeneralResponse, ICompleteTaskPayload, IFetchRiskRatingPayload, IFetchTaskPayload, IFetchTaskRatingDetailsPayload } from "services/api"
+import { GeneralResponse, ICompleteTaskPayload, IDeleteTask, IFetchRiskRatingPayload, IFetchTaskPayload, IFetchTaskRatingDetailsPayload, IUpdateHazard } from "services/api"
 import Toast from "react-native-simple-toast"
 import {  withEnvironment } from "models"
 import { IImages, ImagesModel } from "models/models/audit-model/groups-and-attributes.model"
@@ -129,6 +129,38 @@ export const TaskStore = types.model( "TaskModel" )
             }
         } )
 
+        const deleteTask = flow( function * ( payload: IDeleteTask ) {
+            try {
+                const result: GeneralResponse<any> = yield self.environment.api.deleteTask( payload )
+                if( result && result.data?.Message === "Task Deleted" ) {
+                    self.isTaskPresent = false
+                    Toast.showWithGravity( "Task Deleted", Toast.LONG, Toast.CENTER );
+                    return 'success'
+                }else{
+                    return null
+                }
+                
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while deleting tasks', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
+        const updateHazard = flow( function * ( payload: IUpdateHazard ) {
+            try {
+                const result: GeneralResponse<any> = yield self.environment.api.updateHazard( payload )
+                if( result && result.data?.Message === "Hazard Updated" ) {
+                    Toast.showWithGravity( "Hazard Updated", Toast.LONG, Toast.CENTER );
+                    return 'success'
+                }else{
+                    return null
+                }
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while updating hazards', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
         const setAttributeID = flow( function * ( id: string ) {
             self.attributeID = id
         } )
@@ -186,6 +218,8 @@ export const TaskStore = types.model( "TaskModel" )
             fetchTaskRatingDetails,
             fetchRiskRating,
             completeTask,
+            deleteTask,
+            updateHazard,
             setAttributeID,
             setCustomFormResultID,
             setRadioValue,

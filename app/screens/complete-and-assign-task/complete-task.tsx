@@ -27,6 +27,7 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
     }
 } ) )
 
+// TODO: Add image API and UI implementation along with existing complete task API.
 export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( ( props ) => {
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
@@ -45,7 +46,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
         isSubmitting,
     } = useFormik( {
         initialValues: {
-            taskTitle: "",
+            taskTitle: TaskStore.currentTitle,
             comments: "",
         },
         validationSchema: object( {
@@ -89,7 +90,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
                     label="Task Title *"
                     labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                     placeholder="Please provide task title"
-                    defaultValue={TaskStore.currentTitle}
+                    value={values.taskTitle}
                     onChangeText={handleChange( "taskTitle" )}
                     onBlur={handleBlur( "taskTitle" )}
                     error={touched.taskTitle && errors.taskTitle}

@@ -108,4 +108,16 @@ export interface IFetchRiskRatingPayload {
     SeverityRateValue: string,
     ProbabilityRateValue: string
 }
+export interface IDeleteTask {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionTaskID: string,
+    CustomFormResultID: string
+}
+export interface IUpdateHazard {
+    UserID: string,
+    AccessToken: string,
+    HazardsID: string,
+    CustomFormResultID: string
+}
 
