@@ -53,7 +53,11 @@ export const AuditStore = types
     } ) )
     .views( self => ( {
         shouldShowHazard ( show: string ) {
-            return self.shouldShowHazardGlobally === true && show === "False"
+            return ( self.shouldShowHazardGlobally === true && show === "False" ) 
+        },
+        get shouldShowSourceList () {
+            return self.inspection.AuditAndInspectionDetails.IsDisplaySource === "True"
+             || self.inspection.GroupsAndAttributes.SourceList.length > 0
         },
         get shouldShowReportingPeriod () {
             return self.shouldDisplayWarningMessage 
@@ -83,7 +87,7 @@ export const AuditStore = types
         get initialReportingPeriodDueDateID () {
             const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
             const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
-            return selectedDueDate.ID
+            return selectedDueDate?.ID ?? ""
         }   
     } ) )
     .actions( self => {

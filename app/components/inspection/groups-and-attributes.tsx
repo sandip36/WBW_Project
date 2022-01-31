@@ -54,7 +54,7 @@ export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) 
     )
 }
 
-export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
+export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = React.memo( ( props ) => {
     const {
         groupId
     } = props
@@ -114,20 +114,28 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                 <Box marginHorizontal="regular">
                     <Text variant="heading4" marginHorizontal="medium" fontWeight="bold">{item.AttributeOrder}. {item.Title}</Text>
                 </Box>
-                <Dropdown
-                    title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
-                    items={AuditStore.getDropdownData( item.ScoreList )}
-                    value={item.GivenAnswerID}
-                    onValueChange={( value )=>item.setGivenAnswerId( value )}
-                />
-                <Dropdown
-                    title="Source"
-                    items={AuditStore.sourceList}
-                    value={item.SourceID}
-                    onValueChange={( value )=>item.setSourceId( value )}
-                />
                 {
-                    AuditStore.shouldShowHazard( item.DoNotShowHazard ) 
+                    item.AuditAndInspectionScoreID === "6"
+                        ? null
+                        : <Dropdown
+                            title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
+                            items={AuditStore.getDropdownData( item.ScoreList )}
+                            value={item.GivenAnswerID}
+                            onValueChange={item.setGivenAnswerId}
+                        />
+                }
+                {
+                    AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
+                        ? <Dropdown
+                            title="Source"
+                            items={AuditStore.sourceList}
+                            value={item.SourceID}
+                            onValueChange={( value )=>item.setSourceId( value )}
+                        />
+                        : null
+                }
+                {
+                    AuditStore.shouldShowHazard( item.DoNotShowHazard ) && AuditStore.inspection.GroupsAndAttributes.HazardList.length > 0 && item.AuditAndInspectionScoreID !== "6"
                         ? <Dropdown
                             title="Hazard List"
                             items={AuditStore.hazardList}
@@ -185,4 +193,4 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
             />
         </Box>
     )
-} )
+}, ( prevProps, nextProps ) => prevProps.groupId === nextProps.groupId )

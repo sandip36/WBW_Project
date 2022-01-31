@@ -1,4 +1,4 @@
-import { types } from "mobx-state-tree";
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree";
 
 
 export const SystemFieldsInnerModel = types.model( {
@@ -8,9 +8,22 @@ export const SystemFieldsInnerModel = types.model( {
     ControlID: types.maybeNull( types.string ),
     IsMandatory: types.maybeNull( types.string ),
     SelectedValue: types.maybeNull( types.string ),
-    ControlValues: types.maybeNull( types.string ),
-   
+    ControlValues: types.maybeNull( types.string ),  
 } )
+    .actions( self => {
+        const setSelectedValue = flow( function * ( value: string  ) {
+            self.SelectedValue = value
+        } )
+        
+        return {
+            setSelectedValue
+        }
+    } )
+type SystemFieldsInnerModelType = Instance<typeof SystemFieldsInnerModel>
+export interface ISystemFieldsInnerModel extends SystemFieldsInnerModelType {}
+type SystemFieldsInnerModelSnapshotType = SnapshotOut<typeof SystemFieldsInnerModel>
+export interface ISystemFieldsInnerModelSnapshot extends SystemFieldsInnerModelSnapshotType {}
+
 
 export const SystemFieldsOuterModel = types.model( {
     AuditAndInspection_SystemFieldID: types.maybeNull( types.string ),

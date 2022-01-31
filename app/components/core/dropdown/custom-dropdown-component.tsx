@@ -27,7 +27,7 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
         customIcon,
         onDonePress,
         value,
-        customContainerStyle
+        customContainerStyle    
     } = props
 
     const myPickerStyles = Platform.OS === "android" ? 

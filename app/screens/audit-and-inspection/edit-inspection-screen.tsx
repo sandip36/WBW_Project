@@ -9,10 +9,11 @@ import { isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
-import { observer, useObserver } from "mobx-react-lite"
+import { Observer, observer, useObserver } from "mobx-react-lite"
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
 import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
+import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
 
 export type EditInspectionScreenProps = {
 
@@ -45,6 +46,9 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 
 
 // TODO: skipped dropdown array.
+/* TODO: system fields array may contain varios control type, need to show with different components 
+        like dropdown,  calendar, checkbox, multi-select checkbox etc.
+*/
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
@@ -66,7 +70,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         await AuditStore.fetchDataForEditInspection( payload )
     }, [] )
 
-    const renderItem = ( { item, index } )  => {
+    const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
         switch( item.ControlType ) {
         case 'TextBox': {    
             return (
@@ -77,7 +81,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             : `${item.ControlLabel}`
                         }
                         placeholder={item.ControlLabel}
-                        value={item.SelectedValue}
+                        defaultValue={item.SelectedValue}                        
+                        onChangeText={ ( text ) => item.setSelectedValue( text ) }
                         containerStyle={STYLES.inputContainerStyle}
                     /> 
                 </Box>
@@ -110,20 +115,24 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         value={AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionNumber} 
                     />
                 </Box>  
-                {
-                    useObserver( ( ) => (
-                        <Box>
-                            <CheckBox
-                                title="Select Passing Values for Incomplete Tasks:"
-                                checked={AuditStore.isPassingValuesSelected}
-                                onPress={AuditStore.togglePassingValueSelected}
-                                iconRight={true}
-                                textStyle={STYLES.checkboxTextStyle}
-                                containerStyle={STYLES.checkboxContainerStyle}
-                            />
-                        </Box> 
-                    ) )
-                }               
+                <Box>
+                    <Observer>
+                        {
+                            () => (
+                                <Box>
+                                    <CheckBox
+                                        title="Select Passing Values for Incomplete Tasks:"
+                                        checked={AuditStore.isPassingValuesSelected}
+                                        onPress={AuditStore.togglePassingValueSelected}
+                                        iconRight={true}
+                                        textStyle={STYLES.checkboxTextStyle}
+                                        containerStyle={STYLES.checkboxContainerStyle}
+                                    />
+                                </Box> 
+                            ) 
+                        }
+                    </Observer>
+                </Box>          
                 <Box>
                     <AuditDetailsRow 
                         title= "Action Taken By: " 
@@ -237,7 +246,10 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             data={AuditStore.dynamicFieldsData}
                             nestedScrollEnabled
                             ListHeaderComponent={renderSystemFieldsData}
-                            renderItem={( { item } ) => {
+                            renderItem={( { item } ) => 
+                                
+                            {
+                                console.log( 'called' )
                                 return (
                                     <Box flex={0.85}>
                                         <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
