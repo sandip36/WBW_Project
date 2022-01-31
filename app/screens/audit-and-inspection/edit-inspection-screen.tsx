@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { isEmpty } from "lodash"
@@ -43,13 +43,14 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
     }
 } ) )
 
-// TODO: onValueChange called multiple times using given dropdown libraray, may need to change library
+
 // TODO: skipped dropdown array.
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
     const STYLES = useStyles()
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
+    const [ reportingPeriod, setReportingPeriod ] = useState( "" )
     if( isEmpty( dashboard ) ) {
         return null
     }
@@ -162,8 +163,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             <Dropdown
                                 title="Last Day of Schedule Period *"
                                 items={AuditStore.reportingPeriodDueDates}
-                                value={AuditStore.actualReportingPeriodDueDate}
-                                onValueChange={( value )=>AuditStore.setReportingPeriodDueDateValue( value )}
+                                value={isEmpty( reportingPeriod ) ? AuditStore.initialReportingPeriodDueDateID : reportingPeriod }
+                                onValueChange={( value ) => setReportingPeriod( value )}
                             /> 
                         </Box>
                         : null
@@ -234,7 +235,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                     <Box flex={1}>
                         <FlatList 
                             data={AuditStore.dynamicFieldsData}
-                            extraData={AuditStore.dynamicFieldsData}
                             nestedScrollEnabled
                             ListHeaderComponent={renderSystemFieldsData}
                             renderItem={( { item } ) => {
