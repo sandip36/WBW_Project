@@ -1,5 +1,5 @@
 import { Instance, flow, types } from "mobx-state-tree"
-import { GeneralResponse, IAuditHistoryFetchPayload, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload } from "services/api"
+import { GeneralResponse, IAuditHistoryFetchPayload, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
@@ -15,11 +15,16 @@ export const AuditStoreProps = {
     currentInspectionId: types.optional( types.string, "" ),
     inspection: types.optional( InspectionModel, {} ),
     isPassingValuesSelected: types.optional( types.boolean, false ),
+    currentPrimaryListID: types.maybeNull( types.string ), 
+    currentSecondaryListID: types.maybeNull( types.string ), 
 }
 
 export const AuditStore = types
     .model( AuditStoreProps )
     .extend( withEnvironment )
+    .volatile( ( ) => ( {
+        loading: false
+    } ) )
     .views( self => ( {
         get auditAndInspectionDetails () {
             return isEmpty( self.audit?.AudiAndInspectionListing ) ? [] : self.audit.AudiAndInspectionListing
@@ -49,7 +54,7 @@ export const AuditStore = types
         },
         get shouldShowHazardGlobally ( ) {
             return self.inspection.AuditAndInspectionDetails.IsDisplayHazardList === "True"
-        }
+        },
     } ) )
     .views( self => ( {
         shouldShowHazard ( show: string ) {
@@ -88,7 +93,37 @@ export const AuditStore = types
             const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
             const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
             return selectedDueDate?.ID ?? ""
-        }   
+        }, 
+        get primaryList () {
+            const PRIMARY_LIST = self.getTypesForStartInspection.GetTypes
+            const returnablePrimaryList = self.getDropdownData( PRIMARY_LIST, 'Name', 'TypeID' )
+            return returnablePrimaryList
+        },
+        get shouldShowSecondaryList ( ) {
+            const PRIMARY_LIST = self.getTypesForStartInspection.GetTypes
+            const currentPrimaryListRecord = PRIMARY_LIST.find( item => item.TypeID === self.currentPrimaryListID )
+            if( !currentPrimaryListRecord ) {
+                return false
+            }else{
+                return currentPrimaryListRecord.PrimaryUserList.length > 0
+            }
+        },
+        get secondaryList () {
+            const PRIMARY_LIST = self.getTypesForStartInspection.GetTypes
+            const currentPrimaryListRecord = PRIMARY_LIST.find( item => item.TypeID === self.currentPrimaryListID )
+            const returnableSecondaryList = self.getDropdownData( currentPrimaryListRecord.PrimaryUserList, 'Name', 'TypeID' )
+            return returnableSecondaryList
+        },  
+    } ) )
+    .views( self => ( {
+        get shouldDisableStartInspection ( ) {
+            const isSecondaryPresent = self.shouldShowSecondaryList
+            if( isSecondaryPresent ) {
+                return isEmpty( self.currentPrimaryListID ) || isEmpty( self.currentSecondaryListID )
+            }else{
+                return isEmpty( self.currentPrimaryListID )
+            }
+        }  
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -125,6 +160,28 @@ export const AuditStore = types
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
                 return null
+            }
+        } )
+
+        const submitDataForStartInspection = flow( function * ( payload: ISubmitStartInspectionPayload ) {
+            try {
+                self.loading = true
+                const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
+                console.tron.log( 'result is ',JSON.stringify( result ) )
+                if ( result?.data && !isEmpty( result.data ) ) {
+                    self.inspection = result.data
+                    self.loading = false
+                    self.refreshing = false
+                    return 'success'
+                }else{
+                    self.loading = false
+                    self.refreshing = false
+                    return 'fail'
+                }
+            } catch( error ) {
+                self.loading = false
+                Toast.showWithGravity( error.message || 'Something went wrong while starting inspection', Toast.LONG, Toast.CENTER )
+                return 'fail'
             }
         } )
         
@@ -180,10 +237,25 @@ export const AuditStore = types
             self.inspection.AuditAndInspectionDetails.SkippedReason = value
         } )
 
+        const setCurrentPrimaryListID = flow( function * ( value: string ) {
+            self.currentSecondaryListID = ""
+            self.currentPrimaryListID = value
+        } )
+        const setCurrentSecondaryListID = flow( function * ( value: string ) {
+            self.currentSecondaryListID = value
+        } )
+        const resetPrimaryListID = flow( function * ( ) {
+            self.currentPrimaryListID = ""
+        } )
+        const resetSecondaryListID = flow( function * ( ) {
+            self.currentPrimaryListID = ""
+        } )
+    
 
         return {
             fetch,
             fetchDataForStartInspection,
+            submitDataForStartInspection,
             fetchDataForEditInspection,
             setRefreshing,
             reset,
@@ -192,7 +264,11 @@ export const AuditStore = types
             setPrimaryUserId,
             togglePassingValueSelected,
             resetPassingValueSelected,
-            setSkippedReason
+            setSkippedReason,
+            setCurrentPrimaryListID,
+            setCurrentSecondaryListID,
+            resetPrimaryListID,
+            resetSecondaryListID
         }
     } )
 

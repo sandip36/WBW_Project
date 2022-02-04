@@ -72,8 +72,6 @@ export const AttributesModel = types
         },
         checkForParticularValue ( type: string ) {
             const checkForType = self.ScoreList.find( item => {
-                console.log( item.Value )
-                console.log( type )
                 if( item.Value === type && item.ID === self.GivenAnswerID ) {
                     return true
                 }else{
