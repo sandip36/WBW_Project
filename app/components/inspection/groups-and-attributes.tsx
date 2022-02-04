@@ -54,7 +54,7 @@ export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) 
     )
 }
 
-export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = React.memo( ( props ) => {
+export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
     const {
         groupId
     } = props
@@ -117,12 +117,14 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                 {
                     item.AuditAndInspectionScoreID === "6"
                         ? null
-                        : <Dropdown
-                            title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
-                            items={AuditStore.getDropdownData( item.ScoreList )}
-                            value={item.GivenAnswerID}
-                            onValueChange={item.setGivenAnswerId}
-                        />
+                        : <Box>
+                            <Dropdown
+                                title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
+                                items={AuditStore.getDropdownData( item.ScoreList )}
+                                value={AuditStore.isPassingValuesSelected && item.GivenAnswerID === "0" ? item.MaxCorrectAnswerID : item.GivenAnswerID }
+                                onValueChange={item.setGivenAnswerId}
+                            />
+                        </Box>
                 }
                 {
                     AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
@@ -193,4 +195,4 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
             />
         </Box>
     )
-}, ( prevProps, nextProps ) => prevProps.groupId === nextProps.groupId )
+} )

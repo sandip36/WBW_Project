@@ -55,6 +55,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const STYLES = useStyles()
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     const [ reportingPeriod, setReportingPeriod ] = useState( "" )
+    const [ isChecked, setIsChecked ] = useState( false )
     if( isEmpty( dashboard ) ) {
         return null
     }
@@ -68,7 +69,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             CompanyID: AuthStore?.user?.CompanyID
         } as IFetchEditInspectionDetailsPayload
         await AuditStore.fetchDataForEditInspection( payload )
-    }, [] )
+    }, [ AuditStore.isPassingValuesSelected ] )
 
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
         switch( item.ControlType ) {
@@ -95,6 +96,11 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         } 
     }
 
+    const onCheckBoxValueChange = async ( ) => {
+        await AuditStore.togglePassingValueSelected()
+        setIsChecked( !isChecked )
+    }
+
     const renderSystemFieldsData = ( ) => {
         return(
             <Box>
@@ -116,14 +122,14 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                     />
                 </Box>  
                 <Box>
-                    <Observer>
+                    {/* <Observer>
                         {
                             () => (
                                 <Box>
                                     <CheckBox
                                         title="Select Passing Values for Incomplete Tasks:"
-                                        checked={AuditStore.isPassingValuesSelected}
-                                        onPress={AuditStore.togglePassingValueSelected}
+                                        checked={isChecked}
+                                        onPress={onCheckBoxValueChange}
                                         iconRight={true}
                                         textStyle={STYLES.checkboxTextStyle}
                                         containerStyle={STYLES.checkboxContainerStyle}
@@ -131,7 +137,17 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                 </Box> 
                             ) 
                         }
-                    </Observer>
+                    </Observer> */}
+                    <Box>
+                        <CheckBox
+                            title="Select Passing Values for Incomplete Tasks:"
+                            checked={isChecked}
+                            onPress={onCheckBoxValueChange}
+                            iconRight={true}
+                            textStyle={STYLES.checkboxTextStyle}
+                            containerStyle={STYLES.checkboxContainerStyle}
+                        />
+                    </Box> 
                 </Box>          
                 <Box>
                     <AuditDetailsRow 
@@ -249,7 +265,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             renderItem={( { item } ) => 
                                 
                             {
-                                console.log( 'called' )
                                 return (
                                     <Box flex={0.85}>
                                         <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
