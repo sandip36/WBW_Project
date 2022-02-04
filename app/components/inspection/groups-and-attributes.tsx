@@ -7,7 +7,7 @@ import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
-import { observer } from "mobx-react-lite"
+import { Observer, observer } from "mobx-react-lite"
 import { Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 
@@ -151,15 +151,21 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                         />
                         : null
                 }
-                <Box marginHorizontal="regular" mt="regular">
-                    <TextAreaInput 
-                        label="Comments"
-                        labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
-                        placeholder="Comments"
-                        defaultValue={item.Comments}                        
-                        onChangeText={ ( text ) => item.setComments( text ) }
-                    /> 
-                </Box>
+                <Observer>
+                    {
+                        () => (
+                            <Box marginHorizontal="regular" mt="regular">
+                                <TextAreaInput 
+                                    label={item.commentsMandatoryOrNot}
+                                    labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
+                                    placeholder="Comments"
+                                    defaultValue={item.Comments}                        
+                                    onChangeText={ ( text ) => item.setComments( text ) }
+                                /> 
+                            </Box>
+                        ) 
+                    }
+                </Observer>
                 <TouchableBox marginHorizontal="regular" onPress={ () => imagePressHandler( item as IAttributes )}>
                     <InputWithIcon 
                         rightIcon={{ name: 'camera', type: 'font-awesome' }}

@@ -49,6 +49,166 @@ export const AttributesModel = types
         },
         get isAuditImagePresent ( ) {
             return self.auditImage.length > 0
+        },
+        get checkForNonApplicableValues ( ) {
+            const shouldCheckForNonApplicableValues = self.ScoreList.find( item => {
+                if( item.Value === "Not Applicable" && item.ID === self.GivenAnswerID ) {
+                    return true
+                }else{
+                    return false
+                }
+            } )
+            return shouldCheckForNonApplicableValues
+        },
+        get checkForTruthyValues ( ) {
+            const checkForTruthyValue = self.ScoreList.find( item => {
+                if( [ "True", "False", "Yes", "No","Pass","Fail" ].includes( item.Value ) && item.ID === self.GivenAnswerID ) {
+                    return true
+                }else{
+                    return false
+                }
+            } )
+            return checkForTruthyValue
+        },
+        checkForParticularValue ( type: string ) {
+            const checkForType = self.ScoreList.find( item => {
+                console.log( item.Value )
+                console.log( type )
+                if( item.Value === type && item.ID === self.GivenAnswerID ) {
+                    return true
+                }else{
+                    return false
+                }
+            } )
+            return checkForType
+        }
+    } ) )
+    .views( self => ( {
+        get currentCommentValue ( ) {
+            return self.Comments
+        },
+        get isAuditImagePresent ( ) {
+            return self.auditImage.length > 0
+        },
+        get commentsMandatoryOrNot ( ) {
+            let commentLabel = ''
+            switch( self.IsCommentsMandatory ) {
+            case 'Mandatory': {
+                commentLabel = 'Comments *'
+                break;
+            }
+            case 'Mandatory for Passing Score': {
+                if( self.checkForNonApplicableValues ) {
+                    commentLabel = 'Comments'
+                    break;
+                }
+                else if( self.checkForTruthyValues ? Number( self.GivenAnswerID ) === Number( self.CorrectAnswerID ) : Number( self.GivenAnswerID ) >= Number( self.CorrectAnswerID ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }
+            }
+            case 'Mandatory for Failing Score': {
+                if( Number( self.GivenAnswerID ) !== 0 && Number( self.GivenAnswerID ) < Number( self.CorrectAnswerID ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }     
+            }
+            case 'Not Mandatory': {
+                commentLabel = 'Comments'
+                break;
+            }
+            case 'Mandatory for N/A': {
+                if( self.checkForNonApplicableValues ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for Passing Score and N/A': {
+                if( Number( self.GivenAnswerID ) >= Number( self.CorrectAnswerID ) || self.checkForNonApplicableValues ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }
+            }
+            case 'Mandatory for Failing Score and N/A': {
+                if( Number( self.GivenAnswerID ) !== 0 && Number( self.GivenAnswerID ) < Number( self.CorrectAnswerID ) || self.checkForNonApplicableValues ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }
+            }
+            case 'Mandatory for Yes': {
+                if( self.checkForParticularValue( 'Yes' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for No': {
+                if( self.checkForParticularValue( 'No' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for True': {
+                if( self.checkForParticularValue( 'True' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for False': {
+                if( self.checkForParticularValue( 'False' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for Pass': {
+                if( self.checkForParticularValue( 'Pass' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            case 'Mandatory for Fail': {
+                if( self.checkForParticularValue( 'Fail' ) ) {
+                    commentLabel = 'Comments *'
+                    break;
+                }else{
+                    commentLabel = 'Comments'
+                    break;
+                }    
+            }
+            default: {
+                commentLabel = "Comments" 
+            }
+            }
+            return commentLabel
         }
     } ) )
     .actions( self => {
