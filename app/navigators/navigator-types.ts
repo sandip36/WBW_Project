@@ -14,6 +14,7 @@ export type ApplicationNavigationRoutes = {
     AuditAndInspectionScreen: undefined
     StartInspection: undefined
     EditInspection: undefined
+    Inspection: undefined
     CompleteOrAssignTask: undefined
     CompleteTask: undefined
     AssignTask: undefined
