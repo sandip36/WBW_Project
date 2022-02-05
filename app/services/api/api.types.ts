@@ -120,4 +120,14 @@ export interface IUpdateHazard {
     HazardsID: string,
     CustomFormResultID: string
 }
+export interface ISubmitStartInspectionPayload {
+    UserID: string,
+    AccessToken: string,
+    CustomFormID: string,
+    AuditAndInspectionTemplateID: string,
+    TypeID: string,
+    PrimaryUserID: string,
+    Type: string,
+    CompanyID: string
+}
 

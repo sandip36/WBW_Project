@@ -7,7 +7,7 @@ import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
-import { observer } from "mobx-react-lite"
+import { Observer, observer } from "mobx-react-lite"
 import { Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 
@@ -54,7 +54,7 @@ export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) 
     )
 }
 
-export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = React.memo( ( props ) => {
+export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
     const {
         groupId
     } = props
@@ -117,12 +117,14 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                 {
                     item.AuditAndInspectionScoreID === "6"
                         ? null
-                        : <Dropdown
-                            title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
-                            items={AuditStore.getDropdownData( item.ScoreList )}
-                            value={item.GivenAnswerID}
-                            onValueChange={item.setGivenAnswerId}
-                        />
+                        : <Box>
+                            <Dropdown
+                                title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
+                                items={AuditStore.getDropdownData( item.ScoreList )}
+                                value={AuditStore.isPassingValuesSelected && item.GivenAnswerID === "0" ? item.MaxCorrectAnswerID : item.GivenAnswerID }
+                                onValueChange={item.setGivenAnswerId}
+                            />
+                        </Box>
                 }
                 {
                     AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
@@ -149,15 +151,21 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                         />
                         : null
                 }
-                <Box marginHorizontal="regular" mt="regular">
-                    <TextAreaInput 
-                        label="Comments"
-                        labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
-                        placeholder="Comments"
-                        defaultValue={item.Comments}                        
-                        onChangeText={ ( text ) => item.setComments( text ) }
-                    /> 
-                </Box>
+                <Observer>
+                    {
+                        () => (
+                            <Box marginHorizontal="regular" mt="regular">
+                                <TextAreaInput 
+                                    label={item.commentsMandatoryOrNot}
+                                    labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
+                                    placeholder="Comments"
+                                    defaultValue={item.Comments}                        
+                                    onChangeText={ ( text ) => item.setComments( text ) }
+                                /> 
+                            </Box>
+                        ) 
+                    }
+                </Observer>
                 <TouchableBox marginHorizontal="regular" onPress={ () => imagePressHandler( item as IAttributes )}>
                     <InputWithIcon 
                         rightIcon={{ name: 'camera', type: 'font-awesome' }}
@@ -193,4 +201,4 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
             />
         </Box>
     )
-}, ( prevProps, nextProps ) => prevProps.groupId === nextProps.groupId )
+} )
