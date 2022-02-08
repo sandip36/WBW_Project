@@ -1,7 +1,7 @@
 import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import React from "react"
 import { useNavigation } from "@react-navigation/native"
-import { IAttributes, IImages, useStores } from "models"
+import { AuditStore, IAttributes, IAudit, IImages, useStores } from "models"
 import { FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
@@ -10,6 +10,7 @@ import Toast from "react-native-simple-toast"
 import { Observer, observer } from "mobx-react-lite"
 import { Image } from "react-native-elements"
 import { isEmpty } from "lodash"
+import { Item } from "react-native-picker-select"
 
 export type GroupsAndAttributesProps = {
     groupId: string
@@ -40,6 +41,12 @@ export type RenderImageProps = {
     style?: StyleProp<ImageStyle>
 }
 
+export type RenderHazardProps = {
+    data: IAttributes,
+    items: Item[],
+    onValueChange: ( value: any, index: number ) => any,
+}
+
 export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) => {
     const { image, style } = props
     return (
@@ -52,6 +59,30 @@ export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) 
             </Box>
         </Box>
     )
+}
+
+export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props ) => {
+    const { data, items, onValueChange } = props
+    const { AuditStore } = useStores()
+    const showHazard = AuditStore.shouldShowHazard( data.DoNotShowHazard )
+    console.log( 'show hazard',showHazard )
+    if( showHazard && AuditStore.inspection.GroupsAndAttributes?.HazardList.length > 0
+        && data.checkForTruthyValues ? Number( data.GivenAnswerID ) !== Number( data.CorrectAnswerID )
+        : Number( data.GivenAnswerID ) <= Number( data.CorrectAnswerID ) ) {
+        return (
+            <Box flex={1}>
+                <Text>Hazards Shown</Text>
+                <Dropdown
+                    title="Hazard List"
+                    items={items}
+                    value={data.HazardsID}
+                    onValueChange={onValueChange}
+                />
+            </Box>
+        )
+    }else{
+        return <Text>ELSE BLOCK</Text>
+    }
 }
 
 export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
@@ -110,84 +141,103 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
 
     const renderItem = ( { item }: {item:IAttributes } ) => {
         return (
-            <Box flex={1}>
-                <Box marginHorizontal="regular">
-                    <Text variant="heading4" marginHorizontal="medium" fontWeight="bold">{item.AttributeOrder}. {item.Title}</Text>
-                </Box>
+            <Observer>
                 {
-                    item.AuditAndInspectionScoreID === "6"
-                        ? null
-                        : <Box>
-                            <Dropdown
-                                title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
-                                items={AuditStore.getDropdownData( item.ScoreList )}
-                                value={AuditStore.isPassingValuesSelected && item.GivenAnswerID === "0" ? item.MaxCorrectAnswerID : item.GivenAnswerID }
-                                onValueChange={item.setGivenAnswerId}
-                            />
-                        </Box>
-                }
-                {
-                    AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
-                        ? <Dropdown
-                            title="Source"
-                            items={AuditStore.sourceList}
-                            value={item.SourceID}
-                            onValueChange={( value )=>item.setSourceId( value )}
-                        />
-                        : null
-                }
-                {
-                    AuditStore.shouldShowHazard( item.DoNotShowHazard ) && AuditStore.inspection.GroupsAndAttributes.HazardList.length > 0 && item.AuditAndInspectionScoreID !== "6"
-                        ? <Dropdown
-                            title="Hazard List"
-                            items={AuditStore.hazardList}
-                            value={item.HazardsID}
-                            onValueChange={( value )=>{
-                                item.setHazardId( value )
-                                if( !isEmpty( value ) ){
-                                    navigateToAssignOrCompleteTask( item )
-                                }
-                            }}
-                        />
-                        : null
-                }
-                <Observer>
-                    {
-                        () => (
-                            <Box marginHorizontal="regular" mt="regular">
-                                <TextAreaInput 
-                                    label={item.commentsMandatoryOrNot}
-                                    labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
-                                    placeholder="Comments"
-                                    defaultValue={item.Comments}                        
-                                    onChangeText={ ( text ) => item.setComments( text ) }
-                                /> 
+                    ( ) => (
+                        <Box flex={1}>
+                            <Box marginHorizontal="regular">
+                                <Text variant="heading4" marginHorizontal="medium" fontWeight="bold">{item.AttributeOrder}. {item.Title}</Text>
                             </Box>
-                        ) 
-                    }
-                </Observer>
-                <TouchableBox marginHorizontal="regular" onPress={ () => imagePressHandler( item as IAttributes )}>
-                    <InputWithIcon 
-                        rightIcon={{ name: 'camera', type: 'font-awesome' }}
-                        labelStyle={{ color: theme.colors.primary , fontSize: theme.textVariants?.heading5?.fontSize }}
-                        editable={false}
-                        label="Upload Image"
-                        placeholder="Upload Image"
-                    // onChangeText={handleChange( "username" )}
-                    /> 
-                </TouchableBox>
-                <Box flex={1} flexDirection="row" marginHorizontal="regular">
-                    <FlatList 
-                        data={item.auditImage}
-                        extraData={item.auditImage}
-                        keyExtractor={( item,index ) => String( index ) }
-                        renderItem={renderImageItem}
-                        horizontal={true}
-                    />
-                </Box>
-            </Box>
-            
-        )
+                            {
+                                item.AuditAndInspectionScoreID === "6"
+                                    ? null
+                                    : 
+                                    <Box>
+                                        <Dropdown
+                                            title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
+                                            items={AuditStore.getDropdownData( item.ScoreList )}
+                                            value={item.GivenAnswerID}
+                                            onValueChange={ ( value ) => {
+                                                item.setGivenAnswerId( value )
+                                            } }
+                                        />
+                                    </Box>
+                            }
+                            {
+                                AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
+                                    ? <Dropdown
+                                        title="Source"
+                                        items={AuditStore.sourceList}
+                                        value={item.SourceID}
+                                        onValueChange={( value )=>item.setSourceId( value )}
+                                    />
+                                    : null
+                            }
+                            {
+                                item.currentGivenAnswerID === "0" || isEmpty( item.currentGivenAnswerID )
+                                    ? null
+                                    : (
+                                        AuditStore.shouldShowHazard( item.DoNotShowHazard ) 
+                                && AuditStore.inspection.GroupsAndAttributes?.HazardList.length > 0
+                                && ( item.checkForTruthyValues ? Number( item.GivenAnswerID ) !== Number( item.CorrectAnswerID )
+                                    : Number( item.GivenAnswerID ) <= Number( item.CorrectAnswerID ) )
+                                            ? 
+                                            (
+                                                <Box flex={1}>
+                                                    <Dropdown
+                                                        title="Hazard List"
+                                                        items={AuditStore.hazardList}
+                                                        value={item.HazardsID}
+                                                        onValueChange={( value )=>{
+                                                            item.setHazardId( value )
+                                                            if( !isEmpty( value ) ){
+                                                                navigateToAssignOrCompleteTask( item )
+                                                            }
+                                                        }}
+                                                    />
+                                                </Box>
+                                            )
+                                            : 
+                                            null
+                                    )
+                            }
+                            {
+                                (
+                                    <Box marginHorizontal="regular" mt="regular">
+                                        <TextAreaInput 
+                                            label={item.commentsMandatoryOrNot}
+                                            labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
+                                            placeholder="Comments"
+                                            defaultValue={item.Comments}                        
+                                            onChangeText={ ( text ) => item.setComments( text ) }
+                                        /> 
+                                    </Box>
+                                ) 
+                            }
+                            <TouchableBox marginHorizontal="regular" onPress={ () => imagePressHandler( item as IAttributes )}>
+                                <InputWithIcon 
+                                    rightIcon={{ name: 'camera', type: 'font-awesome' }}
+                                    labelStyle={{ color: theme.colors.primary , fontSize: theme.textVariants?.heading5?.fontSize }}
+                                    editable={false}
+                                    label="Upload Image"
+                                    placeholder="Upload Image"
+                                    // onChangeText={handleChange( "username" )}
+                                /> 
+                            </TouchableBox>
+                            <Box flex={1} flexDirection="row" marginHorizontal="regular">
+                                <FlatList 
+                                    data={item.auditImage}
+                                    extraData={item.auditImage}
+                                    keyExtractor={( item,index ) => String( index ) }
+                                    renderItem={renderImageItem}
+                                    horizontal={true}
+                                />
+                            </Box>
+                        </Box>
+                    )
+                }
+            </Observer>
+        )             
     }
 
     return (

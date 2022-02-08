@@ -47,6 +47,9 @@ export const AttributesModel = types
         get currentCommentValue ( ) {
             return self.Comments
         },
+        get currentGivenAnswerID ( ) {
+            return self.GivenAnswerID
+        },
         get isAuditImagePresent ( ) {
             return self.auditImage.length > 0
         },
