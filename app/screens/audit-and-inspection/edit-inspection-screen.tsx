@@ -5,7 +5,7 @@ import { useStores } from "models"
 import React, { useCallback, useState } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
-import { isEmpty } from "lodash"
+import { findIndex, isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
@@ -39,8 +39,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
     },
     skippedDataLabelStyle: {
         color: theme.colors.primary,
-        fontWeight: 'bold',
-        marginHorizontal: theme.spacing.medium
+        fontSize: theme.textVariants?.caption?.fontSize,
+        marginHorizontal: theme.spacing.large
     }
 } ) )
 
@@ -49,6 +49,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 /* TODO: system fields array may contain varios control type, need to show with different components 
         like dropdown,  calendar, checkbox, multi-select checkbox etc.
 */
+
+let remainingDropdownArray = []
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
@@ -101,6 +103,17 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         setIsChecked( !isChecked )
     }
 
+    const onChangeReportingPeriod = ( value ) => {
+        const data = [ ...AuditStore.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates ]
+        const reversedData = data.reverse()
+        const currentSelectedIndex = findIndex( reversedData, function ( o ) { return o.ID === value } );
+        remainingDropdownArray = []
+        for( let i=0;i<currentSelectedIndex;i++ ) {
+            remainingDropdownArray.push( reversedData[i].Value )
+        }
+        setReportingPeriod( value )   
+    }
+
     const renderSystemFieldsData = ( ) => {
         return(
             <Box>
@@ -122,22 +135,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                     />
                 </Box>  
                 <Box>
-                    {/* <Observer>
-                        {
-                            () => (
-                                <Box>
-                                    <CheckBox
-                                        title="Select Passing Values for Incomplete Tasks:"
-                                        checked={isChecked}
-                                        onPress={onCheckBoxValueChange}
-                                        iconRight={true}
-                                        textStyle={STYLES.checkboxTextStyle}
-                                        containerStyle={STYLES.checkboxContainerStyle}
-                                    />
-                                </Box> 
-                            ) 
-                        }
-                    </Observer> */}
                     <Box>
                         <CheckBox
                             title="Select Passing Values for Incomplete Tasks:"
@@ -189,22 +186,21 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                 title="Last Day of Schedule Period *"
                                 items={AuditStore.reportingPeriodDueDates}
                                 value={isEmpty( reportingPeriod ) ? AuditStore.initialReportingPeriodDueDateID : reportingPeriod }
-                                onValueChange={( value ) => setReportingPeriod( value )}
+                                onValueChange={onChangeReportingPeriod}
                             /> 
                         </Box>
                         : null
                 }
-                {/* {
-                    AuditStore.shouldShowSkippedData
+                {
+                    remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null
                         ? <Box>
-                            <Box>
-                                <Text numberOfLines={0} style={STYLES.skippedDataLabelStyle}>
-                                    {
-                                        `By doing this, following period(s) will be skipped: ${AuditStore.skippedDueDateList}`
-                                    }
-                                </Text>
-                            </Box>
-                            <Box>
+                            <Text numberOfLines={0} style={STYLES.skippedDataLabelStyle}>
+                                {
+                                    `By doing this, following period(s) will be skipped: ${remainingDropdownArray}`
+                                }
+                            </Text>
+                            
+                            <Box mt="regular" marginHorizontal="medium">
                                 <TextAreaInput 
                                     label="Reason for Skipping the Last Day of Schedule Period *"
                                     labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize, marginLeft: theme.spacing.mini  }}
@@ -214,8 +210,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                 />
                             </Box>
                         </Box>
-                        : <Text>Other</Text>
-                } */}
+                        : null
+                }
                 <Box marginVertical="large" marginHorizontal="small" >
                     <FlatList 
                         data={AuditStore.systemFieldsData}
