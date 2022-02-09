@@ -15,7 +15,7 @@ import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
 import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
 
-export type EditInspectionScreenProps = {
+export type InspectionScreenProps = {
 
 }
 
@@ -49,9 +49,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 /* TODO: system fields array may contain varios control type, need to show with different components 
         like dropdown,  calendar, checkbox, multi-select checkbox etc.
 */
-
 let remainingDropdownArray = []
-export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
+export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
     const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
     const STYLES = useStyles()
@@ -61,18 +60,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     if( isEmpty( dashboard ) ) {
         return null
     }
-    const fetchEditInspectionDetails = useCallback( async () => {
-        const payload = {
-            UserID: AuthStore?.user.UserID,
-            AccessToken: AuthStore?.token,
-            CustomFormID: dashboard?.CustomFormID,
-            AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
-            AuditAndInspectionId: AuditStore?.currentInspectionId,
-            CompanyID: AuthStore?.user?.CompanyID
-        } as IFetchEditInspectionDetailsPayload
-        await AuditStore.fetchDataForEditInspection( payload )
-    }, [ AuditStore.isPassingValuesSelected ] )
-
+   
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
         switch( item.ControlType ) {
         case 'TextBox': {    
@@ -135,6 +123,22 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                     />
                 </Box>  
                 <Box>
+                    {/* <Observer>
+                        {
+                            () => (
+                                <Box>
+                                    <CheckBox
+                                        title="Select Passing Values for Incomplete Tasks:"
+                                        checked={isChecked}
+                                        onPress={onCheckBoxValueChange}
+                                        iconRight={true}
+                                        textStyle={STYLES.checkboxTextStyle}
+                                        containerStyle={STYLES.checkboxContainerStyle}
+                                    />
+                                </Box> 
+                            ) 
+                        }
+                    </Observer> */}
                     <Box>
                         <CheckBox
                             title="Select Passing Values for Incomplete Tasks:"
@@ -233,71 +237,52 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
 
     return (
         <Box flex={1}>
-            <Async promiseFn={fetchEditInspectionDetails} watch={TaskStore.completedTaskComments}>
-                <Async.Pending>
-                    { ( ) => (
-                        <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
-                            <ActivityIndicator size={32} color="red" />
-                        </Box>
-                    ) }
-                </Async.Pending>
-                <Async.Rejected>
-                    { ( error: any ) => (
-                        <Box justifyContent="center" alignItems="center" flex={1}>
-                            <Text>{error.reason || error.message || 'Something went wrong'}</Text>
-                        </Box>
-                    ) }
-                </Async.Rejected>
-                <Async.Resolved>
-                    <FormHeader 
-                        title={dashboard?.Category}
-                        navigation={navigation}
-                    />                        
-                    <Box flex={1}>
-                        <FlatList 
-                            data={AuditStore.dynamicFieldsData}
-                            nestedScrollEnabled
-                            ListHeaderComponent={renderSystemFieldsData}
-                            renderItem={( { item } ) => 
+            <FormHeader 
+                title={dashboard?.Category}
+                navigation={navigation}
+            />                        
+            <Box flex={1}>
+                <FlatList 
+                    data={AuditStore.dynamicFieldsData}
+                    nestedScrollEnabled
+                    ListHeaderComponent={renderSystemFieldsData}
+                    renderItem={( { item } ) => 
                                 
-                            {
-                                return (
-                                    <Box flex={0.85}>
-                                        <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
-                                            <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
-                                        </Box>
-                                        <Box flex={0.9} mt="medium">
-                                            <GroupsAndAttributes groupId={item.GroupID}/>
-                                        </Box>
-                                    </Box>
-                                )
-                            }}
-                            keyExtractor={( item ) => item.GroupID }
-                            contentContainerStyle={STYLES.contentContainerStyle}
-                            ItemSeparatorComponent={ItemSeparatorComponent}
-                        />
-                    </Box>
-                    <Box flexDirection="row">
-                        <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
-                            <Button
-                                title="Submit"
-                            // onPress={handleSubmit}
+                    {
+                        return (
+                            <Box flex={0.85}>
+                                <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
+                                    <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
+                                </Box>
+                                <Box flex={0.9} mt="medium">
+                                    <GroupsAndAttributes groupId={item.GroupID}/>
+                                </Box>
+                            </Box>
+                        )
+                    }}
+                    keyExtractor={( item ) => item.GroupID }
+                    contentContainerStyle={STYLES.contentContainerStyle}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                />
+            </Box>
+            <Box flexDirection="row">
+                <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
+                    <Button
+                        title="Submit"
+                        // onPress={handleSubmit}
+                    />
+                </Box>
+                {
+                    AuditStore.shouldShowReportingPeriod
+                        ? <Box width="50%">
+                            <Button 
+                                title="Save And Come Back"
+                                // onPress={handleSubmit}
                             />
                         </Box>
-                        {
-                            AuditStore.shouldShowReportingPeriod
-                                ? <Box width="50%">
-                                    <Button 
-                                        title="Save And Come Back"
-                                        // onPress={handleSubmit}
-                                    />
-                                </Box>
-                                : null
-                        }
-                    </Box>
-
-                </Async.Resolved>
-            </Async>
+                        : null
+                }
+            </Box>
         </Box>
     )
 } )

@@ -17,6 +17,7 @@ export const AuditStoreProps = {
     isPassingValuesSelected: types.optional( types.boolean, false ),
     currentPrimaryListID: types.maybeNull( types.string ), 
     currentSecondaryListID: types.maybeNull( types.string ), 
+    rerender: types.optional( types.boolean, false )
 }
 
 export const AuditStore = types
@@ -250,6 +251,9 @@ export const AuditStore = types
         const resetSecondaryListID = flow( function * ( ) {
             self.currentPrimaryListID = ""
         } )
+        const toggleRerender = flow( function * ( ) {
+            self.rerender = !self.rerender
+        } )
     
 
         return {
@@ -268,7 +272,8 @@ export const AuditStore = types
             setCurrentPrimaryListID,
             setCurrentSecondaryListID,
             resetPrimaryListID,
-            resetSecondaryListID
+            resetSecondaryListID,
+            toggleRerender
         }
     } )
 

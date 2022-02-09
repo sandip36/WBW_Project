@@ -13,7 +13,7 @@ const renderHistoryCardDetails = ( title: string, value: string ) => {
         <Box flex={1}>
             <Box flex={1} flexDirection="row" paddingLeft="regular">
                 <Box flex={0.5}>
-                    <Text variant="heading5" fontWeight="bold" color="white">{title}</Text>
+                    <Text variant="heading5" fontWeight="bold">{title}</Text>
                 </Box>
                 <Box flex={0.5}>
                     <Text variant="body" mx="small">{value}</Text>
@@ -31,7 +31,7 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
     
     return (
         <Box flex={1} mx="regular" my="medium">
-            <Box borderRadius="large" borderWidth={0.5} bg="lightGrey5">
+            <Box borderRadius="large" borderWidth={0.5} bg="lightGrey">
                 <Box 
                     flex={1}
                     justifyContent="center" 
@@ -45,7 +45,7 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
                         <Text variant="body" color="white">{observation?.ObservationNumber}</Text>
                     </Box>
                     <Box flex={0.3}>
-                        <Text variant="body">{observation?.Status}</Text>
+                        <Text variant="body" color="white">{observation?.Status}</Text>
                     </Box>
                 </Box>
                 <Box my="medium">

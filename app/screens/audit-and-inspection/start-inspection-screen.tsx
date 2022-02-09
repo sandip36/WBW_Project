@@ -48,7 +48,7 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
         } as ISubmitStartInspectionPayload
         const result = await AuditStore.submitDataForStartInspection( payload )
         if( result === 'success' ) {
-            navigation.navigate( 'EditInspection' )
+            navigation.navigate( 'Inspection' )
         }
     }
 
