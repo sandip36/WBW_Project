@@ -173,7 +173,6 @@ export const AuditStore = types
             try {
                 self.loading = true
                 const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
-                console.tron.log( 'result is ',JSON.stringify( result ) )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     self.inspection = result.data
                     self.loading = false
