@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import {  AuditAndInspectionCard, Box, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
@@ -10,6 +10,7 @@ import { useStores } from "models"
 import { isEmpty } from "lodash"
 import { IAuditHistoryFetchPayload } from "services/api"
 import { observer } from "mobx-react-lite"
+import { reset } from "utils/keychain"
 
 export type AuditAndInspectionScreenProps = {
 
@@ -37,6 +38,7 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
     if( isEmpty( dashboard ) ) {
         return null
     }
+    
     const fetchAuditAndInspectionHistory = useCallback( async () => {
         await AuditStore.reset()
         const payload = {
@@ -78,7 +80,7 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
 
     return (
         <Box flex={1}>
-            <Async promiseFn={fetchAuditAndInspectionHistory}>
+            <Async promiseFn={fetchAuditAndInspectionHistory} watch={AuditStore.rerender}>
                 <Async.Pending>
                     { ( ) => (
                         <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">

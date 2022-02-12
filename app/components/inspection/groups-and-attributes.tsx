@@ -65,7 +65,6 @@ export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props 
     const { data, items, onValueChange } = props
     const { AuditStore } = useStores()
     const showHazard = AuditStore.shouldShowHazard( data.DoNotShowHazard )
-    console.log( 'show hazard',showHazard )
     if( showHazard && AuditStore.inspection.GroupsAndAttributes?.HazardList.length > 0
         && data.checkForTruthyValues ? Number( data.GivenAnswerID ) !== Number( data.CorrectAnswerID )
         : Number( data.GivenAnswerID ) <= Number( data.CorrectAnswerID ) ) {
@@ -180,7 +179,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                         AuditStore.shouldShowHazard( item.DoNotShowHazard ) 
                                 && AuditStore.inspection.GroupsAndAttributes?.HazardList.length > 0
                                 && ( item.checkForTruthyValues ? Number( item.GivenAnswerID ) !== Number( item.CorrectAnswerID )
-                                    : Number( item.GivenAnswerID ) <= Number( item.CorrectAnswerID ) )
+                                    : Number( item.GivenAnswerID ) < Number( item.CorrectAnswerID ) )
                                             ? 
                                             (
                                                 <Box flex={1}>

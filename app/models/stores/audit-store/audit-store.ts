@@ -1,5 +1,5 @@
 import { Instance, flow, types } from "mobx-state-tree"
-import { GeneralResponse, IAuditHistoryFetchPayload, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISubmitStartInspectionPayload } from "services/api"
+import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
@@ -136,7 +136,12 @@ export const AuditStore = types
                     self.audit.AudiAndInspectionListing = list as any
                     self.refreshing = false
                     self.page = Number( payload.PageNumber )
-                }else{
+                }else if ( result?.data && isEmpty( result.data?.AudiAndInspectionListing ) ) {
+                    self.audit.TemplateDetails = result.data.TemplateDetails
+                    self.audit.AudiAndInspectionListing = self.audit.AudiAndInspectionListing.length === 0 ? [] : self.audit.AudiAndInspectionListing as any
+                    self.refreshing = false
+                }
+                else{
                     self.refreshing = false
                 }
                 return result
@@ -204,6 +209,24 @@ export const AuditStore = types
             }
         } )
 
+        const deleteInspectionRecord = flow( function * ( payload: IDeleteInspectionRecord ) {
+            try {
+                self.rerender = false
+                const result: GeneralResponse<any> = yield self.environment.api.deleteInspection( payload )
+                self.rerender = true
+                if ( result?.data && !isEmpty( result.data ) ) {
+                    self.refreshing = false
+                    Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
+                }else{
+                    self.refreshing = false
+                }
+                return result
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
         const setRefreshing = flow( function * ( ) {
             self.refreshing = !self.refreshing
         } )
@@ -212,6 +235,7 @@ export const AuditStore = types
             self.audit = undefined
             self.page = 0
             self.refreshing = false
+            self.rerender = false
         } )
 
         const setCurrentInspectionId = flow( function * ( id: string ) {
@@ -261,6 +285,7 @@ export const AuditStore = types
             fetchDataForStartInspection,
             submitDataForStartInspection,
             fetchDataForEditInspection,
+            deleteInspectionRecord,
             setRefreshing,
             reset,
             setCurrentInspectionId,

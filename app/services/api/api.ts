@@ -4,7 +4,7 @@ import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
 import { GeneralResponse, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
-import { ICompleteTaskPayload, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISubmitStartInspectionPayload, IUpdateHazard } from "."
+import { ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISubmitStartInspectionPayload, IUpdateHazard } from "."
 
 /**
  * Manages all requests to the API.
@@ -244,6 +244,19 @@ export class Api {
 
   async updateHazard ( payload: IUpdateHazard ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/UpdateHazard", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async deleteInspection ( payload: IDeleteInspectionRecord ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/DeleteAuditAndInspection", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
