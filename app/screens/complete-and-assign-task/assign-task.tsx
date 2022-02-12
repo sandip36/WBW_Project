@@ -7,11 +7,15 @@ import { makeStyles, theme } from "theme"
 import { object, string } from "yup"
 import { ActivityIndicator, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload } from "services/api"
+import { IAssignTaskPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload } from "services/api"
 import { Async } from "react-async"
 import { Dropdown } from "components/core/dropdown"
 import { isEmpty } from "lodash"
 import { CustomDateTimePicker } from "components/core/date-time-picker/date-time-picker"
+import { SearchableList } from "components/searchable-input/searchable-input"
+import { IUserList } from "models/models/task-model/user-list-model"
+import Toast from "react-native-simple-toast"
+
 
 export type AssignTaskScreenProps = {
 
@@ -87,22 +91,28 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
         isValid,
         values,
         isValidating,
-        isSubmitting,
+        isSubmitting
     } = useFormik( {
         initialValues: {
-            taskTitle: "",
+            taskTitle: TaskStore.currentTitle,
             description: "",
-            riskRatingValue: ""
+            riskRatingValue: "",
         },
-        validationSchema: object( {
-            taskTitle: string()
-                .required( 'Task title is required field' ),
-            description: string()
-                .required(),
-            riskRatingValue: string()
-                .required()
-        } ),
         async onSubmit ( values ) {
+            const isValid = [
+                values.taskTitle,
+                TaskStore.currentSeverityRating,
+                TaskStore.currentProbabilityRating,
+                values.description,
+                TaskStore.currentRatingValue,
+                TaskStore.currentDueDateValue,
+                TaskStore.selectedUser?.UserID
+            ]
+            const notValidPayload = isValid.includes( "" ) || isValid.includes( undefined ) || isValid.includes( null )
+            if( notValidPayload ) {
+                Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+                return null
+            }
             const payload = {
                 UserID: AuthStore.user.UserID,
                 AccessToken: AuthStore.token,
@@ -110,13 +120,19 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                 TaskTitle: values.taskTitle,
                 Description: values.description,
                 AttributeID: TaskStore.attributeID,
-                AssignedToUserID: "",
+                AssignedToUserID: TaskStore.selectedUser?.UserID,
                 DueDate: isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value,
                 SeverityRating: TaskStore.currentSeverityRating,
                 ProbabilityRating: TaskStore.currentProbabilityRating,
                 RiskRating: TaskStore.currentRatingValue,
                 HazardsID: TaskStore.currentHazardId, 
                 CustomFormResultID: TaskStore.customFormResultID
+            } as IAssignTaskPayload
+            const response = await TaskStore.assignTask( payload )
+            if( response === 'success' ) {
+                await setTimeout( ( ) => {
+                    navigation.goBack()
+                }, 3000 )
             }
         },
     } )
@@ -124,6 +140,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
     const fetchTaskRatingsDetails = useCallback( async () => {
         await TaskStore.resetCurrentSeverityRatingValue()
         await TaskStore.resetCurrentProbabilityRatingValue()
+        await TaskStore.resetSelectedUser()
         const payload = {
             UserID: AuthStore.user?.UserID,
             AccessToken: AuthStore.token,
@@ -157,6 +174,11 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             return null
         }
     }, [] ) 
+
+    const onUserSelect = async ( item: IUserList ) => {
+        await TaskStore.setSelectedUser( item )
+        await TaskStore.hideSearchableModal()
+    }
 
     return (
         <Box flex={1}>
@@ -193,8 +215,23 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 defaultValue={TaskStore.currentTitle}
                                 onChangeText={handleChange( "taskTitle" )}
                                 onBlur={handleBlur( "taskTitle" )}
-                                error={touched.taskTitle && errors.taskTitle}
                             />
+                            {
+                                TaskStore.showModal 
+                                    ? <SearchableList
+                                        data={TaskStore.taskRatingFilters?.UserList}
+                                        isModalVisible={TaskStore.showModal}
+                                        closeModal={TaskStore.hideSearchableModal}
+                                        onUserSelect={onUserSelect}
+                                    />
+                                    : <Input 
+                                        label="User List *"
+                                        placeholder="Please select user"
+                                        value={TaskStore.selectedUser?.FullName ?? ""}
+                                        onTouchStart={TaskStore.displaySearchableModal}
+                                    />
+                            }
+                            
                             <TextAreaInput 
                                 label="Description *"
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
@@ -202,7 +239,6 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 value={values.description}
                                 onChangeText={handleChange( "description" )}
                                 onBlur={handleBlur( "description" )}
-                                error={touched.description && errors.description}
                             /> 
                         </Box>
                         <Box marginVertical="negative8">
@@ -257,7 +293,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 </Async.Resolved>
                             </Async>
                         </Box>
-                        <Box mt="small">
+                        <Box mt="medium">
                             <Button 
                                 title="Assign Task"
                                 onPress={handleSubmit}

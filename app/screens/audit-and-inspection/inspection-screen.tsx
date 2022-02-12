@@ -2,11 +2,11 @@ import { useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
-import { IFetchEditInspectionDetailsPayload } from "services/api"
+import { IDeleteInspectionRecord, IFetchEditInspectionDetailsPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
 import { Observer, observer, useObserver } from "mobx-react-lite"
@@ -59,6 +59,43 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     const [ isChecked, setIsChecked ] = useState( false )
     if( isEmpty( dashboard ) ) {
         return null
+    }
+
+    useEffect( () => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            _handleBackPress
+        );
+        return () => backHandler.remove();
+    }, [] )
+
+    const _handleBackPress = ( ) => {
+        // Works on both iOS and Android
+        Alert.alert(
+            "Discard changes?",
+            "Are you sure you want to discard the changes?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null
+                },
+                {
+                    text: "Yes",
+                    onPress: deleteInspectionRecord
+                }
+            ],
+        );
+        return true
+    }
+
+    const deleteInspectionRecord = async ( ) => {
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionID: AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
+        } as IDeleteInspectionRecord
+        await AuditStore.deleteInspectionRecord( payload )
+        navigation.pop( 2 )
     }
    
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
@@ -240,6 +277,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             <FormHeader 
                 title={dashboard?.Category}
                 navigation={navigation}
+                customBackHandler={_handleBackPress}
             />                        
             <Box flex={1}>
                 <FlatList 

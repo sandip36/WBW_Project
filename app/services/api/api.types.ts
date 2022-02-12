@@ -130,4 +130,24 @@ export interface ISubmitStartInspectionPayload {
     Type: string,
     CompanyID: string
 }
+export interface IDeleteInspectionRecord {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string
+}
+export interface IAssignTaskPayload {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string,
+    TaskTitle: string,
+    Description: string,
+    AttributeID: string,
+    AssignedToUserID: string,
+    DueDate: string,
+    SeverityRating: string,
+    ProbabilityRating: string,
+    RiskRating: string,
+    HazardsID: string,
+    CustomFormResultID: string
+}
 

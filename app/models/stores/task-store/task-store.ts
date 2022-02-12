@@ -1,12 +1,13 @@
 import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { TaskModel } from "models/models/task-model/task-model"
-import { GeneralResponse, ICompleteTaskPayload, IDeleteTask, IFetchRiskRatingPayload, IFetchTaskPayload, IFetchTaskRatingDetailsPayload, IUpdateHazard } from "services/api"
+import { GeneralResponse, IAssignTaskPayload, ICompleteTaskPayload, IDeleteTask, IFetchRiskRatingPayload, IFetchTaskPayload, IFetchTaskRatingDetailsPayload, IUpdateHazard } from "services/api"
 import Toast from "react-native-simple-toast"
 import {  withEnvironment } from "models"
 import { IImages, ImagesModel } from "models/models/audit-model/groups-and-attributes.model"
-import { isEmpty } from "lodash"
+import { isEmpty, sortBy } from "lodash"
 import { TaskRatingFiltersModel } from "models/models/task-model/task-rating-filters-model"
 import moment from "moment"
+import { IUserList, UserListModel } from "models/models/task-model/user-list-model"
 
 /**
  * Task model to store task rating details(Assign Tasks)
@@ -42,7 +43,9 @@ export const TaskStore = types.model( "TaskModel" )
         currentDueDateValue: types.optional( types.string, "" ),
         autoCompleteValue: types.optional( types.string, "" ),
         datePicker: types.optional( DatePickerModel, {} ),
-        currentTitle: types.optional( types.string, "" )
+        currentTitle: types.optional( types.string, "" ),
+        showModal: types.optional( types.boolean, false ),
+        selectedUser: types.optional( UserListModel, {} )
     } )
     .views( self => ( {
         getDropdownData ( data: any = [], label?: string, value?: string ) {
@@ -88,7 +91,10 @@ export const TaskStore = types.model( "TaskModel" )
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.fetchTaskRatingFilters( payload )
                 if( result && result.data ) {
-                    self.taskRatingFilters = result.data
+                    const data = { ...result.data }
+                    const userList = data.UserList
+                    const finalData = { ... result.data, UserList: sortBy( userList, ( item ) => item.FullName ) }
+                    self.taskRatingFilters = finalData
                 }
                 return result
             } catch( error ) {
@@ -125,6 +131,24 @@ export const TaskStore = types.model( "TaskModel" )
                 }       
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching tasks', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
+        const assignTask = flow( function * ( payload: IAssignTaskPayload ) {
+            try {
+                const result: GeneralResponse<any> = yield self.environment.api.assignTask( payload )
+                if( isEmpty( result ) || isEmpty( result.data ) ) {
+                    return null
+                }else if ( !isEmpty( result ) && !isEmpty( result.data ) ) {
+                    self.completedTaskComments = result.data?.Comments
+                    Toast.showWithGravity( 'Task Assigned Successfully', Toast.LONG, Toast.CENTER );
+                    return 'success'
+                }else{
+                    return null
+                }       
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while assigning tasks', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
@@ -213,11 +237,28 @@ export const TaskStore = types.model( "TaskModel" )
         const setCurrentTitle = flow( function * ( value: string ) {
             self.currentTitle = value
         } )
+
+        const displaySearchableModal = flow( function * ( ) {
+            self.showModal = true
+        } )
+        const hideSearchableModal = flow( function * ( ) {
+            self.showModal = false
+        } )
+
+        const setSelectedUser = flow( function * ( user: any ) {
+            self.selectedUser = { ...user }
+        } )
+
+        const resetSelectedUser = flow( function * ( ) {
+            self.selectedUser = {} as any
+        } )
+
         return {
             fetch,
             fetchTaskRatingDetails,
             fetchRiskRating,
             completeTask,
+            assignTask,
             deleteTask,
             updateHazard,
             setAttributeID,
@@ -234,7 +275,11 @@ export const TaskStore = types.model( "TaskModel" )
             hideDatePicker,
             formatDate,
             resetDatePicker,
-            setCurrentTitle
+            setCurrentTitle,
+            displaySearchableModal,
+            hideSearchableModal,
+            setSelectedUser,
+            resetSelectedUser
         }
     } )
 

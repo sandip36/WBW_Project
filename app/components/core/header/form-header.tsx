@@ -27,6 +27,7 @@ export type HeaderProps = {
     navigation: any,
     leftContainerStyle?: StyleProp<ViewStyle>,
     rightContainerStyle?: StyleProp<ViewStyle>,
+    customBackHandler?: ( ) => void
 }
 
 export const FormHeader: FunctionComponent<HeaderProps> = props => {
@@ -37,17 +38,19 @@ export const FormHeader: FunctionComponent<HeaderProps> = props => {
         rightComponent,
         navigation,
         leftContainerStyle,
-        rightContainerStyle
+        rightContainerStyle,
+        customBackHandler
     } = props
     const STYLES = useStyles()
     const theme = useTheme()
     const navigateToGoBack = ( ) => {
         navigation.goBack()
     }
+    const backHandler = customBackHandler || navigateToGoBack
     return (
         <RNEHeader
             statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
-            leftComponent={{ icon: 'arrow-left', type: 'material-community', color: theme.colors.black, onPress: navigateToGoBack }}
+            leftComponent={{ icon: 'arrow-left', type: 'material-community', color: theme.colors.black, onPress: backHandler }}
             leftContainerStyle={[ STYLES.leftContainerStyle, leftContainerStyle ]}
             centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
             rightComponent={rightComponent}

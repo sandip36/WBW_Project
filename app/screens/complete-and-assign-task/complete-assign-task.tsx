@@ -134,7 +134,7 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
                 <Async.Resolved>
                     <Box flex={1}>
                         <FormHeader 
-                            title="Complete or Assign Task"
+                            title={TaskStore.radioValue}
                             navigation={navigation}
                         />
                         {
