@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
-import { useStores } from "models"
+import { IReportingPeriodDueDatesModel, useStores } from "models"
 import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator, Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
-import { IDeleteInspectionRecord, IFetchEditInspectionDetailsPayload } from "services/api"
+import { IDeleteInspectionRecord, IFetchEditInspectionDetailsPayload, ISaveAuditPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
 import { Observer, observer, useObserver } from "mobx-react-lite"
@@ -14,6 +14,8 @@ import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
 import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
 import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
+import Toast from "react-native-simple-toast"
+
 
 export type InspectionScreenProps = {
 
@@ -272,6 +274,122 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         )
     }
 
+    const saveAndComeBack = async ( ) => {
+        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        if( !isValidReportingPeriod ) {
+            Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            return null 
+        }
+
+        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        if( !isValidSkippedReason ) {
+            Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            return null
+        }
+
+        const reportingPeriodDueDate = !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates ) ? AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === reportingPeriod ) as IReportingPeriodDueDatesModel : {} as IReportingPeriodDueDatesModel
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            PrimaryUserID: !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.PrimaryUserID ) ? AuditStore?.inspection?.AuditAndInspectionDetails?.PrimaryUserID : AuthStore.user.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionID: AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
+            AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+            Type: AuditStore.audit?.TemplateDetails?.Type,
+            TypeID: AuditStore.inspection.AuditAndInspectionDetails?.TypeID,
+            Notes: AuditStore.inspection?.AuditAndInspectionDetails?.Notes,
+            ReportingPeriodDueDateSelected: isEmpty( reportingPeriodDueDate ) ? null : reportingPeriodDueDate.Value as string,
+            ReportingPeriodDueDateSelectedID: reportingPeriod,
+            NextDueDate: AuditStore.inspection?.AuditAndInspectionDetails?.NextDueDate,
+            SkippedReason: AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason,
+            SystemFields: {
+                AuditAndInspection_SystemFieldID: AuditStore?.inspection?.SystemFields?.AuditAndInspection_SystemFieldID,
+                SystemFields: AuditStore.formattedSystemFieldsData
+            },
+            GroupsAndAttributes: {
+                Groups: AuditStore.formattedGroupsData
+            } 
+        } as ISaveAuditPayload
+        const response = await AuditStore.saveAuditAndInspection( payload )
+        if( response === 'success' ) {
+            await setTimeout( ( ) => {
+                navigation.pop( 1 )
+            }, 3000 )
+        }
+    }
+
+    const onSubmit = async ( ) => {
+        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        if( !isValidReportingPeriod ) {
+            Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            return null 
+        }
+
+        if( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList && AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList.length > 0 && isEmpty( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserID ) ) {
+            Toast.showWithGravity( 'Please select primary user list', Toast.LONG, Toast.CENTER );
+            return null
+        }
+
+        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        if( !isValidSkippedReason ) {
+            Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            return null
+        }
+
+        const isValidDynamicFields = AuditStore.requiredSystemFieldsData
+        if( !isValidDynamicFields ) {
+            return null
+        }
+
+        const isValidScoresItem = AuditStore.requiredScoreData
+        if( !isValidScoresItem ) {
+            Toast.showWithGravity( 'Please select a score from the Score column', Toast.LONG, Toast.CENTER );
+            return null 
+        }
+
+        const checkForHazards = AuditStore.requiredHazardData 
+        if( !checkForHazards ) {
+            Toast.showWithGravity( 'Hazard is required.', Toast.LONG, Toast.CENTER );
+            return null 
+        }
+
+        const checkForComments = AuditStore.requiredCommentsData
+        if( !checkForComments ) {
+            Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
+            return null 
+        }
+
+        const reportingPeriodDueDate = !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates ) ? AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === reportingPeriod ) as IReportingPeriodDueDatesModel : {} as IReportingPeriodDueDatesModel
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            PrimaryUserID: !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.PrimaryUserID ) ? AuditStore?.inspection?.AuditAndInspectionDetails?.PrimaryUserID : AuthStore.user.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionID: AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
+            AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+            Type: AuditStore.audit?.TemplateDetails?.Type,
+            TypeID: AuditStore.inspection.AuditAndInspectionDetails?.TypeID,
+            Notes: AuditStore.inspection?.AuditAndInspectionDetails?.Notes,
+            ReportingPeriodDueDateSelected: isEmpty( reportingPeriodDueDate ) ? null : reportingPeriodDueDate.Value as string,
+            ReportingPeriodDueDateSelectedID: reportingPeriod,
+            NextDueDate: AuditStore.inspection?.AuditAndInspectionDetails?.NextDueDate,
+            SkippedReason: AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason,
+            SystemFields: {
+                AuditAndInspection_SystemFieldID: AuditStore?.inspection?.SystemFields?.AuditAndInspection_SystemFieldID,
+                SystemFields: AuditStore.formattedSystemFieldsData
+            },
+            GroupsAndAttributes: {
+                Groups: AuditStore.formattedGroupsData
+            } 
+        } as ISaveAuditPayload
+        // const response = await AuditStore.completeAuditAndInspection( payload )
+        const response = await AuditStore.saveAuditAndInspection( payload )
+        if( response === 'success' ) {
+            await setTimeout( ( ) => {
+                navigation.pop( 1 )
+            }, 3000 )
+        }
+    }
+
+
     return (
         <Box flex={1}>
             <FormHeader 
@@ -307,7 +425,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                 <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
                     <Button
                         title="Submit"
-                        // onPress={handleSubmit}
+                        onPress={onSubmit}
                     />
                 </Box>
                 {
@@ -315,7 +433,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                         ? <Box width="50%">
                             <Button 
                                 title="Save And Come Back"
-                                // onPress={handleSubmit}
+                                onPress={saveAndComeBack}
                             />
                         </Box>
                         : null
