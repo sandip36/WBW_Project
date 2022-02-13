@@ -1,9 +1,9 @@
 import { Instance, flow, types } from "mobx-state-tree"
-import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISubmitStartInspectionPayload } from "services/api"
+import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
-import { isEmpty, uniqBy, sortBy } from "lodash"
+import { isEmpty, uniqBy, sortBy, omit, map } from "lodash"
 import { GetTypesModel, IAttributes, IGroups } from "models/models/audit-model"
 import { InspectionModel } from "models/models/audit-model/inspection-model"
 
@@ -94,7 +94,7 @@ export const AuditStore = types
             const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
             const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
             return selectedDueDate?.ID ?? ""
-        }, 
+        },
         get primaryList () {
             const PRIMARY_LIST = self.getTypesForStartInspection.GetTypes
             const returnablePrimaryList = self.getDropdownData( PRIMARY_LIST, 'Name', 'TypeID' )
@@ -114,7 +114,85 @@ export const AuditStore = types
             const currentPrimaryListRecord = PRIMARY_LIST.find( item => item.TypeID === self.currentPrimaryListID )
             const returnableSecondaryList = self.getDropdownData( currentPrimaryListRecord.PrimaryUserList, 'Name', 'TypeID' )
             return returnableSecondaryList
-        },  
+        },
+        get requiredSystemFieldsData () {
+            const systemFields = self.systemFieldsData
+            if( isEmpty( systemFields ) ) {
+                return true
+            }else{
+                const isValidData = systemFields.map( item => {
+                    if( item.IsMandatory === "True" && isEmpty( item.SelectedValue ) ){
+                        Toast.showWithGravity( `${item.ControlLabel} is required`, Toast.LONG, Toast.CENTER );
+                        return false
+                    }else{
+                        return true
+                    }
+                } )
+                const doesSystemFieldsHaveFalsyValue = isValidData.every( item => item === true )
+                return doesSystemFieldsHaveFalsyValue
+            }
+        },
+        get requiredScoreData () {
+            const checkForValidScoreData = []
+            self.inspection?.GroupsAndAttributes?.Groups.map( item => {
+                item.Attributes.map( val => {
+                    if( val.AuditAndInspectionScore === "Do Not Show Score" ) {
+                        checkForValidScoreData.push( true )
+                        return val
+                    }else{
+                        const givenAnswer = !( val.GivenAnswerID === "0" || val.GivenAnswerID === null )
+                        checkForValidScoreData.push( givenAnswer )
+                        return val  
+                    }
+                } )
+                return item
+            } )
+
+            const checkForValidScore = checkForValidScoreData.every( item => item === true )
+            return checkForValidScore
+        },
+        get requiredHazardData () {
+            const groupsArrayToCheck = []
+            self.inspection?.GroupsAndAttributes?.Groups.map( item => {
+                item.Attributes.map( val => {
+                    const isHazardRequired = !( val.DoNotShowHazard === "True" || val.AuditAndInspectionScore === "Do Not Show Score" )
+                    if( isHazardRequired === true && ![ '','0',0,null,undefined ].includes( val.HazardsID ) ) {
+                        groupsArrayToCheck.push( true )
+                        return true
+                    }else if( isHazardRequired === true && [ '','0',0,null,undefined ].includes( val.HazardsID ) ) {
+                        groupsArrayToCheck.push( false )
+                        return false
+                    }else if( isHazardRequired === false ) {
+                        groupsArrayToCheck.push( true )
+                        return true
+                    }
+                    return val
+                } )
+                return item
+            } )
+            const result = groupsArrayToCheck.every( item => item === true )
+            return result
+        },
+
+        get requiredCommentsData () {
+            const groupsArrayToCheck = []
+            self.inspection.GroupsAndAttributes.Groups.map( item => {
+                item.Attributes.map( val => {
+                    if( val.IsCommentsMandatory && val.Comments !== "" ) {
+                        groupsArrayToCheck.push( true )
+                    }else if( !val.IsCommentsMandatory ) {
+                        groupsArrayToCheck.push( true )
+                    }else{
+                        groupsArrayToCheck.push( false )
+                    }
+                    return val
+                } )
+                return item
+            } )
+            const result = groupsArrayToCheck.every( item => item === true )
+            return result
+        }
+
     } ) )
     .views( self => ( {
         get shouldDisableStartInspection ( ) {
@@ -124,7 +202,26 @@ export const AuditStore = types
             }else{
                 return isEmpty( self.currentPrimaryListID )
             }
-        }  
+        },
+        get formattedSystemFieldsData ( ) {
+            const finalData = self.inspection.SystemFields.SystemFields.map( ( { DisplayOrder,ControlType,ControlLabel,IsMandatory,ControlValues,...rest } ) => {
+                return rest;
+            } );
+            return finalData
+        },
+        get formattedGroupsData ( ) {
+            const finalFormattedGroupData = self.inspection?.GroupsAndAttributes?.Groups.map( item => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                // eslint-disable-next-line camelcase
+                const attributes = item.Attributes.map( ( { CustomForm_Attribute_InstanceID,AttributeID,AttributeOrder,Title,AuditAndInspectionScoreID,ScoreList,CorrectAnswerID,CorrectAnswerValue,DoNotShowHazard, IsCommentsMandatory,AuditAndInspectionScore, auditImage, MaxCorrectAnswerID ,...rest } ) => {
+                    return rest;
+                } );
+                return {
+                    Attributes: attributes
+                }
+            } )
+            return finalFormattedGroupData
+        }    
     } ) )
     .actions( self => {
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
@@ -226,6 +323,42 @@ export const AuditStore = types
             }
         } )
 
+        const saveAuditAndInspection = flow( function * ( payload: ISaveAuditPayload ) {
+            try {
+                self.rerender = false
+                const result: GeneralResponse<any> = yield self.environment.api.saveAuditAndInspection( payload )
+                if ( result?.data && !isEmpty( result.data ) ) {
+                    self.refreshing = false
+                    Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
+                    return 'success'
+                }else{
+                    self.refreshing = false
+                    return 'fail'
+                }
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+        
+        const completeAuditAndInspection = flow( function * ( payload: ISaveAuditPayload ) {
+            try {
+                self.rerender = false
+                const result: GeneralResponse<any> = yield self.environment.api.completeAuditAndInspection( payload )
+                if ( result?.data && !isEmpty( result.data ) ) {
+                    self.refreshing = false
+                    Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
+                    return 'success'
+                }else{
+                    self.refreshing = false
+                    return 'fail'
+                }
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
         const setRefreshing = flow( function * ( ) {
             self.refreshing = !self.refreshing
         } )
@@ -285,6 +418,8 @@ export const AuditStore = types
             submitDataForStartInspection,
             fetchDataForEditInspection,
             deleteInspectionRecord,
+            saveAuditAndInspection,
+            completeAuditAndInspection,
             setRefreshing,
             reset,
             setCurrentInspectionId,

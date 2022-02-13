@@ -6,6 +6,11 @@ export const ReportingPeriodDueDatesModel = types.model( {
     Value: types.maybeNull( types.string )
 } )
 
+export type ReportingPeriodDueDatesModelType = Instance<typeof ReportingPeriodDueDatesModel>
+export interface IReportingPeriodDueDatesModel extends ReportingPeriodDueDatesModelType {}
+type ReportingPeriodDueDatesModelSnapshotType = SnapshotOut<typeof ReportingPeriodDueDatesModel>
+export interface IReportingPeriodDueDatesModelType extends ReportingPeriodDueDatesModelSnapshotType {}
+
 export const AuditAndInspectionDetailsModel = types 
     .model( {
         AuditAndInspectionID: types.maybeNull( types.string ),

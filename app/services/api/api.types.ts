@@ -151,3 +151,24 @@ export interface IAssignTaskPayload {
     CustomFormResultID: string
 }
 
+export interface ISaveAuditPayload {
+    UserID: string,
+    PrimaryUserID: string,
+    AccessToken: string,
+    AuditAndInspectionID: string,
+    Type: string,
+    TypeID: string,
+    Notes: string,
+    ReportingPeriodDueDateSelected: string,
+    NextDueDate: string,
+    SkippedReason: string,
+    SystemFields: {
+        // eslint-disable-next-line camelcase
+        AuditAndInspection_SystemFieldID: string,
+        SystemFields: any[]
+    },
+    GroupsAndAttributes: {
+        Groups: any[]
+    }
+}
+
