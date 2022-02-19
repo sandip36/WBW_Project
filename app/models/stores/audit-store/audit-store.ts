@@ -1,11 +1,12 @@
-import { Instance, flow, types } from "mobx-state-tree"
+import { Instance, flow, types, getRoot } from "mobx-state-tree"
 import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
 import { isEmpty, uniqBy, sortBy, omit, map } from "lodash"
-import { GetTypesModel, IAttributes, IGroups } from "models/models/audit-model"
+import { GetTypesModel, IAttributes, IGroups, IImages } from "models/models/audit-model"
 import { InspectionModel } from "models/models/audit-model/inspection-model"
+import { AuthStoreType } from "../auth-store"
 
 export const AuditStoreProps = {
     audit: types.optional( AuditModel, {} ),
@@ -224,6 +225,9 @@ export const AuditStore = types
         }    
     } ) )
     .actions( self => {
+        const rootStore = getRoot<{
+            AuthStore: AuthStoreType,
+        }>( self )
         const fetch = flow( function * ( payload: IAuditHistoryFetchPayload ) {
             try {
                 const result: GeneralResponse<IAudit> = yield self.environment.api.fetchAuditHistory( payload )
@@ -359,6 +363,50 @@ export const AuditStore = types
             }
         } )
 
+        function createFormDataForAll ( media ) {
+            const data = new FormData()
+            const imagesArray = []
+            if ( media && media.length > 0 ) {
+                media.map( item => {
+                    const localUri = item.uri
+                    const filename = localUri.split( "/" ).pop()
+                    const image = {
+                        name: filename,
+                        uri: localUri,
+                        type: item.mime || item.type || "image/jpeg",
+                    }
+                    imagesArray.push( image )
+                    return media
+                } )
+                data.append( "file", imagesArray )
+            }
+        
+            return data
+        }
+
+        const uploadImages = flow( function * ( payload: IImages[] ) {
+            try {
+                const formDataPayload = createFormDataForAll( payload )
+                console.log( 'formDataPayload is ',JSON.stringify( formDataPayload ) )
+                const userId = rootStore.AuthStore.user?.UserID
+                const auditAndInspectionId = self.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
+                const result: GeneralResponse<any> = yield self.environment.api.uploadImages( formDataPayload, userId, auditAndInspectionId )
+                console.log( 'result is', result )
+                if ( result?.data && !isEmpty( result.data ) ) {
+                    self.refreshing = false
+                    Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
+                    return 'success'
+                }else{
+                    self.refreshing = false
+                    return 'fail'
+                }
+            } catch( error ) {
+                console.log( 'error is ',JSON.stringify( error ) )
+                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
         const setRefreshing = flow( function * ( ) {
             self.refreshing = !self.refreshing
         } )
@@ -420,6 +468,7 @@ export const AuditStore = types
             deleteInspectionRecord,
             saveAuditAndInspection,
             completeAuditAndInspection,
+            uploadImages,
             setRefreshing,
             reset,
             setCurrentInspectionId,

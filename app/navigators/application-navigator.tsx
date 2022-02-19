@@ -10,6 +10,8 @@ import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen, Co
 import { AuditAndInspectionScreen, StartInspectionScreen, EditInspectionScreen, InspectionScreen } from "screens/audit-and-inspection"
 import { CompleteTaskScreen } from "screens/complete-and-assign-task/complete-task"
 import { AssignTaskScreen } from "screens/complete-and-assign-task/assign-task"
+import { UploadImageScreen } from "screens/audit-and-inspection/upload-image-screen"
+import { CaptureImageScreen } from "screens/audit-and-inspection/capture-image-screen"
    
 const { Navigator, Screen } = createStackNavigator<ApplicationNavigationRoutes>()
   
@@ -28,6 +30,8 @@ export const ApplicationNavigator = ( ) => {
                 <Screen name="CompleteOrAssignTask" component={CompleteOrAssignTaskScreen} />
                 <Screen name="CompleteTask" component={CompleteTaskScreen} />
                 <Screen name="AssignTask" component={AssignTaskScreen} />
+                <Screen name="UploadImage" component={UploadImageScreen} />
+                <Screen name="CaptureImage" component={CaptureImageScreen} />
             </Navigator>
         </Fragment>
     )

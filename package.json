@@ -53,6 +53,7 @@
     "react-async": "^10.0.1",
     "react-native": "0.64.0",
     "react-native-autocomplete-input": "^5.0.2",
+    "react-native-camera": "^4.2.1",
     "react-native-dotenv": "^2.5.5",
     "react-native-elements": "^3.4.1",
     "react-native-fast-image": "^8.3.4",
