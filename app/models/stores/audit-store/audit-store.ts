@@ -387,11 +387,9 @@ export const AuditStore = types
         const uploadImages = flow( function * ( payload: IImages[] ) {
             try {
                 const formDataPayload = createFormDataForAll( payload )
-                console.log( 'formDataPayload is ',JSON.stringify( formDataPayload ) )
                 const userId = rootStore.AuthStore.user?.UserID
                 const auditAndInspectionId = self.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
                 const result: GeneralResponse<any> = yield self.environment.api.uploadImages( formDataPayload, userId, auditAndInspectionId )
-                console.log( 'result is', result )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     self.refreshing = false
                     Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )

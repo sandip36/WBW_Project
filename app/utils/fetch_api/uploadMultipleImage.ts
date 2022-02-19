@@ -22,7 +22,6 @@ function createFormDataForAll ( media ) {
 const uploadAllImages = async ( props ) => {
     const { images, url } = props
     const formdata = createFormDataForAll( images )
-    console.log( 'formdata is ',JSON.stringify( formdata ) )
     const requestOptions = {
         method: 'POST',
         body: formdata,
@@ -32,14 +31,11 @@ const uploadAllImages = async ( props ) => {
         redirect: 'follow'
     };
     const apiUrl = `${API_URL}/${url}`
-    console.log( 'api url is ',apiUrl )
-    console.log( 'request options',JSON.stringify( requestOptions ) )
     const result = await fetch( apiUrl, requestOptions )
         .then( ( response ) => {
             return response.text()
         } )
         .then( ( res ) => {
-            console.log( 'res is ',JSON.stringify( res ) )
             Toast.showWithGravity( 'File Saved Successfully', Toast.LONG, Toast.CENTER );
             return res;
         } )

@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Button, Input, Text, TextAreaInput } from "components"
+import { Box, Button, Input, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
-import { useStores } from "models"
-import React, { useCallback } from "react"
+import { IImages, useStores } from "models"
+import React, { useCallback, useEffect } from "react"
 import { makeStyles, theme } from "theme"
 import { object, string } from "yup"
 import { ActivityIndicator, ImageStyle, StyleProp, ViewStyle } from "react-native"
@@ -15,6 +15,7 @@ import { CustomDateTimePicker } from "components/core/date-time-picker/date-time
 import { SearchableList } from "components/searchable-input/searchable-input"
 import { IUserList } from "models/models/task-model/user-list-model"
 import Toast from "react-native-simple-toast"
+import { RenderImage } from "components/inspection"
 
 
 export type AssignTaskScreenProps = {
@@ -128,7 +129,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                 HazardsID: TaskStore.currentHazardId, 
                 CustomFormResultID: TaskStore.customFormResultID
             } as IAssignTaskPayload
-            const response = await TaskStore.assignTask( payload )
+            const response = await TaskStore.assignTask( payload, TaskStore.taskImage )
             if( response === 'success' ) {
                 await setTimeout( ( ) => {
                     navigation.goBack()
@@ -179,6 +180,29 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
         await TaskStore.setSelectedUser( item )
         await TaskStore.hideSearchableModal()
     }
+
+    const onImageSelected = async ( value: IImages ) => {
+        await TaskStore.addTaskImage( value )
+    }
+
+    useEffect( ( ) => {
+        resetImage()
+    }, [] )
+
+    const resetImage = ( ) => {
+        deleteTaskImage()
+    }
+
+    const openImagePickerOptions = ( ) => {
+        navigation.navigate( 'CaptureTaskImage', {
+            callback: ( value: IImages ) => onImageSelected( value )
+        } )
+    }
+
+    const deleteTaskImage = async ( ) => {
+        await TaskStore.removeTaskImage( )
+    }
+
 
     return (
         <Box flex={1}>
@@ -293,6 +317,26 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 </Async.Resolved>
                             </Async>
                         </Box>
+                        {
+                            isEmpty( TaskStore.taskImage?.uri ) 
+                                ? <TouchableBox mt="medium" onPress={openImagePickerOptions}>
+                                    <InputWithIcon 
+                                        rightIcon={{ name: 'camera', type: 'font-awesome' }}
+                                        labelStyle={{ color: theme.colors.primary , fontSize: theme.textVariants?.heading5?.fontSize }}
+                                        editable={false}
+                                        label="Upload Image"
+                                        placeholder="Upload Image"
+                                        // onChangeText={handleChange( "username" )}
+                                    /> 
+                                </TouchableBox> 
+                                : <Box flex={1} justifyContent="center" alignItems={"center"}>
+                                    <RenderImage 
+                                        image={TaskStore.taskImage}
+                                        style={STYLES.imageStyle}
+                                        deleteImage={deleteTaskImage}
+                                    />
+                                </Box>
+                        }
                         <Box mt="medium">
                             <Button 
                                 title="Assign Task"

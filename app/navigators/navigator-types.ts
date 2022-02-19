@@ -26,4 +26,7 @@ export type ApplicationNavigationRoutes = {
     CaptureImage: {
         attributeData: IAttributes
     }
+    CaptureTaskImage: {
+        callback: ( value: any ) => void
+    }
 }

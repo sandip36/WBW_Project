@@ -1,13 +1,15 @@
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotOut, types, getRoot } from "mobx-state-tree"
 import { TaskModel } from "models/models/task-model/task-model"
 import { GeneralResponse, IAssignTaskPayload, ICompleteTaskPayload, IDeleteTask, IFetchRiskRatingPayload, IFetchTaskPayload, IFetchTaskRatingDetailsPayload, IUpdateHazard } from "services/api"
 import Toast from "react-native-simple-toast"
-import {  withEnvironment } from "models"
+import {  AuthStoreType, withEnvironment } from "models"
 import { IImages, ImagesModel } from "models/models/audit-model/groups-and-attributes.model"
 import { isEmpty, sortBy } from "lodash"
 import { TaskRatingFiltersModel } from "models/models/task-model/task-rating-filters-model"
 import moment from "moment"
 import { IUserList, UserListModel } from "models/models/task-model/user-list-model"
+import { imageUpload } from "utils/fetch_api"
+import { AuditStoreType } from ".."
 
 /**
  * Task model to store task rating details(Assign Tasks)
@@ -45,7 +47,7 @@ export const TaskStore = types.model( "TaskModel" )
         datePicker: types.optional( DatePickerModel, {} ),
         currentTitle: types.optional( types.string, "" ),
         showModal: types.optional( types.boolean, false ),
-        selectedUser: types.optional( UserListModel, {} )
+        selectedUser: types.optional( UserListModel, {} ),
     } )
     .views( self => ( {
         getDropdownData ( data: any = [], label?: string, value?: string ) {
@@ -71,6 +73,10 @@ export const TaskStore = types.model( "TaskModel" )
         },
     } ) )
     .actions( self => {
+        const rootStore = getRoot<{
+            AuthStore: AuthStoreType,
+            AuditStore: AuditStoreType
+        }>( self )
         const fetch = flow( function * ( payload: IFetchTaskPayload ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.fetchTasks( payload )
@@ -117,34 +123,51 @@ export const TaskStore = types.model( "TaskModel" )
             }
         } )
 
-        const completeTask = flow( function * ( payload: ICompleteTaskPayload ) {
+        const completeTask = flow( function * ( payload: ICompleteTaskPayload, image?: IImages ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.completeTask( payload )
                 if( isEmpty( result ) || isEmpty( result.data ) ) {
                     return null
-                }else if ( !isEmpty( result ) && !isEmpty( result.data ) ) {
+                }else if ( !isEmpty( result ) && !isEmpty( result.data ) && isEmpty( image?.uri ) ) {
                     self.completedTaskComments = result.data?.Comments
                     Toast.showWithGravity( 'Task Completed Successfully', Toast.LONG, Toast.CENTER );
                     return 'success'
+                }else if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( image?.uri ) ) {
+                    const userId = rootStore.AuthStore.user?.UserID
+                    const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
+                    const response = imageUpload( {
+                        image: image,
+                        url: `AuditAndInspection/UploadCompleteImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
+                    } )
+                    return "success"
                 }else{
                     return null
-                }       
+                }    
             } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while fetching tasks', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while completing tasks', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
 
-        const assignTask = flow( function * ( payload: IAssignTaskPayload ) {
+        const assignTask = flow( function * ( payload: IAssignTaskPayload, image?: IImages ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.assignTask( payload )
                 if( isEmpty( result ) || isEmpty( result.data ) ) {
                     return null
-                }else if ( !isEmpty( result ) && !isEmpty( result.data ) ) {
+                }else if ( !isEmpty( result ) && !isEmpty( result.data ) && isEmpty( image?.uri ) ) {
                     self.completedTaskComments = result.data?.Comments
                     Toast.showWithGravity( 'Task Assigned Successfully', Toast.LONG, Toast.CENTER );
                     return 'success'
-                }else{
+                }else if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( image?.uri ) ) {
+                    const userId = rootStore.AuthStore.user?.UserID
+                    const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
+                    const response = imageUpload( {
+                        image: image,
+                        url: `AuditAndInspection/UploadAssignedImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
+                    } )
+                    return "success"
+                }
+                else{
                     return null
                 }       
             } catch( error ) {
@@ -252,6 +275,12 @@ export const TaskStore = types.model( "TaskModel" )
         const resetSelectedUser = flow( function * ( ) {
             self.selectedUser = {} as any
         } )
+        const addTaskImage = flow( function * (  image: IImages ) {
+            self.taskImage = image
+        } )
+        const removeTaskImage = flow( function * ( ) {
+            self.taskImage = {} as any
+        } )
 
         return {
             fetch,
@@ -279,7 +308,9 @@ export const TaskStore = types.model( "TaskModel" )
             displaySearchableModal,
             hideSearchableModal,
             setSelectedUser,
-            resetSelectedUser
+            resetSelectedUser,
+            addTaskImage,
+            removeTaskImage,
         }
     } )
 

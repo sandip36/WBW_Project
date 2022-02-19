@@ -7,10 +7,10 @@ import { RNCamera } from "react-native-camera"
 import { Platform, StyleProp, ViewStyle } from "react-native"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
-import { IAttributes, IImages } from "models"
+import { IImages } from "models"
 
 
-export type CaptureImageScreenProps = {
+export type CaptureTaskImageScreenProps = {
 
 }
 export type CaptureImageScreenStyleProps = {
@@ -27,10 +27,10 @@ const useStyles = makeStyles<CaptureImageScreenStyleProps>( ( theme ) => ( {
     }
 } ) )
 
-export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) => {
+export const CaptureTaskImageScreen: React.FC<CaptureTaskImageScreenProps> = ( ) => {
     const route = useRoute()
     const {
-        attributeData
+        callback
     } = route.params as any
     const IMAGE_OPTIONS = {
         mediaType: 'photo',
@@ -60,10 +60,8 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
             fileSize: 0,
             uri: imageDetails.uri
         } as IImages
-        await attributeData.setImages( IMAGE_OBJECT )
-        navigation.navigate( 'UploadImage', {
-            attributeData: attributeData
-        } )
+        callback( IMAGE_OBJECT )
+        navigation.goBack()
     }
     const selectPicture = async ( ) => {
         const result = await launchImageLibrary( IMAGE_OPTIONS )
@@ -84,10 +82,8 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
                 fileSize: imageDetails.fileSize,
                 uri: imageDetails.uri
             } as IImages
-            await attributeData.setImages( IMAGE_OBJECT )
-            navigation.navigate( 'UploadImage', {
-                attributeData: attributeData
-            } )
+            callback( IMAGE_OBJECT )
+            navigation.goBack()
         }
     }
 

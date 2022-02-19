@@ -1,13 +1,15 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Button, Text, TextAreaInput } from "components"
+import { Box, Button, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
-import { useStores } from "models"
-import React from "react"
+import { IImages, useStores } from "models"
+import React, { useEffect } from "react"
 import { makeStyles, theme } from "theme"
 import { object, string } from "yup"
 import { ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { ICompleteTaskPayload } from "services/api"
+import { isEmpty } from "lodash"
+import { RenderImage } from "components/inspection"
 
 export type CompleteTaskScreenProps = {
 
@@ -66,7 +68,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
                 HazardsID: TaskStore.currentHazardId, 
                 CustomFormResultID: TaskStore.customFormResultID
             } as ICompleteTaskPayload
-            const response = await TaskStore.completeTask( payload )
+            const response = await TaskStore.completeTask( payload, TaskStore.taskImage )
             if( response === 'success' ) {
                 await setTimeout( ( ) => {
                     navigation.goBack()
@@ -74,6 +76,28 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
             }
         },
     } )
+
+    useEffect( ( ) => {
+        resetImage()
+    }, [] )
+
+    const resetImage = ( ) => {
+        deleteTaskImage()
+    }
+
+    const onImageSelected = async ( value: IImages ) => {
+        await TaskStore.addTaskImage( value )
+    }
+
+    const openImagePickerOptions = ( ) => {
+        navigation.navigate( 'CaptureTaskImage', {
+            callback: ( value: IImages ) => onImageSelected( value )
+        } )
+    }
+
+    const deleteTaskImage = async ( ) => {
+        await TaskStore.removeTaskImage( )
+    }
 
     return (
         <Box
@@ -103,7 +127,27 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
                     onChangeText={handleChange( "comments" )}
                     onBlur={handleBlur( "comments" )}
                     error={touched.comments && errors.comments}
-                /> 
+                />
+                {
+                    isEmpty( TaskStore.taskImage?.uri ) 
+                        ? <TouchableBox onPress={openImagePickerOptions}>
+                            <InputWithIcon 
+                                rightIcon={{ name: 'camera', type: 'font-awesome' }}
+                                labelStyle={{ color: theme.colors.primary , fontSize: theme.textVariants?.heading5?.fontSize }}
+                                editable={false}
+                                label="Upload Image"
+                                placeholder="Upload Image"
+                            // onChangeText={handleChange( "username" )}
+                            /> 
+                        </TouchableBox> 
+                        : <Box flex={1} justifyContent="center" alignItems={"center"}>
+                            <RenderImage 
+                                image={TaskStore.taskImage}
+                                style={STYLES.imageStyle}
+                                deleteImage={deleteTaskImage}
+                            />
+                        </Box>
+                }
             </Box>
             <Box mt="medium">
                 <Button 
