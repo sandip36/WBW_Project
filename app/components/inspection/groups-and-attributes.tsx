@@ -8,7 +8,7 @@ import { Dropdown } from "components/core/dropdown"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
 import { Observer, observer } from "mobx-react-lite"
-import { Image } from "react-native-elements"
+import { Avatar, Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 import { Item } from "react-native-picker-select"
 
@@ -38,7 +38,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
 
 export type RenderImageProps = {
     image: IImages,
-    style?: StyleProp<ImageStyle>
+    style?: StyleProp<ImageStyle>,
+    deleteImage?: ( ) => void
 }
 
 export type RenderHazardProps = {
@@ -48,13 +49,18 @@ export type RenderHazardProps = {
 }
 
 export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) => {
-    const { image, style } = props
+    const { image, style, deleteImage } = props
     return (
         <Box flex={1} bg="transparent" flexDirection="row">
             <Box>
                 <Image
                     source={{ uri: image.uri }}
                     style={style}
+                />
+            </Box>
+            <Box position={"absolute"} right={3} top={3}>
+                <Avatar size="small" onPress={deleteImage} rounded icon={{ name: 'delete' }} 
+                    containerStyle={{ backgroundColor: theme.colors.primary }}
                 />
             </Box>
         </Box>
@@ -99,24 +105,9 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
 
     
     const imagePressHandler = async ( item: IAttributes ) => {
-        const result = await launchImageLibrary( IMAGE_OPTIONS )
-        if( result.didCancel ) {
-            return null
-        }else if( result.errorCode ) {
-            Toast.showWithGravity( result.errorMessage || 'Something went wrong while picking image', Toast.LONG, Toast.CENTER )
-            return null
-        }else{
-            const imageDetails = result.assets[0] as Asset
-            const IMAGE_OBJECT = {
-                height: imageDetails.height,
-                width: imageDetails.width,
-                types: imageDetails.type,
-                fileName: imageDetails.fileName,
-                fileSize: imageDetails.fileSize,
-                uri: imageDetails.uri
-            } as IImages
-            await item.setImages( IMAGE_OBJECT )
-        }
+        navigation.navigate( 'CaptureImage', {
+            attributeData: item
+        } )
     }
 
     const renderImageItem = ( { item } ) => {

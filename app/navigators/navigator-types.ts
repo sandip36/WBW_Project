@@ -1,3 +1,5 @@
+import { IAttributes } from "models"
+
 export type RootNavigationRoutes = {
     AuthStack: undefined,
     ApplicationStack: undefined
@@ -18,4 +20,13 @@ export type ApplicationNavigationRoutes = {
     CompleteOrAssignTask: undefined
     CompleteTask: undefined
     AssignTask: undefined
+    UploadImage: {
+        attributeData: IAttributes
+    }
+    CaptureImage: {
+        attributeData: IAttributes
+    }
+    CaptureTaskImage: {
+        callback: ( value: any ) => void
+    }
 }

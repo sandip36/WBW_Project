@@ -229,12 +229,22 @@ export const AttributesModel = types
             self.auditImage.push( payload )
         } )
 
+        const removeImages = flow( function * ( ) {
+            self.auditImage = [] as any
+        } )
+
+        const removeImageByIndex = flow( function * ( index: number  ) {
+            self.auditImage.splice( index )
+        } )
+
         return {
             setGivenAnswerId,
             setSourceId,
             setHazardId,
             setComments,
-            setImages
+            setImages,
+            removeImages,
+            removeImageByIndex
         }
     } )
 
