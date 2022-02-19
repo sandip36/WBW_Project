@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
-import { IImages, useStores } from "models"
+import { IAttributes, IImages, useStores } from "models"
 import React, { useEffect } from "react"
 import { makeStyles, theme } from "theme"
 import { object, string } from "yup"
@@ -12,7 +12,7 @@ import { isEmpty } from "lodash"
 import { RenderImage } from "components/inspection"
 
 export type CompleteTaskScreenProps = {
-
+    attributeData: IAttributes
 }
 
 const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>}>( ( theme ) => ( {
@@ -29,8 +29,10 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
     }
 } ) )
 
-// TODO: Add image API and UI implementation along with existing complete task API.
 export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( ( props ) => {
+    const {
+        attributeData
+    } = props
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
     const STYLES = useStyles()
@@ -69,7 +71,8 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
                 CustomFormResultID: TaskStore.customFormResultID
             } as ICompleteTaskPayload
             const response = await TaskStore.completeTask( payload, TaskStore.taskImage )
-            if( response === 'success' ) {
+            if( response?.Comments ) {
+                await attributeData.setComments( response.Comments )
                 await setTimeout( ( ) => {
                     navigation.goBack()
                 }, 3000 )

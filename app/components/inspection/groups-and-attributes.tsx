@@ -1,5 +1,5 @@
 import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { AuditStore, IAttributes, IAudit, IImages, useStores } from "models"
 import { FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
@@ -14,6 +14,9 @@ import { Item } from "react-native-picker-select"
 
 export type GroupsAndAttributesProps = {
     groupId: string
+}
+export type ScoreDropdownProps = {
+    item: IAttributes
 }
 
 const ItemSeparatorComponent = ( ) => {
@@ -78,7 +81,7 @@ export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props 
             <Box flex={1}>
                 <Text>Hazards Shown</Text>
                 <Dropdown
-                    title="Hazard List"
+                    title="Hazards"
                     items={items}
                     value={data.HazardsID}
                     onValueChange={onValueChange}
@@ -88,6 +91,57 @@ export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props 
     }else{
         return <Text>ELSE BLOCK</Text>
     }
+}
+
+export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( props ) => {
+    ScoreDropdown.displayName = "ScoreDropdown"
+    const {
+        item
+    } = props
+    const { AuditStore } = useStores()
+    const [ scoreValue, setScoreValue ] = useState( item.GivenAnswerID )
+
+    useEffect( ( ) => {
+        onCheckboxValueChange()
+    }, [ AuditStore.isPassingValuesSelected ] )
+
+    const onCheckboxValueChange = ( ) => {
+        if( !AuditStore.isPassingValuesSelected ) {
+            if( item.GivenAnswerID !== "0" || item.GivenAnswerID !== null || item.GivenAnswerID !== undefined ) {
+                setScoreValue( item.GivenAnswerIDClone )
+            }
+            else{
+                setScoreValue( "0" )
+            }
+        }else{
+            if( item.GivenAnswerID === "0" || item.GivenAnswerID === null || item.GivenAnswerID === undefined ) {
+                setScoreValue( item.MaxCorrectAnswerID )                
+            }else{
+                setScoreValue( item.GivenAnswerID )
+            }
+        }
+    }
+
+    const onScoreValueChange = ( value ) => {
+        if( isEmpty( value ) ) {
+            return null
+        }
+        if( value !== scoreValue ) {
+            setScoreValue( value )
+            item.setGivenAnswerId( value )
+        }  
+    }
+
+    return (
+        <Box>
+            <Dropdown
+                title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
+                items={AuditStore.getDropdownData( item.ScoreList )}
+                value={AuditStore.isPassingValuesSelected === true && isEmpty( Number( scoreValue ) ) ? item.MaxCorrectAnswerID : scoreValue }
+                onValueChange={onScoreValueChange}
+            />
+        </Box>
+    )
 }
 
 export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
@@ -102,6 +156,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     } as ImageLibraryOptions
     const STYLES = useStyles()
     const { AuditStore, TaskStore } = useStores()
+    const [ refreshing, setRefreshing ] = useState( false )
 
     
     const imagePressHandler = async ( item: IAttributes ) => {
@@ -121,12 +176,20 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         )
     }
 
+    const updateHazard = async ( item: IAttributes ) => {
+        await item.setHazardId( item.HazardsIDClone )
+        setRefreshing( refreshing => !refreshing )
+    }
+
     const navigateToAssignOrCompleteTask = async ( item: IAttributes ) => {
         await TaskStore.setAttributeID( item.AttributeID )
         await TaskStore.setCustomFormResultID( item.CustomFormResultID )
         await TaskStore.setCurrentHazardId( item.HazardsID )
         await TaskStore.setCurrentTitle( item.Title )
-        navigation.navigate( 'CompleteOrAssignTask' )
+        navigation.navigate( 'CompleteOrAssignTask', {
+            callback: ( ) => updateHazard( item ),
+            attributeData: item
+        } )
     }
 
     const renderItem = ( { item }: {item:IAttributes } ) => {
@@ -142,16 +205,9 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                 item.AuditAndInspectionScoreID === "6"
                                     ? null
                                     : 
-                                    <Box>
-                                        <Dropdown
-                                            title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
-                                            items={AuditStore.getDropdownData( item.ScoreList )}
-                                            value={item.GivenAnswerID}
-                                            onValueChange={ ( value ) => {
-                                                item.setGivenAnswerId( value )
-                                            } }
-                                        />
-                                    </Box>
+                                    <ScoreDropdown 
+                                        item={item}
+                                    />
                             }
                             {
                                 AuditStore.shouldShowSourceList && item.AuditAndInspectionScoreID !== "6"
@@ -175,12 +231,12 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                             (
                                                 <Box flex={1}>
                                                     <Dropdown
-                                                        title="Hazard List"
+                                                        title="Hazards"
                                                         items={AuditStore.hazardList}
                                                         value={item.HazardsID}
                                                         onValueChange={( value )=>{
-                                                            item.setHazardId( value )
                                                             if( !isEmpty( value ) ){
+                                                                item.setHazardId( value )
                                                                 navigateToAssignOrCompleteTask( item )
                                                             }
                                                         }}
@@ -235,6 +291,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
             <FlatList 
                 data={AuditStore.groupsAndAttributesData( groupId ) as IAttributes[]}
                 renderItem={renderItem}
+                extraData={refreshing}
                 keyExtractor={( item ) => item.AttributeID }
                 contentContainerStyle={STYLES.contentContainerStyle}
                 ItemSeparatorComponent={ItemSeparatorComponent}

@@ -63,6 +63,14 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         return null
     }
 
+    useEffect( ( ) => {
+        resetChecked()
+    }, [] )
+
+    const resetChecked = async ( ) => {
+        await AuditStore.resetPassingValueSelected()
+    }
+
     useEffect( () => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
@@ -432,7 +440,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     AuditStore.shouldShowReportingPeriod
                         ? <Box width="50%">
                             <Button 
-                                title="Save And Come Back"
+                                title="Save"
                                 onPress={saveAndComeBack}
                             />
                         </Box>

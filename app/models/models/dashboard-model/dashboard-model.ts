@@ -22,6 +22,7 @@ export const DashboardModel = createModel( {
     JHASettingID: types.maybeNull( types.string ),
     ObservationSettingID: types.maybeNull( types.string ),
     Link: types.maybeNull( types.string ),
+    LinkType: types.maybeNull( types.string ),
 } )
 
 type DashboardType = Instance<typeof DashboardModel>

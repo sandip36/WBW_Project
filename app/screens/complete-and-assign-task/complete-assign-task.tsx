@@ -1,10 +1,10 @@
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, Radio, ScrollBox, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
-import { useStores } from "models"
-import React, { useCallback } from "react"
+import { IAttributes, useStores } from "models"
+import React, { useCallback, useEffect } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator } from "react-native"
+import { ActivityIndicator, BackHandler } from "react-native"
 import { IDeleteTask, IFetchTaskPayload, IUpdateHazard } from "services/api"
 import { CompleteTaskScreen, AssignTaskScreen } from "screens/complete-and-assign-task"
 import { observer } from "mobx-react-lite"
@@ -15,11 +15,14 @@ export type CompleteOrAssignTaskScreenProps = {
 }
 
 export type TaskUpdateOrDeleteProps = {
-
+    attributeData: IAttributes
 }
 
 export const TaskUpdateOrDelete: React.FunctionComponent<TaskUpdateOrDeleteProps> = observer( ( props ) => {
     const { TaskStore, AuditStore, AuthStore } = useStores()
+    const {
+        attributeData
+    } = props
     const navigation = useNavigation()
     const hazardValue = AuditStore.hazardList.find( item => item.value === TaskStore.currentHazardId )
 
@@ -46,6 +49,7 @@ export const TaskUpdateOrDelete: React.FunctionComponent<TaskUpdateOrDeleteProps
             CustomFormResultID: TaskStore.customFormResultID
         } as IDeleteTask
         await TaskStore.deleteTask( payload )
+        await attributeData.resetHazardIDClone()
     }
 
     return (
@@ -92,6 +96,11 @@ export const TaskUpdateOrDelete: React.FunctionComponent<TaskUpdateOrDeleteProps
 } )
 
 export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProps> = observer( ( props ) => {
+    const route = useRoute()
+    const {
+        callback,
+        attributeData
+    } = route.params as any
     const { AuditStore, AuthStore, TaskStore } = useStores()
     const navigation = useNavigation()
 
@@ -112,6 +121,21 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
             await TaskStore.resetDatePicker()
         }
         await TaskStore.setRadioValue( value )
+    }
+
+    useEffect( () => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            _handleBackPress
+        );
+        return () => backHandler.remove();
+    }, [] )
+
+    const _handleBackPress = ( ) => {
+        // Works on both iOS and Android
+        callback()
+        navigation.goBack()
+        return true
     }
 
     return (
@@ -136,10 +160,13 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
                         <FormHeader 
                             title={TaskStore.radioValue}
                             navigation={navigation}
+                            customBackHandler={_handleBackPress}
                         />
                         {
                             TaskStore.isTaskPresent
-                                ? <TaskUpdateOrDelete />
+                                ? <TaskUpdateOrDelete 
+                                    attributeData={attributeData}
+                                />
                                 : <ScrollBox flex={1}>
                                     <Box flex={0.15}>
                                         <Radio 
@@ -149,8 +176,12 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
                                     <Box flex={1}>
                                         {
                                             TaskStore.radioValue === "Complete Task"
-                                                ? <CompleteTaskScreen />
-                                                : <AssignTaskScreen />
+                                                ? <CompleteTaskScreen 
+                                                    attributeData={attributeData}
+                                                />
+                                                : <AssignTaskScreen 
+                                                    attributeData={attributeData}
+                                                />
                                         }
                                     </Box>
                                 </ScrollBox>

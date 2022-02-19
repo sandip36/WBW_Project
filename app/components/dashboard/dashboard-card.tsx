@@ -43,7 +43,9 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-        if( dashboard?.Category === "POC" ) {
+        if( dashboard?.LinkType === "WebsiteLink" ) {
+            //
+        }else if( dashboard?.Category === "POC" ) {
             navigation.navigate( 'DynamicControls' )
         }else if( dashboard?.Type === "Audit-originator" ) {
             navigation.navigate( 'AuditAndInspectionScreen' )

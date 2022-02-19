@@ -41,7 +41,9 @@ export const AttributesModel = types
         Comments: types.optional( types.string, "" ),
         IsCommentsMandatory: types.maybeNull( types.string ),
         AuditAndInspectionScore: types.maybeNull( types.string ),
-        auditImage: types.optional( types.array( ImagesModel ), [] )
+        auditImage: types.optional( types.array( ImagesModel ), [] ),
+        GivenAnswerIDClone: types.maybeNull( types.string ), 
+        HazardsIDClone: types.maybeNull( types.string ) 
     } )
     .views( self => ( {
         get currentCommentValue ( ) {
@@ -237,6 +239,10 @@ export const AttributesModel = types
             self.auditImage.splice( index )
         } )
 
+        const resetHazardIDClone = flow( function * ( ) {
+            self.HazardsIDClone = ""
+        } )
+
         return {
             setGivenAnswerId,
             setSourceId,
@@ -244,7 +250,8 @@ export const AttributesModel = types
             setComments,
             setImages,
             removeImages,
-            removeImageByIndex
+            removeImageByIndex,
+            resetHazardIDClone
         }
     } )
 

@@ -67,9 +67,24 @@ export const AuditStore = types
              || self.inspection.GroupsAndAttributes.SourceList.length > 0
         },
         get shouldShowReportingPeriod () {
-            return self.shouldDisplayWarningMessage 
+            return self.shouldDisplayWarningMessage && self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.length === 0
                 ? false 
                 : self.inspection.AuditAndInspectionDetails?.IsSchedulerRequired === "True"
+        },
+        get checkForValidReportingPeriod ( ) {
+            if( self.inspection.AuditAndInspectionDetails?.IsSchedulerRequired === "False" ) {
+                return true
+            }
+            if( self.inspection.AuditAndInspectionDetails?.IsSchedulerRequired === "True" && self.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates === null ) {
+                return true
+            }else{
+                const isValidSchedulePeriod = self.shouldDisplayWarningMessage ? self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected === ''  : !isEmpty( self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected )
+                if( isValidSchedulePeriod && !self.shouldDisplayWarningMessage ) {
+                    return true
+                }else{
+                    return false
+                }
+            }
         },
         get sourceList () {
             const SOURCE_LIST = self.inspection.GroupsAndAttributes?.SourceList
@@ -179,9 +194,10 @@ export const AuditStore = types
             const groupsArrayToCheck = []
             self.inspection.GroupsAndAttributes.Groups.map( item => {
                 item.Attributes.map( val => {
-                    if( val.IsCommentsMandatory && val.Comments !== "" ) {
+                    const commentRequiredStatus = val.commentsMandatoryOrNot
+                    if( commentRequiredStatus === "Comments *" && val.Comments !== "" ) {
                         groupsArrayToCheck.push( true )
-                    }else if( !val.IsCommentsMandatory ) {
+                    }else if( commentRequiredStatus === "Comments" ) {
                         groupsArrayToCheck.push( true )
                     }else{
                         groupsArrayToCheck.push( false )
@@ -190,6 +206,7 @@ export const AuditStore = types
                 } )
                 return item
             } )
+            console.log( 'groupsArray to check',groupsArrayToCheck )
             const result = groupsArrayToCheck.every( item => item === true )
             return result
         }
@@ -222,6 +239,13 @@ export const AuditStore = types
                 }
             } )
             return finalFormattedGroupData
+        },    
+        get checkForValidSkippedReason ( ) {
+            if( !isEmpty( self.inspection.AuditAndInspectionDetails?.SkippedReason ) ){
+                return true
+            }else{
+                return false
+            }
         }    
     } ) )
     .actions( self => {
@@ -275,7 +299,14 @@ export const AuditStore = types
                 self.loading = true
                 const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
                 if ( result?.data && !isEmpty( result.data ) ) {
-                    self.inspection = result.data
+                    const finalData = result.data.GroupsAndAttributes.Groups.map( item => {
+                        return item.Attributes.map( val => {
+                            val.GivenAnswerIDClone = val.GivenAnswerID
+                            val.HazardsIDClone = val.HazardsID
+                            return val
+                        } )
+                    } )
+                    self.inspection = { ...result.data, ...finalData }
                     self.loading = false
                     self.refreshing = false
                     return 'success'
@@ -297,6 +328,14 @@ export const AuditStore = types
                 if ( result?.data && !isEmpty( result.data ) ) {
                     const handledEdgeCasesResult = isEmpty( result.data?.GroupsAndAttributes?.SourceList ) ? result.data.GroupsAndAttributes.SourceList = [] : result.data?.GroupsAndAttributes?.SourceList
                     self.inspection = { ...handledEdgeCasesResult, ...result.data }
+                    const finalData = self.inspection.GroupsAndAttributes.Groups.map( item => {
+                        return item.Attributes.map( val => {
+                            val.GivenAnswerIDClone = val.GivenAnswerID
+                            val.HazardsIDClone = val.HazardsID
+                            return val
+                        } )
+                    } )
+                    self.inspection = { ...self.inspection, ...finalData }
                     self.refreshing = false
                 }else{
                     self.refreshing = false

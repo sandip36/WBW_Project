@@ -17,7 +17,10 @@ export type ApplicationNavigationRoutes = {
     StartInspection: undefined
     EditInspection: undefined
     Inspection: undefined
-    CompleteOrAssignTask: undefined
+    CompleteOrAssignTask: {
+        callback: ( value: any ) => void,
+        item: IAttributes
+    }
     CompleteTask: undefined
     AssignTask: undefined
     UploadImage: {
