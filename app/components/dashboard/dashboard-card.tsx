@@ -3,9 +3,10 @@ import { Box } from 'components'
 import { useStores } from 'models'
 import { IDashboard } from 'models/models/dashboard-model'
 import React from 'react'
-import { StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { Alert, AsyncStorage, Linking, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import { ListItem } from 'react-native-elements'
 import { makeStyles  } from 'theme'
+import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 
 export interface DashboardCardProps {
     dashboard: IDashboard,
@@ -15,7 +16,8 @@ export interface DashboardCardProps {
 
 export type DashboardCardStyleProps = {
     containerStyle: StyleProp<ViewStyle>,
-    titleStyle: StyleProp<TextStyle>
+    titleStyle: StyleProp<TextStyle>,
+    inAppBrowserStyle: any
 }
 
 const useStyles = makeStyles<DashboardCardStyleProps>( ( theme ) => ( {
@@ -28,6 +30,38 @@ const useStyles = makeStyles<DashboardCardStyleProps>( ( theme ) => ( {
     },
     titleStyle: {
         color: theme.colors.white
+    },
+    inAppBrowserStyle: {
+        // iOS Properties
+        dismissButtonStyle: 'cancel',
+        preferredBarTintColor: 'white',
+        preferredControlTintColor: 'white',
+        readerMode: false,
+        animated: true,
+        modalPresentationStyle: 'fullScreen',
+        modalTransitionStyle: 'coverVertical',
+        modalEnabled: true,
+        enableBarCollapsing: false,
+        // Android Properties
+        showTitle: false,
+        toolbarColor: '#FFFFFF',
+        secondaryToolbarColor: '#FFFFFF',
+        navigationBarColor: '#FFFFFF',
+        navigationBarDividerColor: '#FFFFFF',
+        enableUrlBarHiding:true,
+        enableDefaultShare: true,
+        forceCloseOnRedirection: false,
+        // Specify full animation resource identifier(package:anim/name)
+        // or only resource name(in case of animation bundled with app).
+        animations: {
+            startEnter: 'slide_in_right',
+            startExit: 'slide_out_left',
+            endEnter: 'slide_in_left',
+            endExit: 'slide_out_right'
+        },
+        // headers: {
+        //   'my-custom-header': 'my custom header value'
+        // }
     }
 } ) )
 
@@ -38,12 +72,28 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         titleStyle
     } = props
     const navigation = useNavigation()
-    const { DashboardStore } = useStores()
+    const { DashboardStore, AuthStore } = useStores()
     const STYLES = useStyles()
+
+    const openInAppBrowser = async ( link ) => {
+        try {
+            // const token = await AsyncStorage.getItem( 'Token' )
+            const url = `${link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
+            if ( await InAppBrowser.isAvailable() ) {
+                const result = await InAppBrowser.openAuth( url, STYLES.inAppBrowserStyle )
+            }
+            else Linking.openURL( url )
+        } catch ( error ) {
+            console.log( 'error is ',JSON.stringify( error ) )
+            Alert.alert( error.message )
+        }
+    }
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-        if( dashboard?.Category === "POC" ) {
+        if( dashboard?.LinkType === "WebsiteLink" ) {
+            openInAppBrowser( dashboard.Link )
+        }else if( dashboard?.Category === "POC" ) {
             navigation.navigate( 'DynamicControls' )
         }else if( dashboard?.Type === "Audit-originator" ) {
             navigation.navigate( 'AuditAndInspectionScreen' )

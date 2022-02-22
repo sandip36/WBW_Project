@@ -131,15 +131,16 @@ export const TaskStore = types.model( "TaskModel" )
                 }else if ( !isEmpty( result ) && !isEmpty( result.data ) && isEmpty( image?.uri ) ) {
                     self.completedTaskComments = result.data?.Comments
                     Toast.showWithGravity( 'Task Completed Successfully', Toast.LONG, Toast.CENTER );
-                    return 'success'
+                    return result.data
                 }else if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( image?.uri ) ) {
+                    self.completedTaskComments = result.data?.Comments
                     const userId = rootStore.AuthStore.user?.UserID
                     const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
                     const response = imageUpload( {
                         image: image,
                         url: `AuditAndInspection/UploadCompleteImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
                     } )
-                    return "success"
+                    return result.data
                 }else{
                     return null
                 }    
@@ -148,7 +149,7 @@ export const TaskStore = types.model( "TaskModel" )
                 return null
             }
         } )
-
+        
         const assignTask = flow( function * ( payload: IAssignTaskPayload, image?: IImages ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.assignTask( payload )
@@ -157,15 +158,16 @@ export const TaskStore = types.model( "TaskModel" )
                 }else if ( !isEmpty( result ) && !isEmpty( result.data ) && isEmpty( image?.uri ) ) {
                     self.completedTaskComments = result.data?.Comments
                     Toast.showWithGravity( 'Task Assigned Successfully', Toast.LONG, Toast.CENTER );
-                    return 'success'
+                    return result.data
                 }else if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( image?.uri ) ) {
+                    self.completedTaskComments = result.data?.Comments
                     const userId = rootStore.AuthStore.user?.UserID
                     const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
                     const response = imageUpload( {
                         image: image,
                         url: `AuditAndInspection/UploadAssignedImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
                     } )
-                    return "success"
+                    return result.data
                 }
                 else{
                     return null

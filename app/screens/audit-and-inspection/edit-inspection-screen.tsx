@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
@@ -61,6 +61,16 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     const [ reportingPeriod, setReportingPeriod ] = useState( AuditStore.initialReportingPeriodDueDateID )
     const [ isChecked, setIsChecked ] = useState( false )
+
+    useEffect( ( ) => {
+        resetChecked()
+    }, [] )
+
+    const resetChecked = async ( ) => {
+        await AuditStore.resetPassingValueSelected()
+    }
+
+
     if( isEmpty( dashboard ) ) {
         return null
     }
@@ -74,7 +84,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             CompanyID: AuthStore?.user?.CompanyID
         } as IFetchEditInspectionDetailsPayload
         await AuditStore.fetchDataForEditInspection( payload )
-    }, [ AuditStore.isPassingValuesSelected ] )
+    }, [] )
 
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
         switch( item.ControlType ) {
@@ -121,8 +131,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         return(
             <Box>
                 {
-                    AuditStore.shouldDisplayWarningMessage
-                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular">
+                    AuditStore.shouldDisplayWarningMessage && !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage )
+                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular" bg="caribbeanGreenPearl">
                             <Text numberOfLines={0} color="primary" variant="heading4">
                                 {
                                     AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
@@ -234,6 +244,19 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         )
     }
 
+    const checkForSkippedReason = ( ) => {
+        let result = false
+        if( remainingDropdownArray.length === 0 ) {
+            result = true
+        }
+        else if( AuditStore.inspection.AuditAndInspectionDetails?.SkippedReason !== '' ) {
+            result = true
+        }else{
+            result = false
+        }
+        return result
+}
+ 
     const saveAndComeBack = async ( ) => {
         /**
          *  check for valid reporting period
@@ -247,7 +270,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         /**
          * check for valid skipped reason value
          */
-        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        const isValidSkippedReason = checkForSkippedReason()
+        console.log( 'isValid', isValidSkippedReason )
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -285,7 +309,10 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     }
     
     const onSubmit = async ( ) => {
-        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        console.log( 'show reporting period',AuditStore.shouldShowReportingPeriod )
+        console.log( 'reporting perios', reportingPeriod )
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod
+        console.log( isValidReportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
@@ -296,7 +323,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             return null
         }
 
-        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -320,6 +347,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         }
 
         const checkForComments = AuditStore.requiredCommentsData
+        console.log('check for comments',checkForComments)
         if( !checkForComments ) {
             Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
             return null 
@@ -347,8 +375,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                 Groups: AuditStore.formattedGroupsData
             } 
         } as ISaveAuditPayload
-        // const response = await AuditStore.completeAuditAndInspection( payload )
-        const response = await AuditStore.saveAuditAndInspection( payload )
+        const response = await AuditStore.completeAuditAndInspection( payload )
+        // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
                 navigation.pop( 1 )
@@ -382,6 +410,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         <FlatList 
                             data={AuditStore.dynamicFieldsData}
                             nestedScrollEnabled
+                            extraData={isChecked}
                             ListHeaderComponent={renderSystemFieldsData}
                             renderItem={( { item } ) => 
                                 
@@ -413,7 +442,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             AuditStore.shouldShowReportingPeriod
                                 ? <Box width="50%">
                                     <Button 
-                                        title="Save And Come Back"
+                                        title="Save"
                                         onPress={saveAndComeBack}
                                     />
                                 </Box>

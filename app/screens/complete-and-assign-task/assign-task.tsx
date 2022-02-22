@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, Input, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
-import { IImages, useStores } from "models"
+import { IAttributes, IImages, useStores } from "models"
 import React, { useCallback, useEffect } from "react"
 import { makeStyles, theme } from "theme"
 import { object, string } from "yup"
@@ -19,7 +19,7 @@ import { RenderImage } from "components/inspection"
 
 
 export type AssignTaskScreenProps = {
-
+    attributeData: IAttributes
 }
 export type RiskRatingScreenProps = {
     riskRatingValue: string,
@@ -75,9 +75,10 @@ export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observ
     )
 } )
 
-// TODO: Add autocomplete or searchable dropdown component
-// TODO: Add image implementation and implement Images API separately. 
 export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( props ) => {
+    const {
+        attributeData
+    } = props
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
     const STYLES = useStyles()
@@ -130,7 +131,8 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                 CustomFormResultID: TaskStore.customFormResultID
             } as IAssignTaskPayload
             const response = await TaskStore.assignTask( payload, TaskStore.taskImage )
-            if( response === 'success' ) {
+            if( response?.Comments ) {
+                await attributeData.setComments( response.Comments )
                 await setTimeout( ( ) => {
                     navigation.goBack()
                 }, 3000 )
