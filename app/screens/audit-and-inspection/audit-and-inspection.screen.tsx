@@ -38,6 +38,12 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
     if( isEmpty( dashboard ) ) {
         return null
     }
+
+    useFocusEffect(
+        React.useCallback( () => {
+            fetchAuditAndInspectionHistory()
+        }, [] )
+    );
     
     const fetchAuditAndInspectionHistory = useCallback( async () => {
         await AuditStore.reset()

@@ -48,7 +48,6 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 } ) )
 
 
-// TODO: skipped dropdown array.
 /* TODO: system fields array may contain varios control type, need to show with different components 
         like dropdown,  calendar, checkbox, multi-select checkbox etc.
 */
@@ -130,17 +129,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const renderSystemFieldsData = ( ) => {
         return(
             <Box>
-                {
-                    AuditStore.shouldDisplayWarningMessage && !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage )
-                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular" bg="caribbeanGreenPearl">
-                            <Text numberOfLines={0} color="primary" variant="heading4">
-                                {
-                                    AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
-                                }
-                            </Text>
-                        </Box>
-                        : null
-                }
+               
                 <Box mt="small">
                     <AuditDetailsRow 
                         title= "Record Number: " 
@@ -255,7 +244,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             result = false
         }
         return result
-}
+    }
  
     const saveAndComeBack = async ( ) => {
         /**
@@ -308,7 +297,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     }
     
     const onSubmit = async ( ) => {
-        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 

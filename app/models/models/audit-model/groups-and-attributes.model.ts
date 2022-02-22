@@ -43,7 +43,8 @@ export const AttributesModel = types
         AuditAndInspectionScore: types.maybeNull( types.string ),
         auditImage: types.optional( types.array( ImagesModel ), [] ),
         GivenAnswerIDClone: types.maybeNull( types.string ), 
-        HazardsIDClone: types.maybeNull( types.string ) 
+        HazardsIDClone: types.maybeNull( types.string ) ,
+        isHazardRequired: types.optional( types.boolean, false )
     } )
     .views( self => ( {
         get currentCommentValue ( ) {
@@ -224,6 +225,9 @@ export const AttributesModel = types
         const setHazardId = flow( function * ( value: string  ) {
             self.HazardsID = value
         } )
+        const setHazardIDClone = flow( function * ( value: string  ) {
+            self.HazardsIDClone = value
+        } )
         const setComments = flow( function * ( value: string  ) {
             self.Comments = value
         } )
@@ -243,15 +247,21 @@ export const AttributesModel = types
             self.HazardsIDClone = ""
         } )
 
+        const setIsHazardRequired = flow( function * ( value: boolean ) {
+            self.isHazardRequired = value
+        } )
+
         return {
             setGivenAnswerId,
             setSourceId,
             setHazardId,
+            setHazardIDClone,
             setComments,
             setImages,
             removeImages,
             removeImageByIndex,
-            resetHazardIDClone
+            resetHazardIDClone,
+            setIsHazardRequired
         }
     } )
 

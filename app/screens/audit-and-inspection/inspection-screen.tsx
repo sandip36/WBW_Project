@@ -46,8 +46,9 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
     }
 } ) )
 
-
-// TODO: skipped dropdown array.
+/** TODO: checkbox implementation. 
+ * 
+ */
 /* TODO: system fields array may contain varios control type, need to show with different components 
         like dropdown,  calendar, checkbox, multi-select checkbox etc.
 */
@@ -282,6 +283,22 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         )
     }
 
+    const checkForSkippedReason = ( ) => {
+        let result = false
+        if( remainingDropdownArray.length === 0 ) {
+            console.log( 'Inside IF' )
+            result = true
+        }
+        else if( AuditStore.inspection.AuditAndInspectionDetails?.SkippedReason !== '' ) {
+            console.log( 'Inside els if ' )    
+            result = true
+        }else{
+            console.log( 'Inside else' )
+            result = false
+        }
+        return result
+    }
+
     const saveAndComeBack = async ( ) => {
         const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
         if( !isValidReportingPeriod ) {
@@ -289,7 +306,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             return null 
         }
 
-        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -320,13 +337,13 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
-                navigation.pop( 1 )
+                navigation.pop( 2 )
             }, 3000 )
         }
     }
 
     const onSubmit = async ( ) => {
-        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
@@ -337,7 +354,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             return null
         }
 
-        const isValidSkippedReason = remainingDropdownArray && remainingDropdownArray.length > 0 && AuditStore.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates != null && !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails?.SkippedReason )
+        const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -392,7 +409,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
-                navigation.pop( 1 )
+                navigation.pop( 2 )
             }, 3000 )
         }
     }
