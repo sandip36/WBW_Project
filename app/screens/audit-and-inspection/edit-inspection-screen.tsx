@@ -271,7 +271,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
          * check for valid skipped reason value
          */
         const isValidSkippedReason = checkForSkippedReason()
-        console.log( 'isValid', isValidSkippedReason )
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -309,10 +308,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     }
     
     const onSubmit = async ( ) => {
-        console.log( 'show reporting period',AuditStore.shouldShowReportingPeriod )
-        console.log( 'reporting perios', reportingPeriod )
         const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod
-        console.log( isValidReportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
@@ -347,7 +343,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         }
 
         const checkForComments = AuditStore.requiredCommentsData
-        console.log('check for comments',checkForComments)
         if( !checkForComments ) {
             Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
             return null 

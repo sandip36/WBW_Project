@@ -6,10 +6,33 @@ import { useFormik } from "formik"
 import { string, object } from 'yup'
 import { useStores } from "models"
 import { ILoginPayload } from "services/api"
+import { Dropdown } from "components/core/dropdown"
+import { observer } from "mobx-react-lite"
+
 
 export type LoginScreenProps = {
 
 }
+
+const BUILD_BASE_URL = [
+    {
+        label: "Unit test - Demo",
+        value: "http://198.71.63.116/Demo/MobileAPI"
+    },
+    {
+        label: "Unit test -Sandbox",
+        value: "http://198.71.63.116/MySite/MobileAPI"
+    },
+    {
+        label: "Demo",
+        value: "http://demo.wisebusinessware.com/MobileAPI"
+    },
+    {
+        label: "Sandbox",
+        value: "http://sandbox.wisebusinessware.com/MobileAPI"
+    }
+]
+
 
 const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     imageStyle: {
@@ -30,7 +53,7 @@ const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerS
     }
 } ) )
 
-export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) => {
+export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( ( props ) => {
     const theme = useTheme()
     const STYLES = useStyles()
     const { AuthStore } = useStores()
@@ -48,8 +71,8 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
         resetForm,
     } = useFormik( {
         initialValues: {
-            username: "",
-            password: "",
+            username: "w1@swordmfg",
+            password: "chemistry7",
         },
         validationSchema: object( {
             username: string()
@@ -63,6 +86,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
                 UserName: values.username,
                 Password: values.password
             }
+            await AuthStore.setBaseUrl( AuthStore.baseUrl )
             await AuthStore.login( payload as ILoginPayload )
         },
     } )
@@ -79,7 +103,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
                 <Box mb="large" justifyContent="center" alignItems="center">
                     <Text fontSize={theme.typography.large} textAlign="center" fontWeight="bold" mt="negative8" mb="medium"> Login </Text>
                 </Box>
-                <Box justifyContent="center" alignItems="center" mx="small" mt="massive">
+                <Box mx="small" mt="massive">
                     <Input 
                         label="Username"
                         placeholder="Username"
@@ -96,6 +120,14 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
                         onBlur={handleBlur( "password" )}
                         error={touched.password && errors.password}
                     />
+                    <Box mx="negative8">
+                        <Dropdown
+                            title="Base URL"
+                            items={BUILD_BASE_URL}
+                            value={AuthStore.baseUrl}
+                            onValueChange={( value )=>AuthStore.setBaseUrl( value )}
+                        />
+                    </Box>
                 </Box>
                 <Box mt="medium">
                     <Button 
@@ -108,4 +140,4 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = ( props ) 
             </ScrollView>
         </Box>
     )
-}
+} )

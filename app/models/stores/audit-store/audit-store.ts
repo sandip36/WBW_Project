@@ -206,7 +206,6 @@ export const AuditStore = types
                 } )
                 return item
             } )
-            console.log( 'groupsArray to check',groupsArrayToCheck )
             const result = groupsArrayToCheck.every( item => item === true )
             return result
         }
