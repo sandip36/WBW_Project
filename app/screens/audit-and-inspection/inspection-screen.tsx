@@ -150,20 +150,9 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         setReportingPeriod( value )   
     }
 
-    const renderSystemFieldsData = ( ) => {
+    const renderOtherData = ( ) => {
         return(
             <Box>
-                {
-                    AuditStore.shouldDisplayWarningMessage
-                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular">
-                            <Text numberOfLines={0} color="primary" variant="heading4">
-                                {
-                                    AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
-                                }
-                            </Text>
-                        </Box>
-                        : null
-                }
                 <Box mt="small">
                     <AuditDetailsRow 
                         title= "Record Number: " 
@@ -171,22 +160,6 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     />
                 </Box>  
                 <Box>
-                    {/* <Observer>
-                        {
-                            () => (
-                                <Box>
-                                    <CheckBox
-                                        title="Select Passing Values for Incomplete Tasks:"
-                                        checked={isChecked}
-                                        onPress={onCheckBoxValueChange}
-                                        iconRight={true}
-                                        textStyle={STYLES.checkboxTextStyle}
-                                        containerStyle={STYLES.checkboxContainerStyle}
-                                    />
-                                </Box> 
-                            ) 
-                        }
-                    </Observer> */}
                     <Box>
                         <CheckBox
                             title="Select Passing Values for Incomplete Tasks:"
@@ -237,7 +210,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                             <Dropdown
                                 title="Last Day of Schedule Period *"
                                 items={AuditStore.reportingPeriodDueDates}
-                                value={isEmpty( reportingPeriod ) ? AuditStore.initialReportingPeriodDueDateID : reportingPeriod }
+                                value={reportingPeriod}
                                 onValueChange={onChangeReportingPeriod}
                             /> 
                         </Box>
@@ -275,6 +248,28 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                 </Box>
             </Box>
         )
+    }
+
+    const renderSystemFieldsData = ( ) => {
+        if( AuditStore.shouldDisplayWarningMessage && !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage ) ) {
+            return (
+                <Box>
+                    <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular" bg="caribbeanGreenPearl">
+                        <Text numberOfLines={0} color="primary" variant="heading4">
+                            {
+                                AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
+                            }
+                        </Text>
+                    </Box>
+                    { renderOtherData() }
+                </Box>
+            )
+        }else{
+            return (
+                renderOtherData()
+            )
+        }
+        
     }
 
     const ItemSeparatorComponent = ( ) => {
