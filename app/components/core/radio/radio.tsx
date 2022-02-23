@@ -55,21 +55,21 @@ export const Radio: React.FunctionComponent<RadioProps> = ( props ) => {
     ]
     
     return (
-        <Box flex={1} mt="medium" mx="medium">
+        <Box flex={1} mx="medium">
             <Box my="medium">
                 <Text 
                     color="primary"
                     fontWeight="bold"
                     variant="body"
                     fontSize={theme.typography.semiMedium}
-                    pl="large"
+                    pl="medium"
                     mb="medium"
                 >
                     {label}
                 </Text>
             </Box>
             <RadioForm 
-                radio_props={RADIO_LIST || radioList }
+                radio_props={radioList || RADIO_LIST }
                 initial={initial}
                 formHorizontal={formHorizontal}
                 labelHorizontal={labelHorizontal}

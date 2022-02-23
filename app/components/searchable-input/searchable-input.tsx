@@ -2,7 +2,7 @@ import { Box, TouchableBox } from 'components'
 import { IUserList } from 'models/models/task-model/user-list-model'
 import React, { useState } from 'react'
 import { FlatList, ListRenderItem, Modal, StyleProp, ViewStyle } from 'react-native'
-import { Avatar, ListItem, SearchBar } from 'react-native-elements'
+import { Avatar, Divider, ListItem, SearchBar } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 
 export interface SearchableListProps {
@@ -10,7 +10,9 @@ export interface SearchableListProps {
     customRender?: ListRenderItem<any>,
     isModalVisible?: boolean,
     closeModal?: ( ) => void,
-    onUserSelect?: ( item ) => void
+    onUserSelect?: ( item ) => void,
+    searchKey?: string,
+    key?: string
 }
 
 export type SearchableInputStyleProps = {
@@ -45,7 +47,9 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
         customRender,
         isModalVisible,
         closeModal,
-        onUserSelect
+        onUserSelect,
+        searchKey,
+        key
     } = props
 
     const [ actualUserList, setActualUserList ] = useState<IUserList[]>( data )
@@ -82,8 +86,9 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
             const newData = actualUserList.filter(
                 function ( item ) {
                     // Applying filter for the inserted text in search bar
-                    const itemData = item.FullName
-                        ? item.FullName.toUpperCase()
+                    const searchOnKey = item?.FullName || item[searchKey]
+                    const itemData = searchOnKey
+                        ? searchOnKey.toUpperCase()
                         : ''.toUpperCase();
                     const textData = text.toUpperCase();
                     return itemData.indexOf( textData ) > -1;
@@ -118,7 +123,7 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
                 <FlatList 
                     data={filteredUserList.length === 0 ? actualUserList : filteredUserList }
                     renderItem={renderItem}
-                    keyExtractor={ ( item, index ) => item.UserID }
+                    keyExtractor={ ( item, index ) => item?.UserID || item[key] || String( index ) }
                 />
             </Box>
         </Modal>

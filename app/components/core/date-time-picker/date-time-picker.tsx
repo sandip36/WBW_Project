@@ -28,7 +28,9 @@ export type CustomDateTimePickerProps = {
     maximumDate?: Date,
     minimumDate?: Date,
     defaultValue?: string,
-    value: Date
+    value: Date,
+    display?: any,
+    minuteInterval?: any
 }
 
 
@@ -71,7 +73,9 @@ export const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ( props
         maximumDate,
         minimumDate,
         defaultValue,
-        value
+        value,
+        display,
+        minuteInterval
     } = props
 
     const defaultRightIcon = {
@@ -104,8 +108,9 @@ export const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ( props
                 testID="dateTimePicker"
                 mode={mode}
                 isVisible={show}
-                // minuteInterval={minuteInterval}
+                minuteInterval={minuteInterval}
                 is24Hour={is24Hour}
+                display={display}
                 onChange={onChange}
                 date={value}
                 maximumDate={maximumDate}

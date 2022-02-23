@@ -172,3 +172,12 @@ export interface ISaveAuditPayload {
     }
 }
 
+// Added payload for commanallfilters
+export interface IAllCommanFilterPayload{
+    UserID:string,
+    AccessToken: string,
+    CompanyID:string,
+    ObservationSettingID:string
+}
+
+

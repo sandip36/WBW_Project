@@ -24,7 +24,22 @@ export const DatePickerModel = types.model( {
 type DatePickerType = Instance<typeof DatePickerModel>
 export interface IDatePicker extends DatePickerType {}
 type DatePickerSnapshotType = SnapshotOut<typeof DatePickerModel>
-export interface UserListSnapshot extends DatePickerSnapshotType {}
+export interface DatePickerSnapshot extends DatePickerSnapshotType {}
+
+/**
+ * Task model to store time picker values
+ */
+export const TimePickerModel = types.model( {
+    mode: types.optional( types.string, "" ),
+    show: types.optional( types.boolean, false ),
+    value: types.optional( types.string, "" ),
+    datePickerValue: types.optional( types.Date, new Date() )
+} )
+
+type TimePickerModelType = Instance<typeof TimePickerModel>
+export interface ITimePicker extends TimePickerModelType {}
+type TimePickerSnapshotType = SnapshotOut<typeof TimePickerModel>
+export interface TimePickerSnapshot extends TimePickerSnapshotType {}
 
 export const TaskStore = types.model( "TaskModel" )
     .extend( withEnvironment )
@@ -45,6 +60,7 @@ export const TaskStore = types.model( "TaskModel" )
         currentDueDateValue: types.optional( types.string, "" ),
         autoCompleteValue: types.optional( types.string, "" ),
         datePicker: types.optional( DatePickerModel, {} ),
+        timePicker: types.optional( TimePickerModel, {} ),
         currentTitle: types.optional( types.string, "" ),
         showModal: types.optional( types.boolean, false ),
         selectedUser: types.optional( UserListModel, {} ),
@@ -259,6 +275,25 @@ export const TaskStore = types.model( "TaskModel" )
             self.datePicker.show = false
             self.datePicker.value = ""
         } )
+
+        const showTimePicker = flow( function * ( ) {
+            self.timePicker.show = true
+        } )
+        const hideTimePicker = flow( function * ( ) {
+            self.timePicker.show = false
+        } )
+        const formatTime = flow( function * ( date: Date ) {
+            const selectedDate = date || new Date()
+            const formattedTime = moment( selectedDate ).format( "hh:mm a" )
+            self.timePicker.value = formattedTime
+            self.timePicker.datePickerValue = new Date( selectedDate )
+            self.timePicker.show = false
+        } )
+        const resetTimePicker = flow( function * ( ) {
+            self.timePicker.mode = ""
+            self.timePicker.show = false
+            self.timePicker.value = ""
+        } )
         const setCurrentTitle = flow( function * ( value: string ) {
             self.currentTitle = value
         } )
@@ -313,6 +348,10 @@ export const TaskStore = types.model( "TaskModel" )
             resetSelectedUser,
             addTaskImage,
             removeTaskImage,
+            showTimePicker,
+            hideTimePicker,
+            formatTime,
+            resetTimePicker
         }
     } )
 
