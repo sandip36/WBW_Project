@@ -126,10 +126,9 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         setReportingPeriod( value )   
     }
 
-    const renderSystemFieldsData = ( ) => {
+    const renderOtherData = ( ) => {
         return(
             <Box>
-               
                 <Box mt="small">
                     <AuditDetailsRow 
                         title= "Record Number: " 
@@ -225,6 +224,28 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                 </Box>
             </Box>
         )
+    }
+
+    const renderSystemFieldsData = ( ) => {
+        if( AuditStore.shouldDisplayWarningMessage && !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage ) ) {
+            return (
+                <Box>
+                    <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular" bg="caribbeanGreenPearl">
+                        <Text numberOfLines={0} color="primary" variant="heading4">
+                            {
+                                AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
+                            }
+                        </Text>
+                    </Box>
+                    { renderOtherData() }
+                </Box>
+            )
+        }else{
+            return (
+                renderOtherData()
+            )
+        }
+        
     }
 
     const ItemSeparatorComponent = ( ) => {
