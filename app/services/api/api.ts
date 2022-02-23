@@ -6,6 +6,8 @@ import { CreateQueryParams } from '@nestjsx/crud-request'
 import { GeneralResponse, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
 import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload, IUpdateHazard } from "."
 import { IImages } from "models/models/audit-model/groups-and-attributes.model"
+import { AsyncStorage } from "utils/storage/async-storage"
+import { conformsTo } from "lodash"
 
 /**
  * Manages all requests to the API.
@@ -56,6 +58,14 @@ export class Api {
           this.apisauce.deleteHeader( 'Authorization' )
       } else {
           this.apisauce.setHeader( 'Authorization', `Bearer ${this.token}` )
+      }
+  }
+
+  async setBaseUrl ( url?: any ) {
+      if ( url === undefined || url === null || url === "" ) {
+          this.apisauce.setBaseURL( this.config.url )
+      } else {
+          this.apisauce.setBaseURL( url )
       }
   }
 

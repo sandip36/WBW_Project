@@ -12,7 +12,8 @@ import { GeneralResponse, ILoginPayload, ILoginResponse } from "services/api/api
 
 const AuthStoreProps = {
     token: types.maybe( types.string ),
-    user: types.safeReference( UserModel )
+    user: types.safeReference( UserModel ),
+    baseUrl: types.maybeNull( types.string )
 }
 export const AuthStoreModel = types
     .model( "AuthStore" )
@@ -43,6 +44,11 @@ export const AuthStoreModel = types
             
         } )
 
+        const setBaseUrl = flow( function * ( url?: any ) {
+            self.baseUrl = url
+            self.environment.api.setBaseUrl( url )
+        } )
+
         const logout = flow( function * () {
             self.token = undefined
             self.user = undefined
@@ -53,6 +59,10 @@ export const AuthStoreModel = types
         return {
             login,
             logout,
+            setBaseUrl,
+            beforeCreate ( ) {
+                self.environment.api.setBaseUrl( self.baseUrl )
+            },
             afterCreate ( ) {
                 self.environment.api.setToken( self.token )
             }

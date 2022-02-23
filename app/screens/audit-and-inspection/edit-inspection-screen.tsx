@@ -48,7 +48,6 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 } ) )
 
 
-// TODO: skipped dropdown array.
 /* TODO: system fields array may contain varios control type, need to show with different components 
         like dropdown,  calendar, checkbox, multi-select checkbox etc.
 */
@@ -130,17 +129,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const renderSystemFieldsData = ( ) => {
         return(
             <Box>
-                {
-                    AuditStore.shouldDisplayWarningMessage && !isEmpty( AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage )
-                        ? <Box flexDirection="row" alignItems="center" marginVertical="regular" marginHorizontal="regular" bg="caribbeanGreenPearl">
-                            <Text numberOfLines={0} color="primary" variant="heading4">
-                                {
-                                    AuditStore?.inspection?.AuditAndInspectionDetails?.AdhocWarnigMessage
-                                }
-                            </Text>
-                        </Box>
-                        : null
-                }
+               
                 <Box mt="small">
                     <AuditDetailsRow 
                         title= "Record Number: " 
@@ -255,7 +244,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             result = false
         }
         return result
-}
+    }
  
     const saveAndComeBack = async ( ) => {
         /**
@@ -271,7 +260,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
          * check for valid skipped reason value
          */
         const isValidSkippedReason = checkForSkippedReason()
-        console.log( 'isValid', isValidSkippedReason )
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
@@ -309,10 +297,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     }
     
     const onSubmit = async ( ) => {
-        console.log( 'show reporting period',AuditStore.shouldShowReportingPeriod )
-        console.log( 'reporting perios', reportingPeriod )
-        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod
-        console.log( isValidReportingPeriod )
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
@@ -347,7 +332,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         }
 
         const checkForComments = AuditStore.requiredCommentsData
-        console.log('check for comments',checkForComments)
         if( !checkForComments ) {
             Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
             return null 

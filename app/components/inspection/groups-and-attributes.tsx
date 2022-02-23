@@ -192,6 +192,31 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         } )
     }
 
+    const clearHazards = ( item: IAttributes ) => {
+        item.setIsHazardRequired( false )
+        item.setHazardId( "0" )
+        return null
+    }
+
+    const showHazard = ( item: IAttributes ) => {
+        item.setIsHazardRequired( true )
+        return (
+            <Box flex={1}>
+                <Dropdown
+                    title="Hazards"
+                    items={AuditStore.hazardList}
+                    value={item.HazardsID}
+                    onValueChange={( value )=>{
+                        if( !isEmpty( value ) ){
+                            item.setHazardId( value )
+                            navigateToAssignOrCompleteTask( item )
+                        }
+                    }}
+                />
+            </Box>
+        )
+    }   
+
     const renderItem = ( { item }: {item:IAttributes } ) => {
         return (
             <Observer>
@@ -228,23 +253,9 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                 && ( item.checkForTruthyValues ? Number( item.GivenAnswerID ) !== Number( item.CorrectAnswerID )
                                     : Number( item.GivenAnswerID ) < Number( item.CorrectAnswerID ) )
                                             ? 
-                                            (
-                                                <Box flex={1}>
-                                                    <Dropdown
-                                                        title="Hazards"
-                                                        items={AuditStore.hazardList}
-                                                        value={item.HazardsID}
-                                                        onValueChange={( value )=>{
-                                                            if( !isEmpty( value ) ){
-                                                                item.setHazardId( value )
-                                                                navigateToAssignOrCompleteTask( item )
-                                                            }
-                                                        }}
-                                                    />
-                                                </Box>
-                                            )
-                                            : 
-                                            null
+                                            showHazard( item )
+                                            : clearHazards( item )
+                                            
                                     )
                             }
                             {
