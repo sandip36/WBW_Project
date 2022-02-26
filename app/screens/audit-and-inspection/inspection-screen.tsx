@@ -400,8 +400,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                 Groups: AuditStore.formattedGroupsData
             } 
         } as ISaveAuditPayload
-        // const response = await AuditStore.completeAuditAndInspection( payload )
-        const response = await AuditStore.saveAuditAndInspection( payload )
+        const response = await AuditStore.completeAuditAndInspection( payload )
+        // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
                 navigation.pop( 2 )
