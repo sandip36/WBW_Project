@@ -1,18 +1,20 @@
 import { FormHeader } from "components/core/header/form-header"
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, StyleProp, ViewStyle } from "react-native"
+import { ActivityIndicator, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
 import { useNavigation } from "@react-navigation/native"
-import { IAllCommanFilterPayload } from "services/api"
+import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
 import { ILocationsModel, useStores } from "models"
-import { Avatar, ListItem } from "react-native-elements"
-import { observer } from "mobx-react-lite"
+import { Avatar, Icon, ListItem } from "react-native-elements"
+import { Observer, observer } from "mobx-react-lite"
 import { useFormik } from "formik"
 import { object, string } from "yup"
 import { isEmpty } from "lodash"
 import { Dropdown } from "components/core/dropdown/custom-dropdown-component"
+import Toast from 'react-native-simple-toast';
+
 
 
 
@@ -47,15 +49,46 @@ const useStyles = makeStyles<AddObservationStyleProps>( ( theme ) => ( {
 } ) )
 
 const RADIO_LIST = [
-    { label: 'No', value: "No" },
-    { label: 'Yes', value: "Yes" }
+    { label: 'No', value: "0" },
+    { label: 'Yes', value: "1" }
 ]
+
+export type RightSwitchProps = {
+    isEnabled?: boolean,
+    toggleSwitch?: ( value ) => any
+}
+
+export const RightSwitch: React.FunctionComponent<RightSwitchProps> = ( props ) => {
+    const {
+        isEnabled,
+        toggleSwitch
+    } = props
+    return (
+        <Box alignItems={"center"} flexDirection="row">
+            <Icon name= 'incognito' type='material-community' color='white'/>
+            <Box mx="medium">
+                <Switch
+                    trackColor={{ false: "gray", true: "white" }}
+                    thumbColor={isEnabled ? "#68c151" : "white"}
+                    ios_backgroundColor='lightgray'
+                    onValueChange={toggleSwitch}
+                    value={isEnabled}
+                />
+            </Box>
+        </Box>
+    )
+}
+
 export const AddObservationScreen: React.FunctionComponent<AddObservationScreenProps> = observer( ( ) => {
     const navigation = useNavigation()   
     const { DashboardStore,ObservationStore ,AuthStore, TaskStore } = useStores()
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
+    const [ topicList, setTopicList ] = useState( [] )
+    const [ showTopic, setShowTopic ] = useState( false )
+    const [ topicValue, setTopicValue ] = useState( "" )
     const STYLES = useStyles()
     const todayDate = new Date()
+    const timePickerIcon = { name: 'time-outline', type: 'ionicon', size: 28 ,color:'#1e5873' }
 
     const {
         touched,
@@ -122,10 +155,123 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
     const onRadioPress = async ( value ) => {
-        if( value === "No" ) {
+        console.log( 'value is ',value )
+        if( value === "0" ) {
             await TaskStore.resetDatePicker()
         }
-        await TaskStore.setRadioValue( value )
+        await ObservationStore.setRadioValue( value )
+    }
+
+    const onSectionValueChange = async ( value: any ) => {
+        if ( isEmpty( value ) || value === null ) {
+            await ObservationStore.setDropdown( "section", "" )
+            setShowTopic( false )
+            setTopicList( [] )
+            setTopicValue( "" )
+            return null
+        }
+        await ObservationStore.setDropdown( 'section',value )
+        setTopicList( [] )
+        const topicsBasedOnSections = ObservationStore.startobservation.Sections.find( item => item.ID === value )
+        const topics = topicsBasedOnSections.Topics.map( item => {
+            const topic = { label: item.Value, value: item.ID }
+            return topic
+        } )
+        console.log( 'topics',JSON.stringify( topics ) )
+        setTopicList( topics )
+        setTopicValue( "" )
+        setShowTopic( true )
+    }
+
+    const onSubmit = async ( ) => {
+        console.log( 'Observation store',ObservationStore.currentActOrConditions )
+        const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
+            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
+        console.log( values.whereObservationHappened, TaskStore.datePicker?.value,
+            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation )
+        const notValid = validArray.includes( "" )
+        if( notValid ) {
+            Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+            return null
+        }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.ID ) ) {
+            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            return null
+        }else{
+            const payload = {
+                UserID: AuthStore.user.UserID,
+                AccessToken: AuthStore.token,
+                LevelID: ObservationStore.selectedUser?.ID,
+                ObservationSettingID: dashboard.ObservationSettingID,
+                SectionID: ObservationStore.section,
+                TopicID: topicValue,
+                ActOrConditionID: ObservationStore.actOrConditions,
+                ActOrCondition: ObservationStore.currentActOrConditions?.Value,
+                HazardID: ObservationStore.hazards,
+                Observation: values.observation,
+                IsFollowUpNeeded: ObservationStore.radioValue,
+                ObservationDate: TaskStore.datePicker?.value,
+                ObservationTime: TaskStore.timePicker?.value,	
+                DescribeWhereTheIncidentHappened: values.whereObservationHappened
+            } as ISubmitObservation
+            console.log( 'payload for submit ',JSON.stringify( payload ) )
+            await ObservationStore.saveObservation( payload )
+        }
+    }
+
+    const onSave = async ( ) => {
+        if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
+            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            return null
+        }
+        const payload = {
+            UserID: AuthStore.user.UserID,
+            AccessToken: AuthStore.token,
+            LevelID: ObservationStore.selectedUser?.ID,
+            ObservationSettingID: dashboard.ObservationSettingID,
+            SectionID: ObservationStore.section,
+            TopicID: topicValue,
+            ActOrConditionID: ObservationStore.actOrConditions,
+            ActOrCondition: ObservationStore.currentActOrConditions?.Value,
+            HazardID: ObservationStore.hazards,
+            Observation: values.observation,
+            IsFollowUpNeeded: ObservationStore.radioValue,
+            ObservationDate: TaskStore.datePicker?.value,
+            ObservationTime: TaskStore.timePicker?.value,	
+            DescribeWhereTheIncidentHappened: values.whereObservationHappened
+        } as ISubmitObservation
+        console.log( 'payload for save ',JSON.stringify( payload ) )
+        await ObservationStore.saveAndComeBackObservation( payload )
+    }
+
+    const saveAsAnonymous = async ( ) => {
+        const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
+            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
+        const notValid = validArray.includes( "" )
+        if( notValid ) {
+            Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+            return null
+        }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.Value ) ) {
+            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            return null
+        }
+        const payload = {
+            UserID: AuthStore.user.UserID,
+            AccessToken: AuthStore.token,
+            LevelID: ObservationStore.selectedUser?.ID,
+            ObservationSettingID: dashboard.ObservationSettingID,
+            SectionID: ObservationStore.section,
+            TopicID: topicValue,
+            ActOrConditionID: ObservationStore.actOrConditions,
+            ActOrCondition: ObservationStore.currentActOrConditions?.Value,
+            HazardID: ObservationStore.hazards,
+            Observation: values.observation,
+            IsFollowUpNeeded: ObservationStore.radioValue,
+            ObservationDate: TaskStore.datePicker?.value,
+            ObservationTime: TaskStore.timePicker?.value,	
+            DescribeWhereTheIncidentHappened: values.whereObservationHappened
+        } as ISubmitObservation
+        console.log( 'payload for anonymous ',JSON.stringify( payload ) )
+        await ObservationStore.saveObservationAnonymously( payload )
     }
 
     return (
@@ -149,6 +295,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                     <FormHeader 
                         title="Observation"
                         navigation={navigation}
+                        rightComponent={<RightSwitch  isEnabled={ObservationStore.isSwitchOn} toggleSwitch={ObservationStore.toggleSwitch}/>}
                     />                        
                     <ScrollBox flex={1} mt="regular">
                         {
@@ -162,14 +309,16 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                     searchKey={"Value"}
                                     key={"ID"}
                                 /> 
-                                : <Input 
-                                    label="Where did the Observation occur *"
-                                    placeholder="Click Here"
-                                    value={ObservationStore.selectedUser?.Value ?? ""}
-                                    onTouchStart={ObservationStore.displaySearchableModal}
-                                />
+                                : <Box mx="medium">
+                                    <Input 
+                                        label="Where did the Observation occur *"
+                                        placeholder="Click Here"
+                                        value={ObservationStore.selectedUser?.Value ?? ""}
+                                        onTouchStart={ObservationStore.displaySearchableModal}
+                                    />
+                                </Box>
                         }
-                        <Box>
+                        <Box mx="medium">
                             <TextAreaInput 
                                 label="Describe where the Observation happened *"
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
@@ -179,7 +328,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 error={touched.whereObservationHappened && errors.whereObservationHappened}
                             /> 
                         </Box>
-                        <Box>
+                        <Box mx="medium">
                             <CustomDateTimePicker
                                 label="What was the Date of the Observation *"
                                 onPress={TaskStore.showDatePicker}
@@ -192,7 +341,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 onCancel={TaskStore.hideDatePicker}
                             />
                         </Box>
-                        <Box>
+                        <Box mx="medium">
                             <CustomDateTimePicker
                                 label="What was the Time of the Observation *"
                                 onPress={TaskStore.showTimePicker}
@@ -200,13 +349,14 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 inputValue={TaskStore.timePicker?.value ?? ""}
                                 value={TaskStore.timePicker?.datePickerValue}
                                 mode="time"
+                                customRightIcon={timePickerIcon}
                                 minuteInterval={10}
                                 display={'spinner'}
                                 onConfirm={TaskStore.formatTime}
                                 onCancel={TaskStore.hideTimePicker}
                             />
                         </Box>
-                        <Box mt="negative8">
+                        <Box mx="medium" mt="negative8">
                             <Radio 
                                 radioList={RADIO_LIST}
                                 label="Followup Needed"
@@ -218,26 +368,19 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 title="Section"
                                 items={ObservationStore.sectionList}
                                 value={ObservationStore.section}
-                                onValueChange={ async ( value )=>{
-                                    if( value === null || value === undefined ) {
-                                        ObservationStore.hideShowTopic()
-                                        ObservationStore.setDropdown( 'section',"" )
-                                    }else{
-                                        ObservationStore.hideShowTopic()
-                                        ObservationStore.setDropdown( 'section',value )
-                                        ObservationStore.displayShowTopic()
-                                    }
+                                onValueChange={ async ( value )=> {
+                                    onSectionValueChange( value )
                                 }}
                             />
                         </Box>
                         {
-                            ObservationStore.showTopic
+                            showTopic
                                 ?  <Box>
                                     <Dropdown
                                         title="Topic"
-                                        items={ObservationStore.topicList}
-                                        value={ObservationStore.topic}
-                                        onValueChange={( value )=>ObservationStore.setDropdown( 'topic',value )}
+                                        items={topicList}
+                                        value={topicValue}
+                                        onValueChange={( value )=>setTopicValue( value )}
                                     />
                                 </Box>
                                 : null
@@ -247,18 +390,24 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 title="Act or Condition *"
                                 items={ObservationStore.actOrConditionsList}
                                 value={ObservationStore.actOrConditions}
-                                onValueChange={( value )=>ObservationStore.setDropdown( 'actOrConditions',value )}
+                                onValueChange={( value )=>ObservationStore.setDropdown( 'actOrConditions', value )}
                             />
                         </Box>
-                        <Box>
-                            <Dropdown
-                                title={ObservationStore.HazardLabel}
-                                items={ObservationStore.hazardList}
-                                value={ObservationStore.hazards}
-                                onValueChange={( value )=>ObservationStore.setDropdown( 'hazards', value )}
-                            />
-                        </Box>
-                        <Box>
+                        <Observer>
+                            {
+                                ( ) => (
+                                    <Box>
+                                        <Dropdown
+                                            title={ObservationStore.HazardLabel}
+                                            items={ObservationStore.hazardList}
+                                            value={ObservationStore.hazards}
+                                            onValueChange={( value )=>ObservationStore.setDropdown( 'hazards', value )}
+                                        />
+                                    </Box>
+                                )
+                            }  
+                        </Observer>
+                        <Box mx="medium" mt="regular">
                             <TextAreaInput 
                                 label="Observation *"
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
@@ -269,19 +418,38 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                             /> 
                         </Box>
                     </ScrollBox>
-                    <Box justifyContent={"space-evenly"} flexDirection={"row"} alignItems={"center"} m={"negative8"} >
-                        <Box width={"50%"}>
-                            <Button 
-                                title="Submit"
-                            // onPress={onSubmit}
-                            />
+                    <Box>
+                        <Box position="absolute" bottom={20} right={10}>
+                            <Avatar size="medium"  rounded icon={{ name: 'camera', type: 'feather' }} containerStyle={STYLES.iconContainerStyle}/>
+                            <Box mt="regular">
+                                <Avatar size="medium"  rounded icon={{ name: 'file-pdf-o', type: 'font-awesome' }} containerStyle={STYLES.iconContainerStyle}/>
+                            </Box>
                         </Box>
-                        <Box width={"50%"}>
-                            <Button
-                                title="Save"
-                            // onPress={onSubmit}
-                            />
-                        </Box>                  
+                    </Box>
+                    <Box>
+                        {
+                            ObservationStore.isSwitchOn
+                                ? <Button 
+                                    title="Save As Anonymous"
+                                    onPress={saveAsAnonymous}
+                                />
+                                : 
+                                <Box justifyContent={"space-evenly"} flexDirection={"row"} alignItems={"center"} m={"negative8"} >
+                                    <Box width={"50%"}>
+                                        <Button 
+                                            title="Submit"
+                                            onPress={onSubmit}
+                                        />
+                                    </Box>
+                                    <Box width={"50%"}>
+                                        <Button
+                                            title="Save"
+                                            onPress={onSave}
+                                        />
+                                    </Box>       
+                                </Box>
+                           
+                        }           
                     </Box>
                 </Async.Resolved>
             </Async>

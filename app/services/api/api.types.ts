@@ -179,5 +179,22 @@ export interface IAllCommanFilterPayload{
     CompanyID:string,
     ObservationSettingID:string
 }
+// Added payload for commanallfilters
+export interface ISubmitObservation {
+    UserID: string,
+    AccessToken: string,
+    LevelID: string,
+    ObservationSettingID: string,
+    SectionID: string,
+    TopicID: string,
+    ActOrConditionID: string,
+    ActOrCondition: string,
+    HazardID: string,
+    Observation: string,
+    IsFollowUpNeeded: string,
+    ObservationDate: string,
+    ObservationTime: string,	
+    DescribeWhereTheIncidentHappened: string
+}
 
 

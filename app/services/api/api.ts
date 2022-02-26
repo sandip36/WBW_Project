@@ -4,7 +4,7 @@ import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
 import { GeneralResponse, IAllCommanFilterPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
-import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload, IUpdateHazard } from "."
+import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitObservation, ISubmitStartInspectionPayload, IUpdateHazard } from "."
 import { IImages } from "models/models/audit-model/groups-and-attributes.model"
 import { AsyncStorage } from "utils/storage/async-storage"
 import { conformsTo } from "lodash"
@@ -126,6 +126,45 @@ export class Api {
 
   async fetchObservations ( payload: IObservationFetchPayload ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Observation/GetObservationHistory_WithPaging", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async saveObservation ( payload: ISubmitObservation ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Observation/SaveObservation", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async saveAndComeBackObservation ( payload: ISubmitObservation ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Observation/SaveAndComeBackObservation", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+  
+  async saveObservationAnonymously ( payload: ISubmitObservation ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Observation/SaveAnonymousObservation", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
