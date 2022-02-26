@@ -25,18 +25,20 @@ const uploadAllImages = async ( props ) => {
     const requestOptions = {
         method: 'POST',
         body: formdata,
+        redirect: 'follow',
         headers: {
-            'Content-Type': 'multipart/form-data'
+            Accept: "application/json",
         },
-        redirect: 'follow'
     };
     const result = await fetch( url, requestOptions )
         .then( ( response ) => {
             return response.text()
         } )
         .then( ( res ) => {
-            Toast.showWithGravity( 'File Saved Successfully', Toast.LONG, Toast.CENTER );
-            return res;
+            const stringifiedJson = JSON.stringify( res )
+            const parsedJson = JSON.parse( stringifiedJson )
+            Toast.showWithGravity( result?.Message || 'File Saved Successfully', Toast.LONG, Toast.CENTER );
+            return parsedJson;
         } )
         .catch( error => {
             console.log( 'error while uploading multiple images',JSON.stringify( error ) )

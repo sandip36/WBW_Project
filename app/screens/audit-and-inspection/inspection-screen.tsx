@@ -281,14 +281,11 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     const checkForSkippedReason = ( ) => {
         let result = false
         if( remainingDropdownArray.length === 0 ) {
-            console.log( 'Inside IF' )
             result = true
         }
         else if( AuditStore.inspection.AuditAndInspectionDetails?.SkippedReason !== '' ) {
-            console.log( 'Inside els if ' )    
             result = true
         }else{
-            console.log( 'Inside else' )
             result = false
         }
         return result

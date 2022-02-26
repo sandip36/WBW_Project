@@ -394,15 +394,11 @@ export class Api {
 
   async uploadMultipleImages ( images: any, url: string ) {
       const finalUrl = `${this.apisauce.getBaseURL()}/${url}`
-      const response: ApiResponse<ILoginResponse> = await uploadAllImages( {
+      const response: any = await uploadAllImages( {
           images: images,
           url: finalUrl
       } )
-
-      return {
-          kind: 'ok',
-          data: response.data
-      } as GeneralResponse
+      return JSON.parse( response ) 
   }
 
   

@@ -270,6 +270,11 @@ export const AttributesModel = types
             self.isHazardRequired = value
         } )
 
+        const saveImagesForAuditAndInspection = flow( function * ( response: any ) {
+            console.tron.log( 'parsed image', response )
+            self.AttributeImages = response.AttributeImages
+        } )
+
         return {
             setGivenAnswerId,
             setSourceId,
@@ -280,7 +285,8 @@ export const AttributesModel = types
             removeImages,
             removeImageByIndex,
             resetHazardIDClone,
-            setIsHazardRequired
+            setIsHazardRequired,
+            saveImagesForAuditAndInspection
         }
     } )
 

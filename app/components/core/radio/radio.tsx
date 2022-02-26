@@ -53,6 +53,8 @@ export const Radio: React.FunctionComponent<RadioProps> = ( props ) => {
         { label: 'Complete Task', value: "Complete Task" },
         { label: 'Assign Task', value: "Assign Task" }
     ]
+
+    const finalRadioList = radioList || RADIO_LIST
     
     return (
         <Box flex={1} mx="medium">
@@ -69,7 +71,7 @@ export const Radio: React.FunctionComponent<RadioProps> = ( props ) => {
                 </Text>
             </Box>
             <RadioForm 
-                radio_props={radioList || RADIO_LIST }
+                radio_props={finalRadioList}
                 initial={initial}
                 formHorizontal={formHorizontal}
                 labelHorizontal={labelHorizontal}
@@ -87,10 +89,6 @@ export const Radio: React.FunctionComponent<RadioProps> = ( props ) => {
 
 Radio.defaultProps = {
     label: 'Please Select',
-    radioList: [
-        'Complete Task',
-        'Assign Task'
-    ],
     initial: 0,
     formHorizontal: true,
     labelHorizontal: true

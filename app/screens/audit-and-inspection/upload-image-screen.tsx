@@ -97,7 +97,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     const onSave = async ( ) => {
         if( attributeData.auditImage.length > 0 ) {
             const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
-            await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
+            const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
+            await attributeData.saveImagesForAuditAndInspection( response )
             navigation.pop( 2 )
         }else{
             console.log( 'no data found' )

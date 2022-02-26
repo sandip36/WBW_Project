@@ -155,7 +155,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
     const onRadioPress = async ( value ) => {
-        console.log( 'value is ',value )
         if( value === "0" ) {
             await TaskStore.resetDatePicker()
         }
@@ -177,18 +176,14 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             const topic = { label: item.Value, value: item.ID }
             return topic
         } )
-        console.log( 'topics',JSON.stringify( topics ) )
         setTopicList( topics )
         setTopicValue( "" )
         setShowTopic( true )
     }
 
     const onSubmit = async ( ) => {
-        console.log( 'Observation store',ObservationStore.currentActOrConditions )
         const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
             TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
-        console.log( values.whereObservationHappened, TaskStore.datePicker?.value,
-            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation )
         const notValid = validArray.includes( "" )
         if( notValid ) {
             Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
@@ -213,7 +208,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 ObservationTime: TaskStore.timePicker?.value,	
                 DescribeWhereTheIncidentHappened: values.whereObservationHappened
             } as ISubmitObservation
-            console.log( 'payload for submit ',JSON.stringify( payload ) )
             await ObservationStore.saveObservation( payload )
         }
     }
@@ -239,7 +233,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             ObservationTime: TaskStore.timePicker?.value,	
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
-        console.log( 'payload for save ',JSON.stringify( payload ) )
         await ObservationStore.saveAndComeBackObservation( payload )
     }
 
@@ -270,7 +263,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             ObservationTime: TaskStore.timePicker?.value,	
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
-        console.log( 'payload for anonymous ',JSON.stringify( payload ) )
         await ObservationStore.saveObservationAnonymously( payload )
     }
 
