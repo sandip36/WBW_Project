@@ -30,8 +30,7 @@ const uploadAllImages = async ( props ) => {
         },
         redirect: 'follow'
     };
-    const apiUrl = `${API_URL}/${url}`
-    const result = await fetch( apiUrl, requestOptions )
+    const result = await fetch( url, requestOptions )
         .then( ( response ) => {
             return response.text()
         } )

@@ -152,9 +152,10 @@ export const TaskStore = types.model( "TaskModel" )
                     self.completedTaskComments = result.data?.Comments
                     const userId = rootStore.AuthStore.user?.UserID
                     const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/AuditAndInspection/UploadCompleteImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
                     const response = imageUpload( {
                         image: image,
-                        url: `AuditAndInspection/UploadCompleteImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
+                        url: url
                     } )
                     return result.data
                 }else{
@@ -179,9 +180,10 @@ export const TaskStore = types.model( "TaskModel" )
                     self.completedTaskComments = result.data?.Comments
                     const userId = rootStore.AuthStore.user?.UserID
                     const auditAndInspectionId = rootStore.AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/AuditAndInspection/UploadAssignedImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
                     const response = imageUpload( {
                         image: image,
-                        url: `AuditAndInspection/UploadAssignedImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}&AuditAndInspectionTaskID=${result.data.AuditAndInspectionTaskID}`
+                        url: url
                     } )
                     return result.data
                 }

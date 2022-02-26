@@ -8,6 +8,7 @@ import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDel
 import { IImages } from "models/models/audit-model/groups-and-attributes.model"
 import { AsyncStorage } from "utils/storage/async-storage"
 import { conformsTo } from "lodash"
+import { uploadAllImages } from "utils/fetch_api"
 
 /**
  * Manages all requests to the API.
@@ -384,6 +385,19 @@ export class Api {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
       }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async uploadMultipleImages ( images: any, url: string ) {
+      const finalUrl = `${this.apisauce.getBaseURL()}/${url}`
+      const response: ApiResponse<ILoginResponse> = await uploadAllImages( {
+          images: images,
+          url: finalUrl
+      } )
 
       return {
           kind: 'ok',
