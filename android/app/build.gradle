@@ -1,6 +1,8 @@
 apply plugin: "com.android.application"
 // Unimodules: https://docs.expo.io/bare/installing-unimodules/#configuration-for-android
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
+apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 import com.android.build.OutputFile
 
@@ -82,8 +84,6 @@ import com.android.build.OutputFile
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
-
-apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -168,6 +168,8 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            resValue "string", "CodePushDeploymentKey", "o270jfAxkIP-74BxuF-YsvwHpYmP5nfX7AhnO"
+
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -175,6 +177,8 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+                        resValue "string", "CodePushDeploymentKey", "6t-d7mNTGzBAhuCHoGZvWvEaLuCL7UJ_N7wXW"
+
         }
     }
 

@@ -25,6 +25,8 @@ import {
 } from "./navigators"
 import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 import { theme } from "theme"
+import codePush from "react-native-code-push"
+
 
 // This puts screens in a native ViewController or Activity. If you want fully native
 // stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
@@ -52,8 +54,17 @@ function App () {
 
     setRootNavigation( navigationRef )
     useBackButtonHandler( navigationRef, canExit )
+
+
+
+
+    
     const bootstrapApplication = useCallback( async ( ) => {
+
         try {
+            
+            await codePush.sync()
+
             const rootStore = await setupRootStore()
             setRootStore( rootStore )
         } catch ( error ) {
