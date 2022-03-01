@@ -22,6 +22,22 @@ export interface IImages extends ImagesType {}
 type ImagesSnapshotType = SnapshotOut<typeof ImagesModel>
 export interface IImagesSnapshotType extends ImagesSnapshotType {}
 
+
+
+export const AtttributeImagesModel = types.model( {
+    FilePath: types.optional( types.string, "" ),
+    CustomForm_Attribute_Instance_ImageID: types.optional( types.string, "" ),
+    ThumbnailFilePath: types.optional( types.string, "" ),
+    Order: types.optional( types.string, "" ),
+} )
+export type AtttributeImagesType = Instance<typeof AtttributeImagesModel>
+export interface IAtttributeImages extends AtttributeImagesType {}
+type AtttributeImagesSnapshotType = SnapshotOut<typeof AtttributeImagesModel>
+export interface IAtttributeImagesSnapshotType extends AtttributeImagesSnapshotType {}
+
+
+
+
 export const AttributesModel = types
     .model( {
         CustomFormResultID: types.maybeNull( types.string ),
@@ -44,7 +60,10 @@ export const AttributesModel = types
         auditImage: types.optional( types.array( ImagesModel ), [] ),
         GivenAnswerIDClone: types.maybeNull( types.string ), 
         HazardsIDClone: types.maybeNull( types.string ) ,
-        isHazardRequired: types.optional( types.boolean, false )
+        isHazardRequired: types.optional( types.boolean, false ),
+        AttributeImages: types.optional( types.array( AtttributeImagesModel ), [] )
+
+
     } )
     .views( self => ( {
         get currentCommentValue ( ) {
@@ -251,6 +270,11 @@ export const AttributesModel = types
             self.isHazardRequired = value
         } )
 
+        const saveImagesForAuditAndInspection = flow( function * ( response: any ) {
+            console.tron.log( 'parsed image', response )
+            self.AttributeImages = response.AttributeImages
+        } )
+
         return {
             setGivenAnswerId,
             setSourceId,
@@ -261,7 +285,8 @@ export const AttributesModel = types
             removeImages,
             removeImageByIndex,
             resetHazardIDClone,
-            setIsHazardRequired
+            setIsHazardRequired,
+            saveImagesForAuditAndInspection
         }
     } )
 

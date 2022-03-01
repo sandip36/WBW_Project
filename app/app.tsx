@@ -52,11 +52,6 @@ function App () {
 
     setRootNavigation( navigationRef )
     useBackButtonHandler( navigationRef, canExit )
-    const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
-        storage,
-        NAVIGATION_PERSISTENCE_KEY,
-    )
-
     const bootstrapApplication = useCallback( async ( ) => {
         try {
             const rootStore = await setupRootStore()
@@ -90,8 +85,6 @@ function App () {
                             <SafeAreaView style={styles.rootContainer}>
                                 <RootNavigator
                                     ref={navigationRef}
-                                    initialState={initialNavigationState}
-                                    onStateChange={onNavigationStateChange}
                                 />
                             </SafeAreaView>
                         </SafeAreaProvider>

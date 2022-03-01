@@ -25,6 +25,7 @@ const screenOptions = {
 const RootStack = observer( () => {
     const { AuthStore, DashboardStore } = useStores()
     const bootstrap = useCallback( async () => {
+        await AuthStore.setBaseUrl( AuthStore.baseUrl )
         const response = await DashboardStore.fetch()
         return response
     }, [ AuthStore.user, AuthStore.token ] )

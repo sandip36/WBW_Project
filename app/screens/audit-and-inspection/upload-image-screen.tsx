@@ -7,8 +7,6 @@ import { makeStyles } from "theme"
 import { Avatar } from "react-native-elements"
 import { Alert, BackHandler, FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import Toast from "react-native-simple-toast"
-import { imageUpload, uploadAllImages } from "utils/fetch_api"
 
 
 export type UploadImageScreenProps = {
@@ -98,20 +96,15 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
 
     const onSave = async ( ) => {
         if( attributeData.auditImage.length > 0 ) {
-            const finalUrl = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
-            const response = await uploadAllImages( {
-                images: attributeData.auditImage,
-                url: finalUrl
-            } )
+            const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
+            const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
+            await attributeData.saveImagesForAuditAndInspection( response )
             navigation.pop( 2 )
         }else{
             console.log( 'no data found' )
         }
     }
-    const onCancel = ( ) => {
-        navigation.pop( 2 )
-    }
-
+    
     const addImages = ( ) => {
         navigation.goBack()
     }

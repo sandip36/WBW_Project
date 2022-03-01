@@ -42,7 +42,9 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
 export type RenderImageProps = {
     image: IImages,
     style?: StyleProp<ImageStyle>,
-    deleteImage?: ( ) => void
+    deleteImage?: ( ) => void,
+    customUri?: string,
+    showDeleteIcon?: boolean
 }
 
 export type RenderHazardProps = {
@@ -51,24 +53,29 @@ export type RenderHazardProps = {
     onValueChange: ( value: any, index: number ) => any,
 }
 
-export const RenderImage: React.FunctionComponent<RenderImageProps> = ( props ) => {
-    const { image, style, deleteImage } = props
+export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( ( props ) => {
+    const { image, style, deleteImage, customUri, showDeleteIcon = true } = props
     return (
         <Box flex={1} bg="transparent" flexDirection="row">
             <Box>
                 <Image
-                    source={{ uri: image.uri }}
+                    source={{ uri: image?.uri || customUri }}
+                    // source={{ uri: `http://198.71.63.116/Demo/WorkflowUpload\\AuditAndInspectionFiles\\2455_0c97ad7b-1cea-47ea-850e-25561afbdaa3.jpg` }}
                     style={style}
                 />
             </Box>
-            <Box position={"absolute"} right={3} top={3}>
-                <Avatar size="small" onPress={deleteImage} rounded icon={{ name: 'delete' }} 
-                    containerStyle={{ backgroundColor: theme.colors.primary }}
-                />
-            </Box>
+            {
+                showDeleteIcon
+                    ? <Box position={"absolute"} right={3} top={3}>
+                        <Avatar size="small" onPress={deleteImage} rounded icon={{ name: 'delete' }} 
+                            containerStyle={{ backgroundColor: theme.colors.primary }}
+                        />
+                    </Box>
+                    : null
+            }
         </Box>
     )
-}
+} )
 
 export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props ) => {
     const { data, items, onValueChange } = props
@@ -155,7 +162,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         includeBase64: false
     } as ImageLibraryOptions
     const STYLES = useStyles()
-    const { AuditStore, TaskStore } = useStores()
+    const { AuditStore, TaskStore, AuthStore } = useStores()
     const [ refreshing, setRefreshing ] = useState( false )
 
     
@@ -165,14 +172,28 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         } )
     }
 
+    const deleteTaskImage = async ( ) => {
+        await TaskStore.removeTaskImage( )
+    }
+
     const renderImageItem = ( { item } ) => {
+        let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
+        formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
         return (
-            <Box flex={1} flexDirection="row" marginHorizontal="medium">
-                <RenderImage 
-                    image={item}
-                    style={STYLES.imageStyle as StyleProp<ImageStyle>}
-                />
-            </Box>
+            <Observer>
+                {
+                    ( ) => (
+                        <Box flex={1} flexDirection="row" marginHorizontal="medium">
+                            <RenderImage 
+                                image={item}
+                                customUri={`${formattedUrl}`}
+                                style={STYLES.imageStyle as StyleProp<ImageStyle>}
+                                showDeleteIcon={false}
+                            />
+                        </Box>
+                    )
+                }
+            </Observer>
         )
     }
 
@@ -218,6 +239,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     }   
 
     const renderItem = ( { item }: {item:IAttributes } ) => {
+        console.log( 'Inside' )
         return (
             <Observer>
                 {
@@ -281,15 +303,23 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                     // onChangeText={handleChange( "username" )}
                                 /> 
                             </TouchableBox>
-                            <Box flex={1} flexDirection="row" marginHorizontal="regular">
-                                <FlatList 
-                                    data={item.auditImage}
-                                    extraData={item.auditImage}
-                                    keyExtractor={( item,index ) => String( index ) }
-                                    renderItem={renderImageItem}
-                                    horizontal={true}
-                                />
-                            </Box>
+                            {
+                                <Observer>
+                                    {
+                                        ( ) => (
+                                            <Box flex={1} flexDirection="row" marginHorizontal="regular">
+                                                <FlatList 
+                                                    data={item.AttributeImages}
+                                                    extraData={item.AttributeImages}
+                                                    keyExtractor={( item,index ) => String( index ) }
+                                                    renderItem={renderImageItem}
+                                                    horizontal={true}
+                                                />
+                                            </Box>
+                                        )
+                                    }
+                                </Observer>
+                            }
                         </Box>
                     )
                 }

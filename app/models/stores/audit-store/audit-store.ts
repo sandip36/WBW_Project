@@ -78,9 +78,7 @@ export const AuditStore = types
             if( self.inspection.AuditAndInspectionDetails?.IsSchedulerRequired === "True" && self.inspection.AuditAndInspectionDetails?.ReportingPeriodDueDates === null ) {
                 return true
             }else{
-                console.log( 'warning message',self.shouldDisplayWarningMessage )
                 const isValidSchedulePeriod = self.shouldDisplayWarningMessage ?  isEmpty( value )  : !isEmpty( value )
-                console.log( 'isVlaid',isValidSchedulePeriod )
                 if( isValidSchedulePeriod ) {
                     return true
                 }else{
@@ -110,10 +108,7 @@ export const AuditStore = types
         },
         get initialReportingPeriodDueDateID () {
             const selectedValue = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDateSelected
-            console.log( 'seleced value',selectedValue )
-            console.log( 'seleced value',selectedValue )
             const selectedDueDate = self.inspection.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.Value === selectedValue )
-            console.log( 'seleced due date',selectedDueDate )
             return selectedDueDate?.ID ?? ""
         },
         get primaryList () {
@@ -178,15 +173,12 @@ export const AuditStore = types
                 item.Attributes.map( val => {
                     const isHazardRequired = !( val.DoNotShowHazard === "True" || val.AuditAndInspectionScore === "Do Not Show Score" ) && val.isHazardRequired === true 
                     if( isHazardRequired === true && ![ '','0',0,null,undefined ].includes( val.HazardsID ) ) {
-                        console.log( 'Inside IF' )
                         groupsArrayToCheck.push( true )
                         return true
                     }else if( isHazardRequired === true && [ '','0',0,null,undefined ].includes( val.HazardsID ) ) {
-                        console.log( 'Inside ELSE IF' )
                         groupsArrayToCheck.push( false )
                         return false
                     }else if( isHazardRequired === false ) {
-                        console.log( 'Inside final else if ' )
                         groupsArrayToCheck.push( true )
                         return true
                     }
@@ -194,7 +186,6 @@ export const AuditStore = types
                 } )
                 return item
             } )
-            console.log( 'groups array to check',groupsArrayToCheck )
             const result = groupsArrayToCheck.every( item => item === true )
             return result
         },

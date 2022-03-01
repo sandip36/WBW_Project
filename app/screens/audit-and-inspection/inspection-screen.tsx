@@ -281,14 +281,11 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     const checkForSkippedReason = ( ) => {
         let result = false
         if( remainingDropdownArray.length === 0 ) {
-            console.log( 'Inside IF' )
             result = true
         }
         else if( AuditStore.inspection.AuditAndInspectionDetails?.SkippedReason !== '' ) {
-            console.log( 'Inside els if ' )    
             result = true
         }else{
-            console.log( 'Inside else' )
             result = false
         }
         return result
@@ -400,8 +397,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                 Groups: AuditStore.formattedGroupsData
             } 
         } as ISaveAuditPayload
-        // const response = await AuditStore.completeAuditAndInspection( payload )
-        const response = await AuditStore.saveAuditAndInspection( payload )
+        const response = await AuditStore.completeAuditAndInspection( payload )
+        // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
                 navigation.pop( 2 )

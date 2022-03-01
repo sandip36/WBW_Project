@@ -51,6 +51,9 @@ export const DashboardStore = createModelCollection( DashboardModel )
 
         return {
             fetch,
+            beforeCreate ( ) {
+                self.environment.api.setBaseUrl( rootStore.AuthStore.baseUrl )
+            },
             setCurrentDashboardId
         }
     } )
