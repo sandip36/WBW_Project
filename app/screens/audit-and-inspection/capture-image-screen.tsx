@@ -30,7 +30,8 @@ const useStyles = makeStyles<CaptureImageScreenStyleProps>( ( theme ) => ( {
 export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) => {
     const route = useRoute()
     const {
-        attributeData
+        attributeData,
+        callback
     } = route.params as any
     const IMAGE_OPTIONS = {
         mediaType: 'photo',
@@ -62,7 +63,8 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
         } as IImages
         await attributeData.setImages( IMAGE_OBJECT )
         navigation.navigate( 'UploadImage', {
-            attributeData: attributeData
+            attributeData: attributeData,
+            callback: ( value ) => callback( value )
         } )
     }
     const selectPicture = async ( ) => {

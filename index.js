@@ -9,13 +9,14 @@
 // It's easier just to leave it here.
 import App from "./app/app.tsx"
 import { AppRegistry } from "react-native"
-import codePush from "react-native-code-push"
-import { name as appName } from './app.json';
 
- 
-const RootComponent = codePush( {
-    installMode: codePush.InstallMode.ON_NEXT_RESUME,
-    mandatoryInstallMode: codePush.InstallMode.IMMEDIATE
-} )( App )
+AppRegistry.registerComponent( "WBW", () => App )
+export default App
 
-AppRegistry.registerComponent( "WBW", () => RootComponent );
+
+// //const RootComponent = codePush( {
+//     installMode: codePush.InstallMode.ON_NEXT_RESUME,
+//     mandatoryInstallMode: codePush.InstallMode.IMMEDIATE
+// } )( App )
+
+// AppRegistry.registerComponent( "WBW", () => RootComponent );

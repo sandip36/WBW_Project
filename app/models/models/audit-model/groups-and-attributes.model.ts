@@ -66,14 +66,14 @@ export const AttributesModel = types
 
     } )
     .views( self => ( {
+        get totalImageCount ( ){
+            return self.AttributeImages.length + self.auditImage.length
+        },
         get currentCommentValue ( ) {
             return self.Comments
         },
         get currentGivenAnswerID ( ) {
             return self.GivenAnswerID
-        },
-        get isAuditImagePresent ( ) {
-            return self.auditImage.length > 0
         },
         get checkForNonApplicableValues ( ) {
             const shouldCheckForNonApplicableValues = self.ScoreList.find( item => {
@@ -257,6 +257,7 @@ export const AttributesModel = types
         const removeImages = flow( function * ( ) {
             self.auditImage = [] as any
         } )
+    
 
         const removeImageByIndex = flow( function * ( index: number  ) {
             self.auditImage.splice( index )

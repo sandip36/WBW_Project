@@ -35,7 +35,8 @@ const useStyles = makeStyles<UploadImageStyleProps>( ( theme ) => ( {
 export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( props ) => {
     const route = useRoute()
     const {
-        attributeData
+        attributeData,
+        callback
     } = route.params as any
     const navigation = useNavigation()
     const STYLES = useStyles()
@@ -99,6 +100,9 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
             const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
             const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
             await attributeData.saveImagesForAuditAndInspection( response )
+            // eslint-disable-next-line node/no-callback-literal
+            await attributeData.removeImages()
+            callback( true )
             navigation.pop( 2 )
         }else{
             console.log( 'no data found' )
@@ -121,8 +125,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                 </Box>
 
                 {
-                    attributeData.auditImage?.length < 4
-                        ? <Box position="absolute" bottom={20} right={10}>
+                    attributeData.totalImageCount < 4
+                        ?<Box position="absolute" bottom={20} right={10}>
                             <Avatar size="medium" onPress={addImages} rounded icon={{ name: 'add' }} containerStyle={STYLES.avatarContainerStyle}/>
                         </Box>
                         : null

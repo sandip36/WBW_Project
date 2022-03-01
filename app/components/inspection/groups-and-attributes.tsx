@@ -5,8 +5,7 @@ import { AuditStore, IAttributes, IAudit, IImages, useStores } from "models"
 import { FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
-import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
-import Toast from "react-native-simple-toast"
+import { ImageLibraryOptions } from "react-native-image-picker"
 import { Observer, observer } from "mobx-react-lite"
 import { Avatar, Image } from "react-native-elements"
 import { isEmpty } from "lodash"
@@ -55,6 +54,7 @@ export type RenderHazardProps = {
 
 export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( ( props ) => {
     const { image, style, deleteImage, customUri, showDeleteIcon = true } = props
+    console.log( 'custom uri ',customUri )
     return (
         <Box flex={1} bg="transparent" flexDirection="row">
             <Box>
@@ -165,10 +165,15 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     const { AuditStore, TaskStore, AuthStore } = useStores()
     const [ refreshing, setRefreshing ] = useState( false )
 
+
+    const onCallback = ( value ) => {
+        setRefreshing( !refreshing )
+    }
     
     const imagePressHandler = async ( item: IAttributes ) => {
         navigation.navigate( 'CaptureImage', {
-            attributeData: item
+            attributeData: item,
+            callback: ( value ) => onCallback( value )
         } )
     }
 
@@ -293,9 +298,10 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                     </Box>
                                 ) 
                             }
-                            <TouchableBox marginHorizontal="regular" onPress={ () => imagePressHandler( item as IAttributes )}>
+                            <TouchableBox marginHorizontal="regular" onPress={ () => item.AttributeImages.length >=4 ? null: imagePressHandler( item as IAttributes )}>
                                 <InputWithIcon 
-                                    rightIcon={{ name: 'camera', type: 'font-awesome' }}
+                                    rightIcon=
+                                        {{ name: 'camera', type: 'font-awesome' }}
                                     labelStyle={{ color: theme.colors.primary , fontSize: theme.textVariants?.heading5?.fontSize }}
                                     editable={false}
                                     label="Upload Image"
