@@ -7,10 +7,12 @@ import { RNCamera } from "react-native-camera"
 import { Platform, StyleProp, ViewStyle } from "react-native"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
-import { IAttributes, IImages } from "models"
+import { IImages, useStores } from "models"
+
 
 
 export type CaptureImageScreenProps = {
+
 
 }
 export type CaptureImageScreenStyleProps = {
@@ -25,14 +27,20 @@ const useStyles = makeStyles<CaptureImageScreenStyleProps>( ( theme ) => ( {
     avatarContainerStyle: {
         backgroundColor: theme.colors.primary
     }
+
 } ) )
 
 export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) => {
     const route = useRoute()
     const {
         attributeData,
-        callback
+        callback,
+        calledFrom
     } = route.params as any
+    const {
+        ObservationStore
+    }= useStores()
+
     const IMAGE_OPTIONS = {
         mediaType: 'photo',
         quality: 0.7,
@@ -61,11 +69,21 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
             fileSize: 0,
             uri: imageDetails.uri
         } as IImages
-        await attributeData.setImages( IMAGE_OBJECT )
-        navigation.navigate( 'UploadImage', {
-            attributeData: attributeData,
-            callback: ( value ) => callback( value )
-        } )
+
+
+        if( calledFrom && calledFrom === "Observation"  ) {
+            await  ObservationStore.removeImages()
+            await ObservationStore.setImages( IMAGE_OBJECT )
+            navigation.goBack()
+            
+        }else{
+            await attributeData.setImages( IMAGE_OBJECT )
+            navigation.navigate( 'UploadImage', {
+                attributeData: attributeData,
+                callback: ( value ) => callback( value )
+            } )
+        }
+       
     }
     const selectPicture = async ( ) => {
         const result = await launchImageLibrary( IMAGE_OPTIONS )

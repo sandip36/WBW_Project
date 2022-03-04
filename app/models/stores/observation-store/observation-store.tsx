@@ -1,9 +1,11 @@
 import { Instance, flow, types } from "mobx-state-tree"
 import { GetAllfiltersModel, ISections, LocationsModel, ObservationModel } from "models/models/observation-model/observation-model"
-import { IObservation } from "models/models"
+import { DocumentModel, IDocument, IImages, ImagesModel, IObservation } from "models/models"
 import { GeneralResponse, IAllCommanFilterPayload, IObservationFetchPayload, ISubmitObservation } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import Toast from "react-native-simple-toast"
+import { isEmpty } from "lodash"
+import { imageUpload } from "utils/fetch_api/uploadSingleImage"
 
 
 export const ObservationStore = createModelCollection( ObservationModel )
@@ -19,7 +21,11 @@ export const ObservationStore = createModelCollection( ObservationModel )
         actOrConditions: types.optional( types.string, "" ),
         hazards: types.optional( types.string, "" ),
         showTopic: types.optional( types.boolean, false ),
-        isSwitchOn: types.optional( types.boolean, false )
+        isSwitchOn: types.optional( types.boolean, false ),
+        UploadImage: types.optional( types.array( ImagesModel ), [] ),
+        UploadDocument: types.optional( types.array( DocumentModel ), [] ),
+
+
     } )
     .views( self => ( {
         getDropdownData ( data: any = [], label?: string, value?: string ) {
@@ -31,12 +37,17 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 return dropdownRecord
             } )
         },
-        get HazardLabel () {
-            return self.actOrConditions && self.actOrConditions.startsWith( "Unsafe" ) ? "Hazard" : "Preventive Hazard"
-        },
+    
         get currentActOrConditions () {
             return self.actOrConditions && self.startobservation.ActOrConditions.find( item => item.ID === self.actOrConditions )
-        }
+        },
+        get isObservationImagePresent ( ) {
+            return self.UploadImage.length > 0
+        },
+        get isObservationDocumentPresent ( ) {
+            return self.UploadDocument.length > 0
+        },
+
     } ) )
     .views( self => ( {
         get sectionList ( ) {
@@ -59,9 +70,34 @@ export const ObservationStore = createModelCollection( ObservationModel )
             const HAZARD_LIST = self.startobservation?.Hazards
             const returnableHazardList = self.getDropdownData( HAZARD_LIST )
             return returnableHazardList
-        }
+        },
+        get HazardLabel () {
+            if( !isEmpty( self.currentActOrConditions ) ){
+                console.log( "self.currentActOrConditions", self.currentActOrConditions?.Value.startsWith( "Unsafe" ) ? "Hazard" : "Preventive Hazard" )
+                return self.currentActOrConditions?.Value.startsWith( "Unsafe" ) ? "Hazard" : "Preventive Hazard"
+            }else{
+                return "Hazard"
+            }
+          
+
+        },
     } ) )
     .actions( self => {
+
+        const setImages = flow( function * ( payload: IImages  ) {
+            self.UploadImage.push( payload )
+        } )
+        const removeImages = flow( function * ( ) {
+            self.UploadImage = [] as any
+        } )
+        const setDocument= flow( function * ( payload: IDocument  ) {
+            self.UploadDocument.push( payload )
+        } )
+        const removeDocument = flow( function * ( ) {
+            self.UploadDocument = [] as any
+        } )
+
+
         const fetch = flow( function * ( payload: IObservationFetchPayload ) {
             try {
                 const result: GeneralResponse<IObservation[]> = yield self.environment.api.fetchObservations( payload )
@@ -82,10 +118,39 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const saveObservation = flow( function * ( payload: ISubmitObservation ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.saveObservation( payload )
-                if ( result?.data ) {
-                    //
+                if( isEmpty( result ) || isEmpty( result.data ) ) {
+                    return null
+                } 
+                if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
+               
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                     
+                    if( isEmpty( response ) ) {
+                        return null
+                    }
+                    else{
+                        // Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
+                } 
+                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        // Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
                 }
-                return result
+
+
+                return "Success"
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while saving observation', Toast.LONG, Toast.CENTER )
                 return null
@@ -95,10 +160,35 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const saveAndComeBackObservation = flow( function * ( payload: ISubmitObservation ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.saveAndComeBackObservation( payload )
-                if ( result?.data ) {
-                    //
+                if( isEmpty( result ) || isEmpty( result.data ) ) {
+                    return null
+                } 
+                if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
+               
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
+                } 
+                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
                 }
-                return result
+                return "Success"
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while saving observation', Toast.LONG, Toast.CENTER )
                 return null
@@ -107,10 +197,35 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const saveObservationAnonymously = flow( function * ( payload: ISubmitObservation ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.saveObservationAnonymously( payload )
-                if ( result?.data ) {
-                    //
+                if( isEmpty( result ) || isEmpty( result.data ) ) {
+                    return null
+                } 
+                if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
+               
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
+                } 
+                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadImage[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
                 }
-                return result
+                return "Success"
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while saving observation', Toast.LONG, Toast.CENTER )
                 return null
@@ -184,6 +299,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
             self.isSwitchOn = !self.isSwitchOn
         } )
 
+        const resetSwitch = flow( function * ( ) {
+            self.isSwitchOn = false
+        } )
         const setTopicList = flow( function * ( sectionId, value: any ) {
             const updatedSectionList = self.startobservation.Sections.map( item => {
                 if( item.ID === sectionId ) {
@@ -214,7 +332,12 @@ export const ObservationStore = createModelCollection( ObservationModel )
             hideShowTopic,
             resetTopic,
             setTopicList,
-            toggleSwitch
+            toggleSwitch,
+            setImages,
+            removeImages,
+            setDocument,
+            removeDocument,
+            resetSwitch
         }
     } )
 

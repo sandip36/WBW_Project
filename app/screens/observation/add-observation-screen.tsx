@@ -1,19 +1,22 @@
 import { FormHeader } from "components/core/header/form-header"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, StyleProp, Switch, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
 import { useNavigation } from "@react-navigation/native"
 import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
-import { ILocationsModel, useStores } from "models"
+import { IDocument, ILocationsModel, useStores } from "models"
 import { Avatar, Icon, ListItem } from "react-native-elements"
-import { Observer, observer } from "mobx-react-lite"
+import { observer } from "mobx-react-lite"
 import { useFormik } from "formik"
 import { object, string } from "yup"
 import { isEmpty } from "lodash"
 import { Dropdown } from "components/core/dropdown/custom-dropdown-component"
 import Toast from 'react-native-simple-toast';
+import DocumentPicker from 'react-native-document-picker';
+import { RenderImage } from "components/inspection"
+
 
 
 
@@ -26,7 +29,9 @@ export type AddObservationStyleProps = {
     containerStyle: StyleProp<ViewStyle>,
     listItemContainerStyle: StyleProp<ViewStyle>,
     iconContainerStyle: StyleProp<ViewStyle>,
-    searchBarContainerStyle: StyleProp<ViewStyle>
+    searchBarContainerStyle: StyleProp<ViewStyle>,
+    imageStyle:StyleProp<ImageStyle>
+    
 }
 
 const useStyles = makeStyles<AddObservationStyleProps>( ( theme ) => ( {
@@ -45,6 +50,14 @@ const useStyles = makeStyles<AddObservationStyleProps>( ( theme ) => ( {
         padding: 10,
         borderBottomColor: theme.colors.transparent,
         borderTopColor: theme.colors.transparent
+    },
+    imageStyle: {
+        width: 100,
+        height: 100,
+        borderRadius: theme.borderRadii.medium,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     }
 } ) )
 
@@ -86,6 +99,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const [ topicList, setTopicList ] = useState( [] )
     const [ showTopic, setShowTopic ] = useState( false )
     const [ topicValue, setTopicValue ] = useState( "" )
+
     const STYLES = useStyles()
     const todayDate = new Date()
     const timePickerIcon = { name: 'time-outline', type: 'ionicon', size: 28 ,color:'#1e5873' }
@@ -94,12 +108,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         touched,
         handleBlur,
         handleChange,
-        handleSubmit,
         errors,
-        isValid,
         values,
-        isValidating,
-        isSubmitting,
     } = useFormik( {
         initialValues: {
             whereObservationHappened: "",
@@ -116,8 +126,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         },
     } )
     
-
+   
     const fetchAllFilterData = useCallback( async () => {
+        await ObservationStore.removeDocument()
+        await ObservationStore.removeImages()
+        await ObservationStore.resetSwitch()
         await TaskStore.resetDatePicker()
         await TaskStore.resetTimePicker()
         await ObservationStore.resetSelectedUser()
@@ -129,7 +142,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             CompanyID: AuthStore?.user?.CompanyID
         } as IAllCommanFilterPayload
         await ObservationStore.fetchAllCommanfilter( payload )
-    }, [ ] )
+    }, [] )
 
     const onUserSelect = async ( item: ILocationsModel ) => {
         await ObservationStore.setSelectedUser( item )
@@ -208,7 +221,14 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 ObservationTime: TaskStore.timePicker?.value,	
                 DescribeWhereTheIncidentHappened: values.whereObservationHappened
             } as ISubmitObservation
-            await ObservationStore.saveObservation( payload )
+            const saveRecordResult = await ObservationStore.saveObservation( payload )
+            if( saveRecordResult === "Success" ){
+                await ObservationStore.removeDocument()
+                await ObservationStore.removeImages()
+                navigation.navigate( "ObservationHistory" )
+
+              
+            }
         }
     }
 
@@ -233,7 +253,12 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             ObservationTime: TaskStore.timePicker?.value,	
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
-        await ObservationStore.saveAndComeBackObservation( payload )
+        const resultsaveAndComeBackObservationy = await ObservationStore.saveAndComeBackObservation( payload )
+        if( resultsaveAndComeBackObservationy === "Success" ){
+            await ObservationStore.removeDocument()
+            await ObservationStore.removeImages()
+            navigation.navigate( "ObservationHistory" )
+        }
     }
 
     const saveAsAnonymous = async ( ) => {
@@ -263,7 +288,85 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             ObservationTime: TaskStore.timePicker?.value,	
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
-        await ObservationStore.saveObservationAnonymously( payload )
+        const resultAnonymously =  await ObservationStore.saveObservationAnonymously( payload )
+        if( resultAnonymously === "Success" ){
+            await ObservationStore.removeDocument()
+            await ObservationStore.removeImages()
+            navigation.navigate( "ObservationHistory" )
+        }
+    }
+
+
+    const onpressCamera =()=>{
+        console.tron.log( "hhhdhsvcjdsbvjhdfbsvfdhjsb" )
+        navigation.navigate( "CaptureImage",{ calledFrom:"Observation"
+
+        }
+        )
+        return null
+
+    }
+    const documentPicker = async ( ) => {
+
+        try {
+            await ObservationStore.removeDocument()
+            const res = await DocumentPicker.pick( {
+                type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
+            } );
+          
+            const documentobject = {
+                fileCopyUri: res[0]?.fileCopyUri,
+                type: res[0].type,
+                size: res[0]?.size,
+                name: res[0]?.name,
+                uri: res[0].uri
+            } as IDocument
+    
+            await ObservationStore.setDocument( documentobject ) 
+
+        } catch ( err ) {
+            if ( DocumentPicker.isCancel( err ) ) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+                Toast.showWithGravity( err.Message, Toast.LONG, Toast.TOP );
+                return null
+            } else {
+                Toast.showWithGravity( err.Message, Toast.LONG, Toast.TOP );
+                return null
+            }
+        }
+    }
+
+    const renderImage = ( ) => {
+        if( ObservationStore.isObservationImagePresent ) {
+            return(
+                <Box  width={100} height={100} justifyContent={"center"} alignItems={"center"} mb={"large"}>
+                    <RenderImage 
+                        image={ObservationStore?.UploadImage[0]}
+                        style={STYLES.imageStyle}
+                        showDeleteIcon={false}
+
+                    />
+                </Box>
+              
+            )
+         
+        }else{
+            return null
+        }
+    }
+
+
+    const renderDocument = ( ) => {
+        if( ObservationStore.isObservationDocumentPresent ) {
+            return (
+                <Box  width={100} height={100} justifyContent={"center"} alignItems={"center"} mb={"large"}>
+                    <Icon name="document-outline" size={64} type="ionicon" />
+                    <Text textAlign={"center"}>{ObservationStore.UploadDocument[0]?.name}</Text>
+                </Box>
+            )
+        }else{
+            return null
+        }
     }
 
     return (
@@ -285,7 +388,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 </Async.Rejected>
                 <Async.Resolved>
                     <FormHeader 
-                        title="Observation"
+                        title="hello"
                         navigation={navigation}
                         rightComponent={<RightSwitch  isEnabled={ObservationStore.isSwitchOn} toggleSwitch={ObservationStore.toggleSwitch}/>}
                     />                        
@@ -385,20 +488,17 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 onValueChange={( value )=>ObservationStore.setDropdown( 'actOrConditions', value )}
                             />
                         </Box>
-                        <Observer>
-                            {
-                                ( ) => (
-                                    <Box>
-                                        <Dropdown
-                                            title={ObservationStore.HazardLabel}
-                                            items={ObservationStore.hazardList}
-                                            value={ObservationStore.hazards}
-                                            onValueChange={( value )=>ObservationStore.setDropdown( 'hazards', value )}
-                                        />
-                                    </Box>
-                                )
-                            }  
-                        </Observer>
+                            
+                        <Box>
+                            <Dropdown
+                                title={ObservationStore.HazardLabel}
+                                items={ObservationStore.hazardList}
+                                value={ObservationStore.hazards}
+                                onValueChange={( value )=>ObservationStore.setDropdown( 'hazards', value )}
+                            />
+                        </Box>
+                        
+                         
                         <Box mx="medium" mt="regular">
                             <TextAreaInput 
                                 label="Observation *"
@@ -409,12 +509,23 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 error={touched.observation && errors.observation}
                             /> 
                         </Box>
+                        <Box alignContent={"center"} flexDirection={"row"} justifyContent={"space-evenly"} >
+                            {
+                                renderDocument()
+                           
+                            }
+                            {
+                                renderImage()
+                            }
+                        
+                        </Box>
+                        
                     </ScrollBox>
                     <Box>
                         <Box position="absolute" bottom={20} right={10}>
-                            <Avatar size="medium"  rounded icon={{ name: 'camera', type: 'feather' }} containerStyle={STYLES.iconContainerStyle}/>
+                            <Avatar size="medium"  rounded icon={{ name: 'camera', type: 'feather' }} containerStyle={STYLES.iconContainerStyle} onPress={onpressCamera}/>
                             <Box mt="regular">
-                                <Avatar size="medium"  rounded icon={{ name: 'file-pdf-o', type: 'font-awesome' }} containerStyle={STYLES.iconContainerStyle}/>
+                                <Avatar size="medium"  rounded icon={{ name: 'file-pdf-o', type: 'font-awesome' }} containerStyle={STYLES.iconContainerStyle}onPress={documentPicker}/>
                             </Box>
                         </Box>
                     </Box>

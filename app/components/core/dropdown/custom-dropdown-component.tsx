@@ -18,7 +18,7 @@ const defaultIcon = () => {
     return <Icon name="caret-down" color="primary" size={24} type="fontawesome" />;
 }
 
-export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
+export const Dropdown: React.FC<DropdownProps> = ( props ) => {
     Dropdown.displayName = "Dropdown"
     const {
         title,
@@ -83,8 +83,6 @@ export const Dropdown: React.FC<DropdownProps> = React.memo( ( props ) => {
             />
         </Box>
     )
-}, ( prevProps, nextProps ) => {
-    return prevProps.value === nextProps.value
-} )
+}
 
 

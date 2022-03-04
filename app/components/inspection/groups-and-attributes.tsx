@@ -54,7 +54,7 @@ export type RenderHazardProps = {
 
 export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( ( props ) => {
     const { image, style, deleteImage, customUri, showDeleteIcon = true } = props
-    console.log( 'custom uri ',customUri )
+    // console.log( 'custom uri ',customUri )
     return (
         <Box flex={1} bg="transparent" flexDirection="row">
             <Box>

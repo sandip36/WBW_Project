@@ -23,6 +23,19 @@ type ImagesSnapshotType = SnapshotOut<typeof ImagesModel>
 export interface IImagesSnapshotType extends ImagesSnapshotType {}
 
 
+export const DocumentModel = types.model( {
+    fileCopyUri: types.maybeNull( types.string ),
+    name: types.optional( types.string ,"" ),
+    size: types.optional( types.number, 0 ),
+    type: types.optional( types.string, "" ),
+    uri: types.optional( types.string,"" ),
+} )
+export type DocumentType = Instance<typeof DocumentModel>
+export interface IDocument extends DocumentType {}
+type DocumentSnapshotType = SnapshotOut<typeof DocumentModel>
+export interface IDocumentSnapshotType extends DocumentSnapshotType {}
+
+
 
 export const AtttributeImagesModel = types.model( {
     FilePath: types.optional( types.string, "" ),
