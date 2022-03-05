@@ -308,6 +308,20 @@ export class Api {
       } as GeneralResponse
   }
 
+  // added new api
+  async deleteImageFromServer ( payload: IDeleteTask ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/DeleteAttributesInstanceImage", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
   async updateHazard ( payload: IUpdateHazard ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/UpdateHazard", payload )
       if ( !response.ok ) {

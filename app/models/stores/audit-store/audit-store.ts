@@ -321,6 +321,23 @@ export const AuditStore = types
                 return 'fail'
             }
         } )
+        // const deleteImageFromServer = flow( function * ( payload:payload) {
+        //     try {
+        //         const result: GeneralResponse<any> = yield self.environment.api.deleteImageFromServer( payload )
+        //         if( result && result.data?.Message === "File Deleted" ) {
+        //             Toast.showWithGravity( "File Deleted", Toast.LONG, Toast.CENTER );
+        //             return 'success'
+        //         }else{
+        //             return null
+        //         }
+                
+        //     } catch( error ) {
+        //         Toast.showWithGravity( error.message || 'Something went wrong while deleting tasks', Toast.LONG, Toast.CENTER )
+        //         return null
+        //     }
+        // } )
+
+
         
         const fetchDataForEditInspection = flow( function * ( payload: IFetchEditInspectionDetailsPayload ) {
             try {
@@ -518,7 +535,8 @@ export const AuditStore = types
             setCurrentSecondaryListID,
             resetPrimaryListID,
             resetSecondaryListID,
-            toggleRerender
+            toggleRerender,
+            //  deleteImageFromServer
         }
     } )
 

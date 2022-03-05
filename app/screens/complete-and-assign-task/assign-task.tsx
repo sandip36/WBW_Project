@@ -4,8 +4,8 @@ import { useFormik } from "formik"
 import { IAttributes, IImages, useStores } from "models"
 import React, { useCallback, useEffect } from "react"
 import { makeStyles, theme } from "theme"
-import { ActivityIndicator, ImageStyle, StyleProp, ViewStyle } from "react-native"
-import { observer } from "mobx-react-lite"
+import { ActivityIndicator, FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
+import { Observer, observer } from "mobx-react-lite"
 import { IAssignTaskPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload } from "services/api"
 import { Async } from "react-async"
 import { Dropdown } from "components/core/dropdown"
@@ -203,6 +203,27 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
     const deleteTaskImage = async ( ) => {
         await TaskStore.removeTaskImage( )
     }
+    const renderImageItem = ( { item } ) => {
+        let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
+        formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
+        return (
+            <Observer>
+                {
+                    ( ) => (
+                        <Box flex={1} flexDirection="row" marginHorizontal="medium">
+                            <RenderImage 
+                                image={item}
+                                customUri={`${formattedUrl}`}
+                                style={STYLES.imageStyle as StyleProp<ImageStyle>}
+                                showDeleteIcon={false}
+                            />
+                        </Box>
+                    )
+                }
+            </Observer>
+        )
+    }
+
 
 
     return (
@@ -318,7 +339,17 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 </Async.Resolved>
                             </Async>
                         </Box>
-                        {
+
+                        <Box flex={1} flexDirection="row" marginHorizontal="regular" mt={"large"}>
+                            <FlatList 
+                                data={attributeData.AttributeImages}
+                                extraData={attributeData.AttributeImages}
+                                keyExtractor={( item,index ) => String( index ) }
+                                renderItem={renderImageItem}
+                                horizontal={true}
+                            />
+                        </Box>
+                        {/* {
                             isEmpty( TaskStore.taskImage?.uri ) 
                                 ? <TouchableBox mt="medium" onPress={openImagePickerOptions}>
                                     <InputWithIcon 
@@ -337,7 +368,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                         deleteImage={deleteTaskImage}
                                     />
                                 </Box>
-                        }
+                        } */}
                         <Box mt="medium">
                             <Button 
                                 title="Assign Task"

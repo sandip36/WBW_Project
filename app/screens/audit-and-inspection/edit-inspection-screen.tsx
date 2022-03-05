@@ -9,11 +9,11 @@ import { findIndex, isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload, ISaveAuditPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
-import { Observer, observer, useObserver } from "mobx-react-lite"
+import {  observer } from "mobx-react-lite"
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
 import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
-import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
+import { ISystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
 import { IReportingPeriodDueDatesModel } from "models/models/audit-model/audit-inspection-detail-model"
 import Toast from "react-native-simple-toast"
 
@@ -55,7 +55,7 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
 let remainingDropdownArray = []
 export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observer( ( ) => {
     const navigation = useNavigation()      
-    const { DashboardStore, AuditStore, AuthStore, TaskStore } = useStores()
+    const { DashboardStore, AuditStore, AuthStore } = useStores()
     const STYLES = useStyles()
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     const [ reportingPeriod, setReportingPeriod ] = useState( AuditStore.initialReportingPeriodDueDateID )

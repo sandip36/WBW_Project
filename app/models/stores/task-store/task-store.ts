@@ -286,7 +286,7 @@ export const TaskStore = types.model( "TaskModel" )
         } )
         const formatTime = flow( function * ( date: Date ) {
             const selectedDate = date || new Date()
-            const formattedTime = moment( selectedDate ).format( "hh:mm a" )
+            const formattedTime = moment( selectedDate ).format( "hh:mm A" )
             self.timePicker.value = formattedTime
             self.timePicker.datePickerValue = new Date( selectedDate )
             self.timePicker.show = false
