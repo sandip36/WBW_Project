@@ -36,6 +36,7 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
     const navigation = useNavigation()
     const theme = useTheme()
     const STYLES = useStyles()
+    let onEndReachedCalledDuringMomentum = false
     const dashboard = DashboardStore._get( DashboardStore.currentDashboardId )
     if( isEmpty( dashboard ) ) {
         return null
@@ -74,11 +75,6 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
         ObservationStore.setRefreshing()
     }
 
-    const ListFooterComponent = ( ) => {
-        return (
-            <ActivityIndicator color={theme.colors.error} size="large" />
-        )
-    }
 
     const navigateToAddObservation = ( ) => {
         navigation.navigate( 'AddObservation' )
@@ -111,9 +107,14 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
                             <FlatList 
                                 data={ObservationStore.items.slice()}
                                 renderItem={renderItem}
-                                onEndReached={fetchNextObservationHistory}
+                                onEndReached={()=>{
+                                    if ( !onEndReachedCalledDuringMomentum ) {
+                                        fetchNextObservationHistory();    // LOAD MORE DATA
+                                        onEndReachedCalledDuringMomentum = true;
+                                    }
+                                }}
                                 onEndReachedThreshold={0.01}
-                                ListFooterComponent={ListFooterComponent}
+                                onMomentumScrollBegin = {() => {onEndReachedCalledDuringMomentum = false;}}
                                 refreshControl={
                                     <RefreshControl 
                                         refreshing={ObservationStore.refreshing} 

@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native"
+import { StackActions, useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { IReportingPeriodDueDatesModel, useStores } from "models"
@@ -106,7 +106,10 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             AuditAndInspectionID: AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
         } as IDeleteInspectionRecord
         await AuditStore.deleteInspectionRecord( payload )
-        navigation.pop( 2 )
+        navigation.dispatch( StackActions.pop( 2 ) );
+
+
+        // navigation.pop( 2 )
     }
    
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
@@ -328,8 +331,9 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         } as ISaveAuditPayload
         const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
-            await setTimeout( ( ) => {
-                navigation.pop( 2 )
+            setTimeout( ( ) => {
+                navigation.dispatch( StackActions.pop( 2 ) );
+                // navigation.pop( 2 )
             }, 3000 )
         }
     }
@@ -400,8 +404,10 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         const response = await AuditStore.completeAuditAndInspection( payload )
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
-            await setTimeout( ( ) => {
-                navigation.pop( 2 )
+            setTimeout( ( ) => {
+                navigation.dispatch( StackActions.pop( 2 ) );
+              
+                //  navigation.pop( 2 )
             }, 3000 )
         }
     }

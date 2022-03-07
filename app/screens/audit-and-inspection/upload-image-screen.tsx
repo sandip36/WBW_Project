@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button } from "components"
 import { IImages, useStores } from "models"
 import React, { useEffect } from "react"
@@ -86,7 +86,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                     text: "Yes",
                     onPress: async ( ) => {
                         await attributeData.removeImages()
-                        navigation.pop( 2 )
+                        navigation.dispatch( StackActions.pop( 2 ) );
+                        // navigation.pop( 2 )
                     }
                 }
             ],
@@ -103,7 +104,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
             // eslint-disable-next-line node/no-callback-literal
             await attributeData.removeImages()
             callback( true )
-            navigation.pop( 2 )
+            navigation.dispatch( StackActions.pop( 2 ) );
+            // navigation.pop( 2 )
         }else{
             console.log( 'no data found' )
         }

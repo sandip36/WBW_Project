@@ -311,8 +311,9 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         } as ISaveAuditPayload
         const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
-            await setTimeout( ( ) => {
-                navigation.pop( 1 )
+            setTimeout( () => {
+                // eslint-disable-next-line no-unused-expressions
+                navigation.goBack
             }, 3000 )
         }
     }
@@ -383,8 +384,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         const response = await AuditStore.completeAuditAndInspection( payload )
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
-            await setTimeout( ( ) => {
-                navigation.pop( 1 )
+            setTimeout( () => {
+                navigation.goBack()
             }, 3000 )
         }
     }

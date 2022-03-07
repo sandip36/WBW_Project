@@ -298,7 +298,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
 
 
     const onpressCamera =()=>{
-        console.tron.log( "hhhdhsvcjdsbvjhdfbsvfdhjsb" )
         navigation.navigate( "CaptureImage",{ calledFrom:"Observation"
 
         }

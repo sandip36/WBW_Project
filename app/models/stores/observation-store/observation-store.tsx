@@ -24,7 +24,7 @@ export const ObservationStore = createModelCollection( ObservationModel )
         isSwitchOn: types.optional( types.boolean, false ),
         UploadImage: types.optional( types.array( ImagesModel ), [] ),
         UploadDocument: types.optional( types.array( DocumentModel ), [] ),
-
+        isComplete: types.optional( types.boolean, false )
 
     } )
     .views( self => ( {
@@ -100,13 +100,18 @@ export const ObservationStore = createModelCollection( ObservationModel )
 
         const fetch = flow( function * ( payload: IObservationFetchPayload ) {
             try {
-                const result: GeneralResponse<IObservation[]> = yield self.environment.api.fetchObservations( payload )
+                const result: GeneralResponse<any> = yield self.environment.api.fetchObservations( payload )
                 if ( result?.data ) {
+                    if( result.data?.Message === "No Records found" ) {
+                        self.isComplete = true
+                        return null
+                    }
                     const observations = result.data.map( item => {
                         return { ...item, id: item.ObservationID }
                     } )
                     self._insertOrUpdate( observations )
                     self.page = Number( payload.PageNumber )
+                    self.isComplete = false
                 }
                 return result
             } catch( error ) {
