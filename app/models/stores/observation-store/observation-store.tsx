@@ -104,6 +104,7 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 if ( result?.data ) {
                     if( result.data?.Message === "No Records found" ) {
                         self.isComplete = true
+                        self.refreshing = false
                         return null
                     }
                     const observations = result.data.map( item => {
