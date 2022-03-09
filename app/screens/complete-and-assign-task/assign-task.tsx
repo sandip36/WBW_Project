@@ -3,7 +3,7 @@ import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, Input, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
 import { IAttributes, IImages, useStores } from "models"
-import React, { useCallback, useEffect } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { makeStyles, theme } from "theme"
 import { ActivityIndicator, FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { Observer, observer } from "mobx-react-lite"
@@ -136,6 +136,8 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
     const STYLES = useStyles()
+    const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
+
 
     const hazardValue = AuditStore.hazardList.find( item => item.value === TaskStore.currentHazardId )
 
@@ -154,6 +156,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             riskRatingValue: "",
         },
         async onSubmit ( values ) {
+            setLoadingForSubmit ( true )
             const isValid = [
                 values.taskTitle,
                 TaskStore.currentSeverityRating,
@@ -166,6 +169,8 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             const notValidPayload = isValid.includes( "" ) || isValid.includes( undefined ) || isValid.includes( null )
             if( notValidPayload ) {
                 Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+                setLoadingForSubmit ( false )
+
                 return null
             }
             const payload = {
@@ -187,6 +192,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             if( response?.Comments ) {
                 await attributeData.setComments( response.Comments )
                 await setTimeout( ( ) => {
+                    setLoadingForSubmit ( false )
                     navigation.dispatch( StackActions.pop( 1 ) )
                     //  navigation.goBack()
                 }, 1000 )
@@ -377,7 +383,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                 title="Assign Task"
                                 onPress={handleSubmit}
                                 disabled={!isValid || isValidating || isSubmitting}
-                                loading={isValidating || isSubmitting}
+                                loading={isValidating || isSubmitting && loadingForSubmit}
                             />
                         </Box>
                     </Box>
