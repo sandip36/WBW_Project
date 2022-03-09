@@ -2,15 +2,16 @@ import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "component
 import React, { useEffect, useState } from "react"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { AuditStore, IAttributes, IAtttributeImages, IAudit, IImages, useStores } from "models"
-import { FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
+import { FlatList, ImageStyle, StyleProp, ViewStyle, Modal, TouchableOpacity, View, Dimensions } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
 import { ImageLibraryOptions } from "react-native-image-picker"
 import { Observer, observer } from "mobx-react-lite"
-import { Avatar, Image } from "react-native-elements"
+import { Avatar, Icon, Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 import { Item } from "react-native-picker-select"
 import { IDeleteAttributeImages } from "services/api"
+import ImageViewer from "react-native-image-zoom-viewer"
 
 export type GroupsAndAttributesProps = {
     groupId: string
@@ -25,7 +26,7 @@ const ItemSeparatorComponent = ( ) => {
     )
 }
 
-const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>}>( ( theme ) => ( {
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>, avatarContainerStyle: StyleProp<ViewStyle>, modalContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     contentContainerStyle: {
         paddingBottom: theme.spacing.extraLarge
     },
@@ -36,6 +37,12 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    avatarContainerStyle: {
+        backgroundColor: theme.colors.primary
+    },
+    modalContainerStyle: {
+        flex: 1
     }
 } ) )
 
@@ -44,7 +51,8 @@ export type RenderImageProps = {
     style?: StyleProp<ImageStyle>,
     deleteImage?: ( ) => void,
     customUri?: string,
-    showDeleteIcon?: boolean
+    showDeleteIcon?: boolean,
+    onImagePress?: ( ) => void
 }
 
 export type RenderHazardProps = {
@@ -57,10 +65,10 @@ export type RenderAttributeImagesProps = {
 }
 
 export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( ( props ) => {
-    const { image, style, deleteImage, customUri, showDeleteIcon = true } = props
-    // console.log( 'custom uri ',customUri )
+    const { image, style, deleteImage, customUri, showDeleteIcon = true, onImagePress } = props
+    const shouldImageBePressed = onImagePress || ( ( ) => null )
     return (
-        <Box flex={1} bg="transparent" flexDirection="row">
+        <TouchableBox flex={1} bg="transparent" flexDirection="row" onPress={shouldImageBePressed}>
             <Box>
                 <Image
                     source={{ uri: image?.uri || customUri }}
@@ -77,7 +85,7 @@ export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( 
                     </Box>
                     : null
             }
-        </Box>
+        </TouchableBox>
     )
 } )
 
@@ -160,6 +168,7 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
     const STYLES = useStyles()
     const { AuthStore, AuditStore } = useStores()
     const [ refresh,setRefresh ] = useState( false )
+    const [ showZoomViewer,setShowZoomViewer ] = useState( false )
 
     const onDeleteImage = async ( item: IAtttributeImages, index: number ) => {
         const payload = {
@@ -170,6 +179,10 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
         await AuditStore.deleteImageFromServer( payload )
         await attributeData.removeAttributeImageByIndex( index )
         setRefresh( !refresh )
+    }
+
+    const onImagePress = ( ) => {
+        setShowZoomViewer( true )
     }
 
 
@@ -184,20 +197,44 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
                     style={STYLES.imageStyle as StyleProp<ImageStyle>}
                     showDeleteIcon={true}
                     deleteImage={()=>onDeleteImage( item, index )}
+                    onImagePress={onImagePress}
                 />
             </Box>
         )
     }
 
+    const onRequestClose = ( ) => {
+        console.log( 'on request close' )
+        setShowZoomViewer( false )
+    }
+
+    console.log( attributeData.attributeImageForZoom( AuthStore.environment.api.apisauce.getBaseURL() ) )
+
     return (
         <Box flex={1} flexDirection="row" marginHorizontal="regular">
-            <FlatList 
-                data={attributeData.AttributeImages}
-                extraData={refresh}
-                keyExtractor={( item,index ) => String( index ) }
-                renderItem={renderImageItem}
-                horizontal={true}
-            />
+            {
+                showZoomViewer 
+                    ? <Modal 
+                        style={STYLES.modalContainerStyle}
+                        visible={showZoomViewer}
+                        onRequestClose={onRequestClose}
+                    >
+                        <ImageViewer
+                            imageUrls={attributeData.attributeImageForZoom( AuthStore.environment.api.apisauce.getBaseURL() ) as any}
+                            index={0}
+                        />
+                        <Box position="absolute" top={20} right={10}>
+                            <Avatar size="medium" onPress={onRequestClose} rounded icon={{ name: 'close' }} containerStyle={STYLES.avatarContainerStyle}/>
+                        </Box>
+                    </Modal>
+                    : <FlatList 
+                        data={attributeData.AttributeImages}
+                        extraData={refresh}
+                        keyExtractor={( item,index ) => String( index ) }
+                        renderItem={renderImageItem}
+                        horizontal={true}
+                    /> 
+            }
         </Box>
     )
 } )

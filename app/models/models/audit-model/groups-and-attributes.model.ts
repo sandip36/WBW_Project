@@ -75,8 +75,6 @@ export const AttributesModel = types
         HazardsIDClone: types.maybeNull( types.string ) ,
         isHazardRequired: types.optional( types.boolean, false ),
         AttributeImages: types.optional( types.array( AtttributeImagesModel ), [] )
-
-
     } )
     .views( self => ( {
         get totalImageCount ( ){
@@ -117,6 +115,19 @@ export const AttributesModel = types
                 }
             } )
             return checkForType
+        },
+        attributeImageForZoom ( baseUrl: string ) {
+            if( self.AttributeImages.length > 0 ) {
+                return self.AttributeImages.map( ( item ) => {
+                    let formattedUrl = `${baseUrl}${item.FilePath}`
+                    formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
+                    return {
+                        url: formattedUrl
+                    }
+                } )
+            }else{
+                return []
+            }
         }
     } ) )
     .views( self => ( {
