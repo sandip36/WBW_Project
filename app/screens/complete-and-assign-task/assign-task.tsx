@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, Input, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
@@ -21,7 +22,6 @@ export type AssignTaskScreenProps = {
     attributeData: IAttributes
 }
 export type RiskRatingScreenProps = {
-    riskRatingValue: string,
 }
 
 const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>, customContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
@@ -43,32 +43,87 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, image
 
 const todayDate = new Date()
 export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observer( ( props ) => {
-    const { 
-        riskRatingValue,
-    } = props
-    const { TaskStore } = useStores()
+    const { TaskStore,AuthStore ,AuditStore } = useStores()
+    const fetchRiskRating = useCallback( async () => {
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionID: AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
+            SeverityRateValue: TaskStore.currentSeverityRating,
+            ProbabilityRateValue: TaskStore.currentProbabilityRating
+        } as IFetchRiskRatingPayload
+        const result = await TaskStore.fetchRiskRating( payload )
+        return result
+    },[ TaskStore.currentSeverityRating, TaskStore.currentProbabilityRating ] )
+
+    const shouldFetchRiskRating = useCallback( async () => {
+        if( !isEmpty( TaskStore.currentSeverityRating ) && !isEmpty( TaskStore.currentProbabilityRating ) ) {
+            const response =  await fetchRiskRating()
+            return response
+        }else{
+            return null
+        }
+    }, [ TaskStore.currentSeverityRating, TaskStore.currentProbabilityRating ] ) 
+
+
+    
     return (
         <Box flex={1} bg="transparent" flexDirection="row" marginTop="medium">
-            <Box flex={1} mt="medium">
-                <Input 
-                    label="Risk Rating *"
-                    placeholder="Risk Rating"
-                    value={riskRatingValue}
-                    editable={false}
-                />
-                <Box flex={1}>
-                    <CustomDateTimePicker
-                        label="Due Date *"
-                        onPress={TaskStore.showDatePicker}
-                        show={TaskStore.datePicker?.show}
-                        inputValue={isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value }
-                        value={TaskStore.datePicker?.datePickerValue}
-                        mode="date"
-                        minimumDate={todayDate}
-                        onConfirm={TaskStore.formatDate}
-                        onCancel={TaskStore.hideDatePicker}
-                    />
-                </Box>
+            <Box flex={1}>
+                <Async promiseFn={shouldFetchRiskRating} watch={[ TaskStore.currentProbabilityRating,TaskStore.currentSeverityRating ]}>
+                    <Async.Pending>
+                        { ( ) => (
+                            <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                                <ActivityIndicator size={32} color="red" />
+                            </Box>
+                        ) }
+                    </Async.Pending>
+                    <Async.Rejected>
+                        { ( error: any ) => (
+                            <Box justifyContent="center" alignItems="center" flex={1}>
+                                <Text>{error.reason || error.message || 'Something went wrong'}</Text>
+                            </Box>
+                        ) }
+                    </Async.Rejected>
+                    <Async.Resolved>
+                        {
+                            ( ratingData: any ) => 
+                                (
+                                    !isEmpty( ratingData ) 
+                                        ?  <Box flex={1} mt="medium">
+                                            <Input 
+                                                label="Risk Rating *"
+                                                placeholder="Risk Rating"
+                                                value={ratingData?.data?.RiskRating}
+                                                editable={false}
+                                            />
+                                            {
+                                                <Observer>
+                                                    {
+                                                        () => (
+                                                            <Box flex={1}>
+                                                                <CustomDateTimePicker
+                                                                    label="Due Date *"
+                                                                    onPress={TaskStore.showDatePicker}
+                                                                    show={TaskStore.datePicker?.show}
+                                                                    inputValue={isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value }
+                                                                    value={TaskStore.datePicker?.datePickerValue}
+                                                                    mode="date"
+                                                                    minimumDate={todayDate}
+                                                                    onConfirm={TaskStore.formatDate}
+                                                                    onCancel={TaskStore.hideDatePicker}
+                                                                />
+                                                            </Box>
+                                                        )
+                                                    }
+                                                </Observer>
+                                            }
+                                        </Box>
+                                        : null
+                                )
+                        }
+                    </Async.Resolved>
+                </Async>
             </Box>
         </Box>
     )
@@ -81,14 +136,13 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
     const { TaskStore, AuditStore, AuthStore } = useStores()
     const navigation = useNavigation()
     const STYLES = useStyles()
+
     const hazardValue = AuditStore.hazardList.find( item => item.value === TaskStore.currentHazardId )
 
     const {
-        touched,
         handleBlur,
         handleChange,
         handleSubmit,
-        errors,
         isValid,
         values,
         isValidating,
@@ -134,7 +188,6 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                 await attributeData.setComments( response.Comments )
                 await setTimeout( ( ) => {
                     navigation.dispatch( StackActions.pop( 1 ) )
-
                     //  navigation.goBack()
                 }, 1000 )
             }
@@ -153,31 +206,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
         await TaskStore.fetchTaskRatingDetails( payload )
     }, [] )
 
-    const fetchRiskRating = async ( ) => {
-        const payload = {
-            UserID: AuthStore.user?.UserID,
-            AccessToken: AuthStore.token,
-            AuditAndInspectionID: AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID,
-            SeverityRateValue: TaskStore.currentSeverityRating,
-            ProbabilityRateValue: TaskStore.currentProbabilityRating
-        } as IFetchRiskRatingPayload
-        const result = await TaskStore.fetchRiskRating( payload )
-        return result
-    }
-
-    /**
-     * Description of change: should only fetch risk rating when 
-     * a.) severity and probability rating is not empty
-     * b.) if severity rating exists and probabilty rating changed.
-     */
-    const shouldFetchRiskRating = useCallback( async () => {
-        if( !isEmpty( TaskStore.currentSeverityRating ) && !isEmpty( TaskStore.currentProbabilityRating ) ) {
-            const response = await fetchRiskRating()
-            return response
-        }else{
-            return null
-        }
-    }, [] ) 
+   
 
     const onUserSelect = async ( item: IUserList ) => {
         await TaskStore.setSelectedUser( item )
@@ -196,11 +225,11 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
         deleteTaskImage()
     }
 
-    const openImagePickerOptions = ( ) => {
-        navigation.navigate( 'CaptureTaskImage', {
-            callback: ( value: IImages ) => onImageSelected( value )
-        } )
-    }
+    // const openImagePickerOptions = ( ) => {
+    //     navigation.navigate( 'CaptureTaskImage', {
+    //         callback: ( value: IImages ) => onImageSelected( value )
+    //     } )
+    // }
 
     const deleteTaskImage = async ( ) => {
         await TaskStore.removeTaskImage( )
@@ -308,40 +337,12 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                     customContainerStyle={STYLES.customContainerStyle}
                                 />
                             </Box>
-                        </Box>
-                        <Box>
-                            <Async promiseFn={shouldFetchRiskRating} watch={[ TaskStore.currentProbabilityRating,TaskStore.currentSeverityRating ]}>
-                                <Async.Pending>
-                                    { ( ) => (
-                                        <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
-                                            <ActivityIndicator size={32} color="red" />
-                                        </Box>
-                                    ) }
-                                </Async.Pending>
-                                <Async.Rejected>
-                                    { ( error: any ) => (
-                                        <Box justifyContent="center" alignItems="center" flex={1}>
-                                            <Text>{error.reason || error.message || 'Something went wrong'}</Text>
-                                        </Box>
-                                    ) }
-                                </Async.Rejected>
-                                <Async.Resolved>
-                                    {
-                                        ( ratingData: any ) => 
-                                            (
-                                                !isEmpty( ratingData ) 
-                                                    ? <Box flex={1}>
-                                                        <RiskRating 
-                                                            riskRatingValue={ratingData?.data?.RiskRating}
-                                                        />
-                                                    </Box>
-                                                    : null
-                                            )
-                                    }
-                                </Async.Resolved>
-                            </Async>
-                        </Box>
+                            <Box flex={1}>
+                                <RiskRating/>
+                            </Box>
 
+                        </Box>
+                        
                         <Box flex={1} flexDirection="row" marginHorizontal="regular" mt={"large"}>
                             <FlatList 
                                 data={attributeData.AttributeImages}
