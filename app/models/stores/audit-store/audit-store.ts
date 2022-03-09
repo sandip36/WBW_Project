@@ -1,5 +1,5 @@
 import { Instance, flow, types, getRoot } from "mobx-state-tree"
-import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
+import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteAttributeImages, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
@@ -18,7 +18,8 @@ export const AuditStoreProps = {
     isPassingValuesSelected: types.optional( types.boolean, false ),
     currentPrimaryListID: types.maybeNull( types.string ), 
     currentSecondaryListID: types.maybeNull( types.string ), 
-    rerender: types.optional( types.boolean, false )
+    rerender: types.optional( types.boolean, false ),
+    refreshInspectionImage: types.optional( types.boolean, false )
 }
 
 export const AuditStore = types
@@ -321,21 +322,21 @@ export const AuditStore = types
                 return 'fail'
             }
         } )
-        // const deleteImageFromServer = flow( function * ( payload:payload) {
-        //     try {
-        //         const result: GeneralResponse<any> = yield self.environment.api.deleteImageFromServer( payload )
-        //         if( result && result.data?.Message === "File Deleted" ) {
-        //             Toast.showWithGravity( "File Deleted", Toast.LONG, Toast.CENTER );
-        //             return 'success'
-        //         }else{
-        //             return null
-        //         }
+        const deleteImageFromServer = flow( function * ( payload: IDeleteAttributeImages ) {
+            try {
+                const result: GeneralResponse<any> = yield self.environment.api.deleteImageFromServer( payload )
+                if( result && result.data?.Message === "File Deleted" ) {
+                    Toast.showWithGravity( "File Deleted", Toast.LONG, Toast.CENTER );
+                    return 'success'
+                }else{
+                    return null
+                }
                 
-        //     } catch( error ) {
-        //         Toast.showWithGravity( error.message || 'Something went wrong while deleting tasks', Toast.LONG, Toast.CENTER )
-        //         return null
-        //     }
-        // } )
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while deleting tasks', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
 
 
         
@@ -513,6 +514,10 @@ export const AuditStore = types
             self.rerender = !self.rerender
         } )
     
+        const toggleRefreshInspectionImage = flow( function * ( ) {
+            self.refreshInspectionImage = !self.refreshInspectionImage
+        } )
+    
 
         return {
             fetch,
@@ -536,7 +541,8 @@ export const AuditStore = types
             resetPrimaryListID,
             resetSecondaryListID,
             toggleRerender,
-            //  deleteImageFromServer
+            deleteImageFromServer,
+            toggleRefreshInspectionImage
         }
     } )
 

@@ -197,4 +197,11 @@ export interface ISubmitObservation {
     DescribeWhereTheIncidentHappened: string
 }
 
+export interface IDeleteAttributeImages {
+    UserID:string,
+    AccessToken: string,
+    // eslint-disable-next-line camelcase
+    CustomForm_Attribute_Instance_ImageID: string
+}
+
 

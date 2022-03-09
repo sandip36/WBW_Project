@@ -3,7 +3,7 @@ import { getGeneralApiProblem } from "./api-problem"
 import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
-import { GeneralResponse, IAllCommanFilterPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
+import { GeneralResponse, IAllCommanFilterPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IDeleteAttributeImages, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
 import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitObservation, ISubmitStartInspectionPayload, IUpdateHazard } from "."
 import { IImages } from "models/models/audit-model/groups-and-attributes.model"
 import { AsyncStorage } from "utils/storage/async-storage"
@@ -309,7 +309,7 @@ export class Api {
   }
 
   // added new api
-  async deleteImageFromServer ( payload: IDeleteTask ) {
+  async deleteImageFromServer ( payload: IDeleteAttributeImages ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/DeleteAttributesInstanceImage", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )

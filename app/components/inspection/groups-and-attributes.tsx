@@ -1,7 +1,7 @@
 import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import React, { useEffect, useState } from "react"
-import { useNavigation } from "@react-navigation/native"
-import { AuditStore, IAttributes, IAudit, IImages, useStores } from "models"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { AuditStore, IAttributes, IAtttributeImages, IAudit, IImages, useStores } from "models"
 import { FlatList, ImageStyle, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
@@ -10,6 +10,7 @@ import { Observer, observer } from "mobx-react-lite"
 import { Avatar, Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 import { Item } from "react-native-picker-select"
+import { IDeleteAttributeImages } from "services/api"
 
 export type GroupsAndAttributesProps = {
     groupId: string
@@ -50,6 +51,9 @@ export type RenderHazardProps = {
     data: IAttributes,
     items: Item[],
     onValueChange: ( value: any, index: number ) => any,
+}
+export type RenderAttributeImagesProps = {
+    attributeData: IAttributes
 }
 
 export const RenderImage: React.FunctionComponent<RenderImageProps> = observer( ( props ) => {
@@ -151,6 +155,53 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
     )
 }
 
+export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImagesProps> = observer( ( props ) => {
+    const { attributeData } = props
+    const STYLES = useStyles()
+    const { AuthStore, AuditStore } = useStores()
+    const [ refresh,setRefresh ] = useState( false )
+
+    const onDeleteImage = async ( item: IAtttributeImages, index: number ) => {
+        const payload = {
+            UserID: AuthStore.user?.UserID,
+            AccessToken: AuthStore.token,
+            CustomForm_Attribute_Instance_ImageID: item?.CustomForm_Attribute_Instance_ImageID
+        } as IDeleteAttributeImages
+        await AuditStore.deleteImageFromServer( payload )
+        await attributeData.removeAttributeImageByIndex( index )
+        setRefresh( !refresh )
+    }
+
+
+    const renderImageItem = ( { item, index } ) => {
+        let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
+        formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
+        return (
+            <Box flex={1} flexDirection="row" marginHorizontal="medium">
+                <RenderImage 
+                    image={item}
+                    customUri={`${formattedUrl}`}
+                    style={STYLES.imageStyle as StyleProp<ImageStyle>}
+                    showDeleteIcon={true}
+                    deleteImage={()=>onDeleteImage( item, index )}
+                />
+            </Box>
+        )
+    }
+
+    return (
+        <Box flex={1} flexDirection="row" marginHorizontal="regular">
+            <FlatList 
+                data={attributeData.AttributeImages}
+                extraData={refresh}
+                keyExtractor={( item,index ) => String( index ) }
+                renderItem={renderImageItem}
+                horizontal={true}
+            />
+        </Box>
+    )
+} )
+
 export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesProps> = observer( ( props ) => {
     const {
         groupId
@@ -165,6 +216,20 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     const { AuditStore, TaskStore, AuthStore } = useStores()
     const [ refreshing, setRefreshing ] = useState( false )
 
+    useFocusEffect(
+        React.useCallback( () => {
+            refreshGroupsAndAttributes()
+        }, [ AuditStore.refreshInspectionImage ] )
+    );
+
+    const refreshGroupsAndAttributes = ( ) => {
+        setRefreshing( !refreshing )
+    }
+
+    // useEffect( ( ) => {
+    //     console.log( 'Inside useEffecrt' )
+    //     setRefreshing( !refreshing )
+    // }, [ AuditStore.refreshInspectionImage ] )
 
     const onCallback = ( value ) => {
         setRefreshing( !refreshing )
@@ -173,33 +238,12 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     const imagePressHandler = async ( item: IAttributes ) => {
         navigation.navigate( 'CaptureImage', {
             attributeData: item,
-            callback: ( value ) => onCallback( value )
+            // callback: ( value ) => onCallback( value )
         } )
     }
 
     const deleteTaskImage = async ( ) => {
         await TaskStore.removeTaskImage( )
-    }
-
-    const renderImageItem = ( { item } ) => {
-        let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
-        formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
-        return (
-            <Observer>
-                {
-                    ( ) => (
-                        <Box flex={1} flexDirection="row" marginHorizontal="medium">
-                            <RenderImage 
-                                image={item}
-                                customUri={`${formattedUrl}`}
-                                style={STYLES.imageStyle as StyleProp<ImageStyle>}
-                                showDeleteIcon={false}
-                            />
-                        </Box>
-                    )
-                }
-            </Observer>
-        )
     }
 
     const updateHazard = async ( item: IAttributes ) => {
@@ -244,7 +288,6 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     }   
 
     const renderItem = ( { item }: {item:IAttributes } ) => {
-        console.log( 'Inside' )
         return (
             <Observer>
                 {
@@ -309,23 +352,12 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                     // onChangeText={handleChange( "username" )}
                                 /> 
                             </TouchableBox>
-                            {
-                                <Observer>
-                                    {
-                                        ( ) => (
-                                            <Box flex={1} flexDirection="row" marginHorizontal="regular">
-                                                <FlatList 
-                                                    data={item.AttributeImages}
-                                                    extraData={item.AttributeImages}
-                                                    keyExtractor={( item,index ) => String( index ) }
-                                                    renderItem={renderImageItem}
-                                                    horizontal={true}
-                                                />
-                                            </Box>
-                                        )
-                                    }
-                                </Observer>
-                            }
+                            <Box flex={1}>
+                                <RenderAttributeImages 
+                                    attributeData={item}
+                                />
+                            </Box>
+
                         </Box>
                     )
                 }

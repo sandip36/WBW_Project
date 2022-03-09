@@ -34,12 +34,14 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
     const route = useRoute()
     const {
         attributeData,
-        callback,
+        // callback,
         calledFrom
     } = route.params as any
     const {
         ObservationStore
     }= useStores()
+
+    console.log( 'route for capture image',route )
 
     const IMAGE_OPTIONS = {
         mediaType: 'photo',
@@ -81,7 +83,11 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
             await attributeData.setImages( IMAGE_OBJECT )
             navigation.navigate( 'UploadImage', {
                 attributeData: attributeData,
-                callback: ( value ) => callback( value )
+                // callbackImage: ( value ) => {
+                //     console.log( 'value is ',value )
+                //     // eslint-disable-next-line node/no-callback-literal
+                //     // callback( true )
+                // }
             } )
         }
        

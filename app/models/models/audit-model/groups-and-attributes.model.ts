@@ -276,6 +276,10 @@ export const AttributesModel = types
             self.auditImage.splice( index )
         } )
 
+        const removeAttributeImageByIndex = flow( function * ( index: number  ) {
+            self.AttributeImages.splice( index )
+        } )
+
         const resetHazardIDClone = flow( function * ( ) {
             self.HazardsIDClone = ""
         } )
@@ -300,7 +304,8 @@ export const AttributesModel = types
             removeImageByIndex,
             resetHazardIDClone,
             setIsHazardRequired,
-            saveImagesForAuditAndInspection
+            saveImagesForAuditAndInspection,
+            removeAttributeImageByIndex
         }
     } )
 

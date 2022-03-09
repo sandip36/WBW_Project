@@ -24,12 +24,14 @@ export type ApplicationNavigationRoutes = {
     CompleteTask: undefined
     AssignTask: undefined
     UploadImage: {
-        attributeData: IAttributes
+        attributeData: IAttributes,
+        callbackImage: ( value: any ) => void
     }
     CaptureImage: {
-        attributeData: IAttributes
+        attributeData: IAttributes,
+        callback: ( value: any ) => void
     }
     CaptureTaskImage: {
-        callback: ( value: any ) => void
+        callback: ( value: any ) => void,
     }
 }

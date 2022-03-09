@@ -36,12 +36,14 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     const route = useRoute()
     const {
         attributeData,
-        callback
+        // callbackImage
     } = route.params as any
     const navigation = useNavigation()
     const STYLES = useStyles()
     const { AuthStore, AuditStore } = useStores()
     const [ isLoading, setIsLoading ] = useState( false )
+
+    console.log( 'route is ',route )
 
     const deleteImage = async ( index: number ) => {
         await attributeData.removeImageByIndex( index )
@@ -104,9 +106,10 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
             const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
             const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
             await attributeData.saveImagesForAuditAndInspection( response )
-            // eslint-disable-next-line node/no-callback-literal
             await attributeData.removeImages()
-            callback( true )
+            // eslint-disable-next-line node/no-callback-literal
+            // callbackImage( true )
+            await AuditStore.toggleRefreshInspectionImage()
             setIsLoading( false )
             navigation.dispatch( StackActions.pop( 2 ) );
             // navigation.pop( 2 )
