@@ -99,6 +99,9 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const [ topicList, setTopicList ] = useState( [] )
     const [ showTopic, setShowTopic ] = useState( false )
     const [ topicValue, setTopicValue ] = useState( "" )
+    const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
+    const [ loadingForSave, setLoadingForSave ] = useState( false )
+    const [ loadingForAnonymous, setLoadingForAnonymous ] = useState( false )
 
     const STYLES = useStyles()
     const todayDate = new Date()
@@ -195,6 +198,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
     const onSubmit = async ( ) => {
+        setLoadingForSubmit( true )
         const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
             TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
         const notValid = validArray.includes( "" )
@@ -222,6 +226,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 DescribeWhereTheIncidentHappened: values.whereObservationHappened
             } as ISubmitObservation
             const saveRecordResult = await ObservationStore.saveObservation( payload )
+            setLoadingForSubmit( false )
             if( saveRecordResult === "Success" ){
                 await ObservationStore.removeDocument()
                 await ObservationStore.removeImages()
@@ -233,6 +238,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
     const onSave = async ( ) => {
+        setLoadingForSave( true )
         if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
             Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
             return null
@@ -254,6 +260,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
         const resultsaveAndComeBackObservationy = await ObservationStore.saveAndComeBackObservation( payload )
+        setLoadingForSave( false )
         if( resultsaveAndComeBackObservationy === "Success" ){
             await ObservationStore.removeDocument()
             await ObservationStore.removeImages()
@@ -262,6 +269,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
     const saveAsAnonymous = async ( ) => {
+        setLoadingForAnonymous( true )
         const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
             TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
         const notValid = validArray.includes( "" )
@@ -289,6 +297,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
         const resultAnonymously =  await ObservationStore.saveObservationAnonymously( payload )
+        setLoadingForAnonymous( false )
         if( resultAnonymously === "Success" ){
             await ObservationStore.removeDocument()
             await ObservationStore.removeImages()
@@ -534,6 +543,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                 ? <Button 
                                     title="Save As Anonymous"
                                     onPress={saveAsAnonymous}
+                                    loading={loadingForAnonymous}
                                 />
                                 : 
                                 <Box justifyContent={"space-evenly"} flexDirection={"row"} alignItems={"center"} m={"negative8"} >
@@ -541,12 +551,14 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                                         <Button 
                                             title="Submit"
                                             onPress={onSubmit}
+                                            loading={loadingForSubmit}
                                         />
                                     </Box>
                                     <Box width={"50%"}>
                                         <Button
                                             title="Save"
                                             onPress={onSave}
+                                            loading={loadingForSave}
                                         />
                                     </Box>       
                                 </Box>

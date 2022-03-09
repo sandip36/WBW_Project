@@ -60,6 +60,9 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     const [ reportingPeriod, setReportingPeriod ] = useState( AuditStore.initialReportingPeriodDueDateID )
     const [ isChecked, setIsChecked ] = useState( false )
+    const [ loadingForSave, setLoadingForSave ] = useState( false )
+    const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
+    const [ loadingForAnonymous, setLoadingForAnonymous ] = useState( false )
 
     useEffect( ( ) => {
         resetChecked()
@@ -271,6 +274,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         /**
          *  check for valid reporting period
          */
+        setLoadingForSave( true )
         const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
@@ -285,7 +289,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
         }
-
+        
 
         const reportingPeriodDueDate = !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates ) ? AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === reportingPeriod ) as IReportingPeriodDueDatesModel : {} as IReportingPeriodDueDatesModel
         const payload = {
@@ -310,6 +314,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             } 
         } as ISaveAuditPayload
         const response = await AuditStore.saveAuditAndInspection( payload )
+        setLoadingForSave( false )
         if( response === 'success' ) {
             setTimeout( () => {
                 // eslint-disable-next-line no-unused-expressions
@@ -319,12 +324,13 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     }
     
     const onSubmit = async ( ) => {
+        setLoadingForSubmit( true )
         const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
         }
-
+        
         if( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList && AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList.length > 0 && isEmpty( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserID ) ) {
             Toast.showWithGravity( 'Please select primary user list', Toast.LONG, Toast.CENTER );
             return null
@@ -382,6 +388,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             } 
         } as ISaveAuditPayload
         const response = await AuditStore.completeAuditAndInspection( payload )
+        setLoadingForSubmit( false )
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             setTimeout( () => {
@@ -442,6 +449,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                             <Button
                                 title="Submit"
                                 onPress={onSubmit}
+                                loading={loadingForSubmit}
                             />
                         </Box>
                         {
@@ -450,6 +458,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                     <Button 
                                         title="Save"
                                         onPress={saveAndComeBack}
+                                        loading={loadingForSave}
                                     />
                                 </Box>
                                 : null

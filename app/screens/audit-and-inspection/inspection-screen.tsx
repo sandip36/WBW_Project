@@ -60,6 +60,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     const [ reportingPeriod, setReportingPeriod ] = useState( "" )
     const [ isChecked, setIsChecked ] = useState( false )
+    const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
+    const [ loadingForSave, setLoadingForSave ] = useState( false )
     if( isEmpty( dashboard ) ) {
         return null
     }
@@ -295,18 +297,19 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     }
 
     const saveAndComeBack = async ( ) => {
+        setLoadingForSave( true )
         const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
         }
-
+        
         const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
         }
-
+        
         const reportingPeriodDueDate = !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates ) ? AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === reportingPeriod ) as IReportingPeriodDueDatesModel : {} as IReportingPeriodDueDatesModel
         const payload = {
             UserID: AuthStore.user?.UserID,
@@ -330,6 +333,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             } 
         } as ISaveAuditPayload
         const response = await AuditStore.saveAuditAndInspection( payload )
+        setLoadingForSave( false )
         if( response === 'success' ) {
             setTimeout( ( ) => {
                 navigation.dispatch( StackActions.pop( 2 ) );
@@ -339,28 +343,29 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     }
 
     const onSubmit = async ( ) => {
+        setLoadingForSubmit( true )
         const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null 
         }
-
+        
         if( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList && AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList.length > 0 && isEmpty( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserID ) ) {
             Toast.showWithGravity( 'Please select primary user list', Toast.LONG, Toast.CENTER );
             return null
         }
-
+        
         const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             return null
         }
-
+        
         const isValidDynamicFields = AuditStore.requiredSystemFieldsData
         if( !isValidDynamicFields ) {
             return null
         }
-
+        
         const isValidScoresItem = AuditStore.requiredScoreData
         if( !isValidScoresItem ) {
             Toast.showWithGravity( 'Please select a score from the Score column', Toast.LONG, Toast.CENTER );
@@ -372,13 +377,13 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             Toast.showWithGravity( 'Hazard is required.', Toast.LONG, Toast.CENTER );
             return null 
         }
-
+        
         const checkForComments = AuditStore.requiredCommentsData
         if( !checkForComments ) {
             Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
             return null 
         }
-
+        
         const reportingPeriodDueDate = !isEmpty( AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates ) ? AuditStore.inspection?.AuditAndInspectionDetails.ReportingPeriodDueDates.find( item => item.ID === reportingPeriod ) as IReportingPeriodDueDatesModel : {} as IReportingPeriodDueDatesModel
         const payload = {
             UserID: AuthStore.user?.UserID,
@@ -402,11 +407,12 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             } 
         } as ISaveAuditPayload
         const response = await AuditStore.completeAuditAndInspection( payload )
+        setLoadingForSubmit( false )
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             setTimeout( ( ) => {
                 navigation.dispatch( StackActions.pop( 2 ) );
-              
+                
                 //  navigation.pop( 2 )
             }, 3000 )
         }
@@ -449,6 +455,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     <Button
                         title="Submit"
                         onPress={onSubmit}
+                        loading={loadingForSubmit}
                     />
                 </Box>
                 {
@@ -457,6 +464,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                             <Button 
                                 title="Save"
                                 onPress={saveAndComeBack}
+                                loading={loadingForSave}
                             />
                         </Box>
                         : null

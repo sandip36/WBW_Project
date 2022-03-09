@@ -1,7 +1,7 @@
 import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button } from "components"
 import { IImages, useStores } from "models"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { RenderImage } from "components/inspection"
 import { makeStyles } from "theme"
 import { Avatar } from "react-native-elements"
@@ -41,6 +41,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     const navigation = useNavigation()
     const STYLES = useStyles()
     const { AuthStore, AuditStore } = useStores()
+    const [ isLoading, setIsLoading ] = useState( false )
 
     const deleteImage = async ( index: number ) => {
         await attributeData.removeImageByIndex( index )
@@ -86,8 +87,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                     text: "Yes",
                     onPress: async ( ) => {
                         await attributeData.removeImages()
-                        navigation.dispatch( StackActions.pop( 2 ) );
-                        // navigation.pop( 2 )
+                        // navigation.dispatch( StackActions.pop( 2 ) );
+                        navigation.pop( 2 )
                     }
                 }
             ],
@@ -98,16 +99,19 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
 
     const onSave = async ( ) => {
         if( attributeData.auditImage.length > 0 ) {
+            setIsLoading( true )
             const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
             const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
             await attributeData.saveImagesForAuditAndInspection( response )
             // eslint-disable-next-line node/no-callback-literal
             await attributeData.removeImages()
+            setIsLoading( false )
             callback( true )
             navigation.dispatch( StackActions.pop( 2 ) );
             // navigation.pop( 2 )
         }else{
             console.log( 'no data found' )
+            setIsLoading( false )
         }
     }
     
@@ -140,6 +144,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                         <Button
                             title="Save"
                             onPress={onSave}
+                            loading={isLoading}
                         />
                     </Box>
                     <Box width="50%">
