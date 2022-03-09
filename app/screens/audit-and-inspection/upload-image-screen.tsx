@@ -74,6 +74,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     }, [] )
 
     const _handleBackPress = ( ) => {
+        setIsLoading( false )
         // Works on both iOS and Android
         Alert.alert(
             "Discard changes?",
@@ -87,8 +88,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                     text: "Yes",
                     onPress: async ( ) => {
                         await attributeData.removeImages()
-                        // navigation.dispatch( StackActions.pop( 2 ) );
-                        navigation.pop( 2 )
+                        navigation.dispatch( StackActions.pop( 2 ) );
+                        //  navigation.pop( 2 )
                     }
                 }
             ],
@@ -105,8 +106,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
             await attributeData.saveImagesForAuditAndInspection( response )
             // eslint-disable-next-line node/no-callback-literal
             await attributeData.removeImages()
-            setIsLoading( false )
             callback( true )
+            setIsLoading( false )
             navigation.dispatch( StackActions.pop( 2 ) );
             // navigation.pop( 2 )
         }else{
@@ -116,7 +117,8 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     }
     
     const addImages = ( ) => {
-        navigation.goBack()
+        navigation.dispatch( StackActions.pop( 1 ) )
+        // navigation.goBack()
     }
 
     return (

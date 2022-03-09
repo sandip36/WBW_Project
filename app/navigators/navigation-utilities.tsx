@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 import { BackHandler } from "react-native"
-import { PartialState, NavigationState, NavigationContainerRef } from "@react-navigation/native"
+import { PartialState, NavigationState, NavigationContainerRef, StackActions } from "@react-navigation/native"
 
 export const RootNavigation = {
     navigate ( name: string ) {
@@ -70,7 +70,8 @@ export function useBackButtonHandler (
 
             // we can't exit, so let's turn this into a back action
             if ( navigation.canGoBack() ) {
-                navigation.goBack()
+                navigation.dispatch( StackActions.pop( 1 ) )
+                // navigation.goBack()
 
                 return true
             }

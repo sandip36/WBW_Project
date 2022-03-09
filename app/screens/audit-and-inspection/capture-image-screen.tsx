@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box } from "components"
 import React, {  useRef, useState } from "react"
 import { makeStyles } from "theme"
@@ -74,7 +74,8 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
         if( calledFrom && calledFrom === "Observation"  ) {
             await  ObservationStore.removeImages()
             await ObservationStore.setImages( IMAGE_OBJECT )
-            navigation.goBack()
+            navigation.dispatch( StackActions.pop( 1 ) )
+            // navigation.goBack()
             
         }else{
             await attributeData.setImages( IMAGE_OBJECT )
@@ -88,11 +89,13 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
     const selectPicture = async ( ) => {
         const result = await launchImageLibrary( IMAGE_OPTIONS )
         if( result.didCancel ) {
-            navigation.goBack()
+            navigation.dispatch( StackActions.pop( 1 ) )
+            // navigation.goBack()
             return null
         }else if( result.errorCode ) {
             Toast.showWithGravity( result.errorMessage || 'Something went wrong while picking image', Toast.LONG, Toast.CENTER )
-            navigation.goBack()
+            navigation.dispatch( StackActions.pop( 1 ) )
+            // navigation.goBack()
             return null
         }else{
             const imageDetails = result.assets[0] as Asset

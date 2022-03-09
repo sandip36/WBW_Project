@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import { useFormik } from "formik"
 import { IAttributes, IImages, useStores } from "models"
@@ -74,8 +74,9 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
             if( response?.Comments ) {
                 await attributeData.setComments( response.Comments )
                 await setTimeout( ( ) => {
-                    navigation.goBack()
-                }, 3000 )
+                    navigation.dispatch( StackActions.pop( 1 ) )
+                    // navigation.goBack()
+                }, 1000 )
             }
         },
     } )

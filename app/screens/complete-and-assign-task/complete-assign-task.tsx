@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native"
+import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box, Button, Radio, ScrollBox, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { IAttributes, useStores } from "models"
@@ -36,7 +36,8 @@ export const TaskUpdateOrDelete: React.FunctionComponent<TaskUpdateOrDeleteProps
         const response = await TaskStore.updateHazard( payload )
         if( response === 'success' ) {
             await setTimeout( ( ) => {
-                navigation.goBack()
+                navigation.dispatch( StackActions.pop( 1 ) )
+                // navigation.goBack()
             }, 3000 )
         }
     }
@@ -134,7 +135,8 @@ export const CompleteOrAssignTaskScreen: React.FC<CompleteOrAssignTaskScreenProp
     const _handleBackPress = ( ) => {
         // Works on both iOS and Android
         callback()
-        navigation.goBack()
+        navigation.dispatch( StackActions.pop( 1 ) )
+        // navigation.goBack()
         return true
     }
 

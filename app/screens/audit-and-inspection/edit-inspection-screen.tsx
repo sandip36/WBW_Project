@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native"
+import { StackActions, useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
@@ -278,6 +278,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
+
             return null 
         }
         
@@ -287,6 +289,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
             return null
         }
         
@@ -314,12 +317,13 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             } 
         } as ISaveAuditPayload
         const response = await AuditStore.saveAuditAndInspection( payload )
-        setLoadingForSave( false )
         if( response === 'success' ) {
             setTimeout( () => {
                 // eslint-disable-next-line no-unused-expressions
-                navigation.goBack
-            }, 3000 )
+                setLoadingForSave( false )
+                navigation.dispatch( StackActions.pop( 1 ) )
+                //  navigation.goBack
+            }, 1000 )
         }
     }
     
@@ -328,40 +332,47 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null 
         }
         
         if( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList && AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserList.length > 0 && isEmpty( AuditStore.inspection.AuditAndInspectionDetails?.PrimaryUserID ) ) {
             Toast.showWithGravity( 'Please select primary user list', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null
         }
 
         const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
             Toast.showWithGravity( 'Reason for skipping the last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null
         }
 
         const isValidDynamicFields = AuditStore.requiredSystemFieldsData
         if( !isValidDynamicFields ) {
+            setLoadingForSubmit( false )
             return null
         }
 
         const isValidScoresItem = AuditStore.requiredScoreData
         if( !isValidScoresItem ) {
             Toast.showWithGravity( 'Please select a score from the Score column', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null 
         }
 
         const checkForHazards = AuditStore.requiredHazardData 
         if( !checkForHazards ) {
             Toast.showWithGravity( 'Hazard is required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null 
         }
 
         const checkForComments = AuditStore.requiredCommentsData
         if( !checkForComments ) {
             Toast.showWithGravity( 'Comment(s) required.', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null 
         }
 
@@ -392,7 +403,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             setTimeout( () => {
-                navigation.goBack()
+                navigation.dispatch( StackActions.pop( 1 ) )
+                // navigation.goBack()
             }, 3000 )
         }
     }

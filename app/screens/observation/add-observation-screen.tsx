@@ -204,9 +204,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         const notValid = validArray.includes( "" )
         if( notValid ) {
             Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null
         }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.ID ) ) {
             Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null
         }else{
             const payload = {
@@ -226,10 +228,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 DescribeWhereTheIncidentHappened: values.whereObservationHappened
             } as ISubmitObservation
             const saveRecordResult = await ObservationStore.saveObservation( payload )
-            setLoadingForSubmit( false )
             if( saveRecordResult === "Success" ){
                 await ObservationStore.removeDocument()
                 await ObservationStore.removeImages()
+                setLoadingForSubmit( false )
+
                 navigation.navigate( "ObservationHistory" )
 
               
@@ -241,6 +244,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         setLoadingForSave( true )
         if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
             Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
             return null
         }
         const payload = {
@@ -275,9 +279,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         const notValid = validArray.includes( "" )
         if( notValid ) {
             Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+            setLoadingForAnonymous( false )
             return null
         }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.Value ) ) {
             Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            setLoadingForAnonymous( false )
             return null
         }
         const payload = {
@@ -297,10 +303,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
         const resultAnonymously =  await ObservationStore.saveObservationAnonymously( payload )
-        setLoadingForAnonymous( false )
+       
         if( resultAnonymously === "Success" ){
             await ObservationStore.removeDocument()
             await ObservationStore.removeImages()
+            setLoadingForAnonymous( false )
             navigation.navigate( "ObservationHistory" )
         }
     }

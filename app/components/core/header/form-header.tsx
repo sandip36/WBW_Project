@@ -1,3 +1,4 @@
+import { StackActions } from "@react-navigation/native"
 import React, { FunctionComponent } from "react"
 import { StyleProp, TextStyle, ViewStyle } from "react-native"
 import { Header as RNEHeader } from "react-native-elements"
@@ -44,7 +45,9 @@ export const FormHeader: FunctionComponent<HeaderProps> = props => {
     const STYLES = useStyles()
     const theme = useTheme()
     const navigateToGoBack = ( ) => {
-        navigation.goBack()
+        navigation.dispatch( StackActions.pop( 1 ) )
+
+        // navigation.goBack()
     }
     const backHandler = customBackHandler || navigateToGoBack
     return (
