@@ -112,26 +112,26 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
     const { AuditStore } = useStores()
     const [ scoreValue, setScoreValue ] = useState( item.GivenAnswerID )
 
-    useEffect( ( ) => {
-        onCheckboxValueChange()
-    }, [ AuditStore.isPassingValuesSelected ] )
+    // useEffect( ( ) => {
+    //     onCheckboxValueChange()
+    // }, [ AuditStore.isPassingValuesSelected ] )
 
-    const onCheckboxValueChange = ( ) => {
-        if( !AuditStore.isPassingValuesSelected ) {
-            if( item.GivenAnswerID !== "0" || item.GivenAnswerID !== null || item.GivenAnswerID !== undefined ) {
-                setScoreValue( item.GivenAnswerIDClone )
-            }
-            else{
-                setScoreValue( "0" )
-            }
-        }else{
-            if( item.GivenAnswerID === "0" || item.GivenAnswerID === null || item.GivenAnswerID === undefined ) {
-                setScoreValue( item.MaxCorrectAnswerID )                
-            }else{
-                setScoreValue( item.GivenAnswerID )
-            }
-        }
-    }
+    // const onCheckboxValueChange = ( ) => {
+    //     if( !AuditStore.isPassingValuesSelected ) {
+    //         if( item.GivenAnswerID !== "0" || item.GivenAnswerID !== null || item.GivenAnswerID !== undefined ) {
+    //             setScoreValue( item.GivenAnswerIDClone )
+    //         }
+    //         else{
+    //             setScoreValue( "0" )
+    //         }
+    //     }else{
+    //         if( item.GivenAnswerID === "0" || item.GivenAnswerID === null || item.GivenAnswerID === undefined ) {
+    //             setScoreValue( item.MaxCorrectAnswerID )                
+    //         }else{
+    //             setScoreValue( item.GivenAnswerID )
+    //         }
+    //     }
+    // }
 
     const onScoreValueChange = ( value ) => {
         if( isEmpty( value ) ) {
@@ -148,7 +148,7 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
             <Dropdown
                 title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
                 items={AuditStore.getDropdownData( item.ScoreList )}
-                value={AuditStore.isPassingValuesSelected === true && isEmpty( Number( scoreValue ) ) ? item.MaxCorrectAnswerID : scoreValue }
+                value={AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0  ? item.MaxCorrectAnswerID : item.GivenAnswerID }
                 onValueChange={onScoreValueChange}
             />
         </Box>
