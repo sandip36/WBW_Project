@@ -276,6 +276,7 @@ export const TaskStore = types.model( "TaskModel" )
             self.datePicker.mode = ""
             self.datePicker.show = false
             self.datePicker.value = ""
+            self.datePicker.datePickerValue = new Date()
         } )
 
         const showTimePicker = flow( function * ( ) {
@@ -286,7 +287,7 @@ export const TaskStore = types.model( "TaskModel" )
         } )
         const formatTime = flow( function * ( date: Date ) {
             const selectedDate = date || new Date()
-            const formattedTime = moment( selectedDate ).format( "hh:mm A" )
+            const formattedTime = moment( selectedDate ).format( "h:mm A" )
             self.timePicker.value = formattedTime
             self.timePicker.datePickerValue = new Date( selectedDate )
             self.timePicker.show = false
@@ -295,6 +296,7 @@ export const TaskStore = types.model( "TaskModel" )
             self.timePicker.mode = ""
             self.timePicker.show = false
             self.timePicker.value = ""
+            self.timePicker.datePickerValue = new Date()
         } )
         const setCurrentTitle = flow( function * ( value: string ) {
             self.currentTitle = value

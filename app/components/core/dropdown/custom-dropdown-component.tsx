@@ -11,7 +11,8 @@ export type DropdownProps = {
     onValueChange: ( value: any, index: number ) => any,
     customIcon?: React.ReactNode,
     onDonePress?: ( ) => any,
-    customContainerStyle?: StyleProp<ViewStyle>
+    customContainerStyle?: StyleProp<ViewStyle>,
+    isRequired?: boolean
 }
 
 const defaultIcon = () => {
@@ -27,7 +28,8 @@ export const Dropdown: React.FC<DropdownProps> = ( props ) => {
         customIcon,
         onDonePress,
         value,
-        customContainerStyle    
+        customContainerStyle,
+        isRequired    
     } = props
 
     const myPickerStyles = Platform.OS === "android" ? 
@@ -69,9 +71,16 @@ export const Dropdown: React.FC<DropdownProps> = ( props ) => {
     
     return (
         <Box flex={1} marginVertical="medium" marginHorizontal="large" style={customContainerStyle}>
-            <Box>
-                <Text color="primary" fontWeight="bold" mb="medium" variant="heading5">{title}</Text>
-            </Box>
+            {
+                isRequired
+                    ?  <Box flexDirection={"row"}>
+                        <Text color="primary" fontWeight="bold" mb="medium" variant="heading5">{title}</Text>
+                        <Text color="lightRed"> *</Text>
+                    </Box>
+                    :  <Box>
+                        <Text color="primary" fontWeight="bold" mb="medium" variant="heading5">{title}</Text>
+                    </Box>
+            }
             <RNPickerSelect 
                 items={items}
                 value={value}

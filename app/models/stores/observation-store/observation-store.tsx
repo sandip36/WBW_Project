@@ -24,7 +24,8 @@ export const ObservationStore = createModelCollection( ObservationModel )
         isSwitchOn: types.optional( types.boolean, false ),
         UploadImage: types.optional( types.array( ImagesModel ), [] ),
         UploadDocument: types.optional( types.array( DocumentModel ), [] ),
-        isComplete: types.optional( types.boolean, false )
+        isComplete: types.optional( types.boolean, false ),
+        isImageSelected: types.optional( types.boolean, false )
 
     } )
     .views( self => ( {
@@ -47,7 +48,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
         get isObservationDocumentPresent ( ) {
             return self.UploadDocument.length > 0
         },
-
     } ) )
     .views( self => ( {
         get sectionList ( ) {
@@ -78,9 +78,10 @@ export const ObservationStore = createModelCollection( ObservationModel )
             }else{
                 return "Hazard"
             }
-          
-
         },
+        get observationImage () {
+            return self.UploadImage[0]
+        }
     } ) )
     .actions( self => {
 
@@ -128,21 +129,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     return null
                 } 
                 if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
-               
-                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
-                    const response = imageUpload( {
-                        image: self.UploadImage[0],
-                        url: url
-                    } )
-                     
-                    if( isEmpty( response ) ) {
-                        return null
-                    }
-                    else{
-                        // Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
-                    }
-                } 
-                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
                     const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
                     const response = imageUpload( {
                         image: self.UploadImage[0],
@@ -151,7 +137,19 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     if( isEmpty( response ) ) {
                         return null
                     }else{
-                        // Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
+                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
+                    }
+                } 
+                if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
+                    const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
+                    const response = imageUpload( {
+                        image: self.UploadDocument[0],
+                        url: url
+                    } )
+                    if( isEmpty( response ) ) {
+                        return null
+                    }else{
+                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 }
 
@@ -170,7 +168,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     return null
                 } 
                 if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
-               
                     const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
                     const response = imageUpload( {
                         image: self.UploadImage[0],
@@ -182,10 +179,10 @@ export const ObservationStore = createModelCollection( ObservationModel )
                         Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 } 
-                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
+                if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
                     const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
                     const response = imageUpload( {
-                        image: self.UploadImage[0],
+                        image: self.UploadDocument[0],
                         url: url
                     } )
                     if( isEmpty( response ) ) {
@@ -207,7 +204,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     return null
                 } 
                 if ( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationImagePresent ) {
-               
                     const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
                     const response = imageUpload( {
                         image: self.UploadImage[0],
@@ -219,10 +215,10 @@ export const ObservationStore = createModelCollection( ObservationModel )
                         Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 } 
-                if( !isEmpty( result ) && !isEmpty( result.data ) && !isEmpty( self.isObservationDocumentPresent ) ) {
+                if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
                     const url = `${self.environment.api.apisauce.getBaseURL()}/Observation/Upload?ObservationID=${ result.data?.ObservationID}`
                     const response = imageUpload( {
-                        image: self.UploadImage[0],
+                        image: self.UploadDocument[0],
                         url: url
                     } )
                     if( isEmpty( response ) ) {
@@ -308,6 +304,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const resetSwitch = flow( function * ( ) {
             self.isSwitchOn = false
         } )
+        const toggleIsImageSelected = flow( function * ( ) {
+            self.isImageSelected = !self.isImageSelected
+        } )
         const setTopicList = flow( function * ( sectionId, value: any ) {
             const updatedSectionList = self.startobservation.Sections.map( item => {
                 if( item.ID === sectionId ) {
@@ -343,7 +342,8 @@ export const ObservationStore = createModelCollection( ObservationModel )
             removeImages,
             setDocument,
             removeDocument,
-            resetSwitch
+            resetSwitch,
+            toggleIsImageSelected
         }
     } )
 

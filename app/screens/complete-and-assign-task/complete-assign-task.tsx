@@ -69,11 +69,11 @@ export const TaskUpdateOrDelete: React.FunctionComponent<TaskUpdateOrDeleteProps
                     </Box>
                 </Box>
                 <AuditDetailsRow 
-                    title="Previous Hazards: "
+                    title="Previous Hazard: "
                     value={TaskStore.task?.PreviousHazard}
                 />
                 <AuditDetailsRow 
-                    title="New Hazards: "
+                    title="New Hazard: "
                     value={hazardValue?.label}
                 />
             </Box>

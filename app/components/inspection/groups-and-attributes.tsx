@@ -100,7 +100,7 @@ export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props 
             <Box flex={1}>
                 <Text>Hazards Shown</Text>
                 <Dropdown
-                    title="Hazards"
+                    title="Hazard"
                     items={items}
                     value={data.HazardsID}
                     onValueChange={onValueChange}
@@ -310,7 +310,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         return (
             <Box flex={1}>
                 <Dropdown
-                    title="Hazards"
+                    title="Hazard"
                     items={AuditStore.hazardList}
                     value={item.HazardsID}
                     onValueChange={( value )=>{
@@ -408,7 +408,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                 data={AuditStore.groupsAndAttributesData( groupId ) as IAttributes[]}
                 renderItem={renderItem}
                 extraData={refreshing}
-                keyExtractor={( item ) => item.AttributeID }
+                keyExtractor={( item ) => item.AttributeOrder }
                 contentContainerStyle={STYLES.contentContainerStyle}
                 ItemSeparatorComponent={ItemSeparatorComponent}
             />

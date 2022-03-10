@@ -34,7 +34,6 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
     const route = useRoute()
     const {
         attributeData,
-        // callback,
         calledFrom
     } = route.params as any
     const {
@@ -76,18 +75,13 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
         if( calledFrom && calledFrom === "Observation"  ) {
             await  ObservationStore.removeImages()
             await ObservationStore.setImages( IMAGE_OBJECT )
-            navigation.dispatch( StackActions.pop( 1 ) )
-            // navigation.goBack()
+            await ObservationStore.toggleIsImageSelected( )
+            navigation.goBack()
             
         }else{
             await attributeData.setImages( IMAGE_OBJECT )
             navigation.navigate( 'UploadImage', {
-                attributeData: attributeData,
-                // callbackImage: ( value ) => {
-                //     console.log( 'value is ',value )
-                //     // eslint-disable-next-line node/no-callback-literal
-                //     // callback( true )
-                // }
+                attributeData: attributeData
             } )
         }
        
@@ -113,10 +107,17 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
                 fileSize: imageDetails.fileSize,
                 uri: imageDetails.uri
             } as IImages
-            await attributeData.setImages( IMAGE_OBJECT )
-            navigation.navigate( 'UploadImage', {
-                attributeData: attributeData
-            } )
+            if( calledFrom && calledFrom === "Observation"  ) {
+                await  ObservationStore.removeImages()
+                await ObservationStore.setImages( IMAGE_OBJECT )
+                await ObservationStore.toggleIsImageSelected( )
+                navigation.goBack()  
+            }else{
+                await attributeData.setImages( IMAGE_OBJECT )
+                navigation.navigate( 'UploadImage', {
+                    attributeData: attributeData
+                } )
+            }
         }
     }
 

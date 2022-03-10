@@ -14,8 +14,8 @@ export const DashboardStore = createModelCollection( DashboardModel )
         currentDashboardId: types.optional( types.string, '' )
     } )
     .views( self => ( {
-        get sortDashboardByPageOrder( ) {
-            return sortBy(self.items, [function(o) { return o.HomePageOrder; }]);
+        get sortDashboardByPageOrder ( ) {
+            return sortBy( self.items, [ function ( o ) { return Number( o.HomePageOrder ); } ] );
         }
     } ) )
     .actions( self => {

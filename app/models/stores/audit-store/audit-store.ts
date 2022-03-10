@@ -33,10 +33,10 @@ export const AuditStore = types
             return isEmpty( self.audit?.AudiAndInspectionListing ) ? [] : self.audit.AudiAndInspectionListing
         },
         get systemFieldsData () {
-            return isEmpty( self.inspection?.SystemFields?.SystemFields ) ? [] : sortBy( self.inspection?.SystemFields?.SystemFields, "DisplayOrder" )
+            return isEmpty( self.inspection?.SystemFields?.SystemFields ) ? [] : sortBy( self.inspection?.SystemFields?.SystemFields, ( item ) => Number( item.DisplayOrder ) )
         },
         get dynamicFieldsData () {
-            return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, "GroupOrder" )
+            return isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : sortBy( self.inspection?.GroupsAndAttributes?.Groups, ( item ) => Number( item.GroupOrder ) )
         },
         get shouldDisplayWarningMessage () {
             return !!( self.inspection?.AuditAndInspectionDetails?.IsSchedulerRequired === "True" && isEmpty( self.inspection?.AuditAndInspectionDetails?.ReportingPeriodDueDates ) )
@@ -44,7 +44,8 @@ export const AuditStore = types
         groupsAndAttributesData ( groupId: string ) {
             const groupsAndAttributeData = isEmpty( self.inspection?.GroupsAndAttributes?.Groups ) ? [] : self.inspection?.GroupsAndAttributes?.Groups.filter( item => item.GroupID === groupId ) as IGroups[]
             const attributeData = groupsAndAttributeData[0].Attributes
-            return sortBy( attributeData, "AttributeOrder" ) as IAttributes[]
+            const result = sortBy( attributeData, [ function ( o ) { return Number( o.AttributeOrder ); } ] )
+            return result
         },
         getDropdownData ( data: any = [], label?: string, value?: string ) {
             return data.map( item => {

@@ -308,7 +308,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                         onUserSelect={onUserSelect}
                                     />
                                     : <Input 
-                                        label="User List *"
+                                        label="User *"
                                         placeholder="Select user"
                                         value={TaskStore.selectedUser?.FullName ?? ""}
                                         onTouchStart={TaskStore.displaySearchableModal}
