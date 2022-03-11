@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite"
 import { ICompleteTaskPayload } from "services/api"
 import { isEmpty } from "lodash"
 import { RenderImage } from "components/inspection"
+import { LabelWithAsterisk } from "screens/observation"
 
 export type CompleteTaskScreenProps = {
     attributeData: IAttributes
@@ -73,6 +74,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
             const response = await TaskStore.completeTask( payload, TaskStore.taskImage )
             if( response?.Comments ) {
                 await attributeData.setComments( response.Comments )
+                await attributeData.setHazardIDClone( TaskStore.currentHazardId )
                 await setTimeout( ( ) => {
                     navigation.dispatch( StackActions.pop( 1 ) )
                     // navigation.goBack()
@@ -115,7 +117,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
             </Box>
             <Box mt="regular" marginHorizontal="small">
                 <TextAreaInput 
-                    label="Task Title *"
+                    label={<LabelWithAsterisk label="Task Title"/>}
                     labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                     placeholder="Please provide task title"
                     value={values.taskTitle}
@@ -124,7 +126,7 @@ export const CompleteTaskScreen: React.FC<CompleteTaskScreenProps> = observer( (
                     error={touched.taskTitle && errors.taskTitle}
                 /> 
                 <TextAreaInput 
-                    label="Comments *"
+                    label={<LabelWithAsterisk label="Comments"/>}
                     labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                     placeholder="Please provide comments"
                     value={values.comments}

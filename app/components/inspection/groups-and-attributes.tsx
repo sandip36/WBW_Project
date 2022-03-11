@@ -12,6 +12,7 @@ import { isEmpty } from "lodash"
 import { Item } from "react-native-picker-select"
 import { IDeleteAttributeImages } from "services/api"
 import ImageViewer from "react-native-image-zoom-viewer"
+import { LabelWithAsterisk } from "screens"
 
 export type GroupsAndAttributesProps = {
     groupId: string
@@ -291,14 +292,16 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     }
 
     const navigateToAssignOrCompleteTask = async ( item: IAttributes ) => {
-        await TaskStore.setAttributeID( item.AttributeID )
-        await TaskStore.setCustomFormResultID( item.CustomFormResultID )
-        await TaskStore.setCurrentHazardId( item.HazardsID )
-        await TaskStore.setCurrentTitle( item.Title )
-        navigation.navigate( 'CompleteOrAssignTask', {
-            callback: ( ) => updateHazard( item ),
-            attributeData: item
-        } )
+        if( item.HazardsID !== item.HazardsIDClone ) {
+            await TaskStore.setAttributeID( item.AttributeID )
+            await TaskStore.setCustomFormResultID( item.CustomFormResultID )
+            await TaskStore.setCurrentHazardId( item.HazardsID )
+            await TaskStore.setCurrentTitle( item.Title )
+            navigation.navigate( 'CompleteOrAssignTask', {
+                callback: ( ) => updateHazard( item ),
+                attributeData: item
+            } )
+        }
     }
 
     const clearHazards = ( item: IAttributes ) => {
@@ -372,7 +375,8 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                 (
                                     <Box marginHorizontal="regular" mt="regular">
                                         <TextAreaInput 
-                                            label={item.commentsMandatoryOrNot}
+                                            // label={item.commentsMandatoryOrNot}
+                                            label={item.commentsMandatoryOrNot === "Comments *" ? <LabelWithAsterisk label="Comments" /> : "Comments" }
                                             labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                                             placeholder="Comments"
                                             defaultValue={item.Comments}                        

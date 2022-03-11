@@ -169,7 +169,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             ]
             const notValidPayload = isValid.includes( "" ) || isValid.includes( undefined ) || isValid.includes( null )
             if( notValidPayload ) {
-                Toast.showWithGravity( 'Please fill all the details marked as required', Toast.LONG, Toast.CENTER );
+                Toast.showWithGravity( 'Please fill all mandatory fields', Toast.LONG, Toast.CENTER );
                 setLoadingForSubmit ( false )
 
                 return null
@@ -192,6 +192,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             const response = await TaskStore.assignTask( payload, TaskStore.taskImage )
             if( response?.Comments ) {
                 await attributeData.setComments( response.Comments )
+                await attributeData.setHazardIDClone( TaskStore.currentHazardId )
                 await setTimeout( ( ) => {
                     setLoadingForSubmit ( false )
                     navigation.dispatch( StackActions.pop( 1 ) )
@@ -293,7 +294,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                         </Box>
                         <Box mt="regular" marginHorizontal="small">
                             <TextAreaInput 
-                                label="Task Title *"
+                                label={<LabelWithAsterisk label="Task Title"/>}
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                                 placeholder="Please provide task title"
                                 defaultValue={TaskStore.currentTitle}
@@ -317,7 +318,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                             }
                             
                             <TextAreaInput 
-                                label="Description *"
+                                label={<LabelWithAsterisk label="Description"/>}
                                 labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                                 placeholder="Please provide description"
                                 value={values.description}
