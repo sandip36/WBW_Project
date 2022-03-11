@@ -11,7 +11,7 @@ export type CustomDateTimePickerProps = {
     numOfLines?: number,
     multiline?: boolean,
     editable?: boolean,
-    label?: string,
+    label?: string | React.ReactElement<any>
     placeholder?: string,
     placeholderTextColor?: string,
     textAlignVertical?: 'auto' | 'top' | 'bottom' | 'center';

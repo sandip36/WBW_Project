@@ -83,6 +83,7 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                         <Box flex={AuditStore.shouldShowSecondaryList ? 0.40: 0.25 }>
                             <Dropdown
                                 title={ `Select ${AuditStore?.audit?.TemplateDetails?.Type}` }
+                                isRequired={true}
                                 items={AuditStore.primaryList}
                                 value={AuditStore?.currentPrimaryListID ?? "" }
                                 onValueChange={( value )=>AuditStore.setCurrentPrimaryListID( value )}
@@ -93,6 +94,7 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                                         <Dropdown
                                             title="Inspection on behalf of"
                                             items={AuditStore.secondaryList}
+                                            isRequired={true}
                                             value={AuditStore.currentSecondaryListID}
                                             onValueChange={( value )=>AuditStore.setCurrentSecondaryListID( value )}
                                         />

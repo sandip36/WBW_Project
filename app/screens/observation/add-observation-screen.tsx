@@ -153,9 +153,9 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         },
         validationSchema: object( {
             whereObservationHappened: string()
-                .required( 'Where the observation happened is a required field' ),
+                .required( 'Where the observation happened is required' ),
             observation: string()
-                .required( 'Observation is a required field' )
+                .required( 'Observation is required' )
         } ),
         async onSubmit ( values ) {
             //
@@ -277,6 +277,13 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
             Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
             setLoadingForSave( false )
+            return null
+        }
+        const validArray = [ TaskStore.datePicker?.value ]
+        const notValid = validArray.includes( "" )
+        if( notValid ) {
+            Toast.showWithGravity( 'Please fill the date of the observation field', Toast.LONG, Toast.CENTER );
+            setLoadingForSubmit( false )
             return null
         }
         const payload = {
@@ -443,7 +450,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                         /> 
                         : <Box mx="medium">
                             <Input 
-                                label="Where did the Observation occur *"
+                                label={<LabelWithAsterisk label="Where did the Observation occur" />}
                                 placeholder="Click Here"
                                 value={ObservationStore.selectedUser?.Value ?? ""}
                                 onTouchStart={ObservationStore.displaySearchableModal}
@@ -463,7 +470,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 </Box>
                 <Box mx="medium">
                     <CustomDateTimePicker
-                        label="What was the Date of the Observation *"
+                        label={<LabelWithAsterisk label="What was the Date of the Observation" />}
                         onPress={TaskStore.showDatePicker}
                         show={TaskStore.datePicker?.show}
                         inputValue={isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value }
@@ -476,7 +483,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 </Box>
                 <Box mx="medium">
                     <CustomDateTimePicker
-                        label="What was the Time of the Observation *"
+                        label={<LabelWithAsterisk label="What was the Time of the Observation" />}
                         placeholder="Select Time"
                         onPress={TaskStore.showTimePicker}
                         show={TaskStore.timePicker?.show}

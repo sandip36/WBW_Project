@@ -101,6 +101,7 @@ export const RenderHazard: React.FunctionComponent<RenderHazardProps> = ( props 
                 <Text>Hazards Shown</Text>
                 <Dropdown
                     title="Hazard"
+                    isRequired={true}
                     items={items}
                     value={data.HazardsID}
                     onValueChange={onValueChange}
@@ -158,6 +159,7 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
                 items={AuditStore.getDropdownData( item.ScoreList )}
                 value={AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0  ? item.MaxCorrectAnswerID : item.GivenAnswerID }
                 onValueChange={onScoreValueChange}
+                isRequired={true}
             />
         </Box>
     )
@@ -313,6 +315,7 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                     title="Hazard"
                     items={AuditStore.hazardList}
                     value={item.HazardsID}
+                    isRequired={true}
                     onValueChange={( value )=>{
                         if( !isEmpty( value ) ){
                             item.setHazardId( value )

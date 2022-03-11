@@ -16,6 +16,7 @@ import { SearchableList } from "components/searchable-input/searchable-input"
 import { IUserList } from "models/models/task-model/user-list-model"
 import Toast from "react-native-simple-toast"
 import { RenderImage } from "components/inspection"
+import { LabelWithAsterisk } from "screens/observation"
 
 
 export type AssignTaskScreenProps = {
@@ -92,7 +93,7 @@ export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observ
                                     !isEmpty( ratingData ) 
                                         ?  <Box flex={1} mt="medium">
                                             <Input 
-                                                label="Risk Rating *"
+                                                label={<LabelWithAsterisk label="Risk Rating" />}
                                                 placeholder="Risk Rating"
                                                 value={ratingData?.data?.RiskRating}
                                                 editable={false}
@@ -103,7 +104,7 @@ export const RiskRating: React.FunctionComponent<RiskRatingScreenProps> = observ
                                                         () => (
                                                             <Box flex={1}>
                                                                 <CustomDateTimePicker
-                                                                    label="Due Date *"
+                                                                    label={<LabelWithAsterisk label="Due Date" />}
                                                                     onPress={TaskStore.showDatePicker}
                                                                     show={TaskStore.datePicker?.show}
                                                                     inputValue={isEmpty( TaskStore.datePicker?.value ) ? TaskStore.currentDueDateValue : TaskStore.datePicker?.value }
@@ -308,7 +309,7 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                                         onUserSelect={onUserSelect}
                                     />
                                     : <Input 
-                                        label="User *"
+                                        label={<LabelWithAsterisk label="User" />}
                                         placeholder="Select user"
                                         value={TaskStore.selectedUser?.FullName ?? ""}
                                         onTouchStart={TaskStore.displaySearchableModal}
@@ -326,7 +327,8 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                         </Box>
                         <Box marginVertical="negative8">
                             <Dropdown
-                                title="Severity Rating *"
+                                title="Severity Rating"
+                                isRequired={true}
                                 items={TaskStore.severityRatingList}
                                 value={TaskStore.currentSeverityRating}
                                 onValueChange={( value )=>TaskStore.setCurrentSeverityRatingValue( value )}
@@ -334,7 +336,8 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
                             />
                             <Box mt="mini">
                                 <Dropdown
-                                    title="Probability Rating *"
+                                    title="Probability Rating"
+                                    isRequired={true}
                                     items={TaskStore.probabilityRatingList}
                                     value={TaskStore.currentProbabilityRating}
                                     onValueChange={( value )=>{

@@ -15,6 +15,7 @@ import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
 import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
 import Toast from "react-native-simple-toast"
+import { LabelWithAsterisk } from "screens/observation/add-observation-screen"
 
 
 export type InspectionScreenProps = {
@@ -120,10 +121,11 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             return (
                 <Box marginHorizontal="medium">
                     <Input 
-                        label={item.IsMandatory === "True" 
-                            ? `${item.ControlLabel} *`
-                            : `${item.ControlLabel}`
-                        }
+                        // label={item.IsMandatory === "True" 
+                        //     ? `${item.ControlLabel} *`
+                        //     : `${item.ControlLabel}`
+                        // }
+                        label={item.IsMandatory === "True" ? <LabelWithAsterisk label={`${item.ControlLabel}`}/> : `${item.ControlLabel}`}
                         placeholder={item.ControlLabel}
                         defaultValue={item.SelectedValue}                        
                         onChangeText={ ( text ) => item.setSelectedValue( text ) }
@@ -202,7 +204,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                         ? null
                         :  <Box>
                             <Dropdown
-                                title="Inspection on behalf of *"
+                                title="Inspection on behalf of"
+                                isRequired={true}
                                 items={AuditStore.primaryUser}
                                 value={AuditStore.inspection?.AuditAndInspectionDetails?.PrimaryUserID}
                                 onValueChange={( value )=>AuditStore.setPrimaryUserId( value )}
@@ -213,7 +216,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     AuditStore.shouldShowReportingPeriod
                         ? <Box>
                             <Dropdown
-                                title="Last Day of Schedule Period *"
+                                title="Last Day of Schedule Period"
+                                isRequired={true}
                                 items={AuditStore.reportingPeriodDueDates}
                                 value={reportingPeriod}
                                 onValueChange={onChangeReportingPeriod}

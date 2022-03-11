@@ -6,6 +6,7 @@ import { createModelCollection } from '../../factories/model-collection.factory'
 import Toast from "react-native-simple-toast"
 import { isEmpty } from "lodash"
 import { imageUpload } from "utils/fetch_api/uploadSingleImage"
+import { nullType } from "mobx-state-tree/dist/internal"
 
 
 export const ObservationStore = createModelCollection( ObservationModel )
@@ -116,9 +117,16 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     self.isComplete = false
                 }
                 return result
-            } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
-                return null
+            } 
+            catch( error ) {
+                console.log( 'error is ',JSON.stringify( error ) )
+                if( error?.kind === "rejected" || error?.Message === "No Records Found" ) {
+                    if( self.items?.length > 0 ) {
+                        return null
+                    }
+                    Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
+                    return null
+                }
             }
         } )
 
@@ -136,8 +144,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     } )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 } 
                 if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
@@ -146,10 +152,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
                         image: self.UploadDocument[0],
                         url: url
                     } )
+                    console.log( 'response after uploading document from store',JSON.stringify( response ) )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 }
 
@@ -175,8 +180,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     } )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 } 
                 if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
@@ -187,8 +190,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     } )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 }
                 return "Success"
@@ -211,8 +212,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     } )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Image uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 } 
                 if( !isEmpty( result ) && !isEmpty( result.data ) && self.isObservationDocumentPresent ) {
@@ -223,8 +222,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     } )
                     if( isEmpty( response ) ) {
                         return null
-                    }else{
-                        Toast.showWithGravity( 'Document uploaded Successfully', Toast.LONG, Toast.CENTER )
                     }
                 }
                 return "Success"
