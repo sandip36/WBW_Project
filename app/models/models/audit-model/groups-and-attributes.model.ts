@@ -300,8 +300,9 @@ export const AttributesModel = types
         } )
 
         const saveImagesForAuditAndInspection = flow( function * ( response: any ) {
-            console.tron.log( 'parsed image', response )
             self.AttributeImages = response.AttributeImages
+            self.auditImage = [] as any
+
         } )
 
         return {

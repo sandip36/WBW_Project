@@ -1,6 +1,5 @@
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
-import { Async } from "react-async"
 import { ActivityIndicator, Image, ImageStyle, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
@@ -8,14 +7,13 @@ import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
 import { IDocument, ILocationsModel, useStores } from "models"
 import { Avatar, Icon, ListItem } from "react-native-elements"
-import { Observer, observer } from "mobx-react-lite"
+import {  observer } from "mobx-react-lite"
 import { useFormik } from "formik"
 import { object, string } from "yup"
-import { isEmpty } from "lodash"
+import { isEmpty, } from "lodash"
 import { Dropdown } from "components/core/dropdown/custom-dropdown-component"
 import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
-import { RenderImage } from "components/inspection"
 
 
 
@@ -274,16 +272,17 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
 
     const onSave = async ( ) => {
         setLoadingForSave( true )
-        if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
-            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
-            setLoadingForSave( false )
-            return null
-        }
-        const validArray = [ TaskStore.datePicker?.value ]
+        setLoadingForAnonymous( true )
+        const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
+            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
         const notValid = validArray.includes( "" )
         if( notValid ) {
-            Toast.showWithGravity( 'Please fill the date of the observation field', Toast.LONG, Toast.CENTER );
-            setLoadingForSubmit( false )
+            Toast.showWithGravity( 'Please fill all mandatory fields', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
+            return null
+        }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.Value ) ) {
+            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
             return null
         }
         const payload = {
@@ -363,15 +362,17 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         try {
             await ObservationStore.removeDocument()
             const res = await DocumentPicker.pick( {
-                type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
+                // type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
+                type: [ DocumentPicker.types.pdf ],
+
             } );
-          
             const documentobject = {
                 fileCopyUri: res[0]?.fileCopyUri,
                 type: res[0].type,
                 size: res[0]?.size,
                 name: res[0]?.name,
-                uri: res[0].uri
+                uri: `${res[0].uri}`
+                // .replace( "%3A17", ".pd f" )
             } as IDocument
     
             await ObservationStore.setDocument( documentobject ) 
@@ -546,7 +547,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 </Box>           
                 <Box mx="medium" mt="regular">
                     <TextAreaInput 
-                        label="Observation *"
+                        label={<LabelWithAsterisk label="Observation" />}
                         labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                         placeholder="Type Here"
                         onChangeText={handleChange( "observation" )}
@@ -576,7 +577,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 {
                     ObservationStore.isSwitchOn
                         ? <Button 
-                            title="Submit As Anonymous"
+                            title="Submit as Anonymous"
                             onPress={saveAsAnonymous}
                             loading={loadingForAnonymous}
                         />
