@@ -1,6 +1,5 @@
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
-import { Async } from "react-async"
 import { ActivityIndicator, Image, ImageStyle, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
@@ -8,14 +7,13 @@ import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
 import { IDocument, ILocationsModel, useStores } from "models"
 import { Avatar, Icon, ListItem } from "react-native-elements"
-import { Observer, observer } from "mobx-react-lite"
+import {  observer } from "mobx-react-lite"
 import { useFormik } from "formik"
 import { object, string } from "yup"
-import { isEmpty } from "lodash"
+import { isEmpty, } from "lodash"
 import { Dropdown } from "components/core/dropdown/custom-dropdown-component"
 import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
-import { RenderImage } from "components/inspection"
 
 
 
@@ -368,13 +366,13 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 type: [ DocumentPicker.types.pdf ],
 
             } );
-          
             const documentobject = {
                 fileCopyUri: res[0]?.fileCopyUri,
                 type: res[0].type,
                 size: res[0]?.size,
                 name: res[0]?.name,
-                uri: res[0].uri
+                uri: `${res[0].uri}`
+                // .replace( "%3A17", ".pd f" )
             } as IDocument
     
             await ObservationStore.setDocument( documentobject ) 

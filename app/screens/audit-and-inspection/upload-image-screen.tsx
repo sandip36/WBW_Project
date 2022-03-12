@@ -104,17 +104,16 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
         if( attributeData.auditImage.length > 0 ) {
             setIsLoading( true )
             const url = `AuditAndInspection/UploadAttributesInstanceImage?UserID=${AuthStore.user?.UserID}&AuditAndInspectionID=${AuditStore.inspection?.AuditAndInspectionDetails?.AuditAndInspectionID}&CustomForm_Attribute_InstanceID=${attributeData.CustomForm_Attribute_InstanceID}`
-            const response = await AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url )
-            await attributeData.saveImagesForAuditAndInspection( response )
-            await attributeData.removeImages()
-            // eslint-disable-next-line node/no-callback-literal
-            // callbackImage( true )
-            await AuditStore.toggleRefreshInspectionImage()
-            setIsLoading( false )
-            navigation.dispatch( StackActions.pop( 2 ) );
-            // navigation.pop( 2 )
+            AuditStore.environment.api.uploadMultipleImages( attributeData.auditImage, url ).then( ( response )=>{
+                attributeData.saveImagesForAuditAndInspection( response )
+                AuditStore.toggleRefreshInspectionImage()
+                setIsLoading( false )
+                navigation.dispatch( StackActions.pop( 2 ) );
+            } ).catch( ( error )=>{
+                console.log( "error while uploading ",error )
+                
+            } )
         }else{
-            console.log( 'no data found' )
             setIsLoading( false )
         }
     }
@@ -154,7 +153,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                     </Box>
                     <Box width="50%">
                         <Button 
-                            title="Cancel"
+                            title="Close"
                             onPress={_handleBackPress}
                         />
                     </Box>
