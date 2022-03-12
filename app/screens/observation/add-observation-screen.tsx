@@ -274,16 +274,17 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
 
     const onSave = async ( ) => {
         setLoadingForSave( true )
-        if( ObservationStore.selectedUser && isEmpty( ObservationStore.selectedUser?.ID ) ) {
-            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
-            setLoadingForSave( false )
-            return null
-        }
-        const validArray = [ TaskStore.datePicker?.value ]
+        setLoadingForAnonymous( true )
+        const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
+            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
         const notValid = validArray.includes( "" )
         if( notValid ) {
-            Toast.showWithGravity( 'Please fill the date of the observation field', Toast.LONG, Toast.CENTER );
-            setLoadingForSubmit( false )
+            Toast.showWithGravity( 'Please fill all mandatory fields', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
+            return null
+        }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.Value ) ) {
+            Toast.showWithGravity( 'Please select values from where did observation occur dropdown', Toast.LONG, Toast.CENTER );
+            setLoadingForSave( false )
             return null
         }
         const payload = {
@@ -363,7 +364,9 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         try {
             await ObservationStore.removeDocument()
             const res = await DocumentPicker.pick( {
-                type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
+                // type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
+                type: [ DocumentPicker.types.pdf ],
+
             } );
           
             const documentobject = {
@@ -546,7 +549,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 </Box>           
                 <Box mx="medium" mt="regular">
                     <TextAreaInput 
-                        label="Observation *"
+                        label={<LabelWithAsterisk label="Observation" />}
                         labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                         placeholder="Type Here"
                         onChangeText={handleChange( "observation" )}
@@ -576,7 +579,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 {
                     ObservationStore.isSwitchOn
                         ? <Button 
-                            title="Submit As Anonymous"
+                            title="Submit as Anonymous"
                             onPress={saveAsAnonymous}
                             loading={loadingForAnonymous}
                         />
