@@ -13,29 +13,23 @@ import "./i18n"
 import "./utils/ignore-warnings"
 import React, { useState, useRef, useCallback } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
-import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context"
 import { SafeAreaView , ActivityIndicator, StyleSheet } from "react-native"
-import * as storage from "./utils/storage"
 import {
     useBackButtonHandler,
     RootNavigator,
     canExit,
     setRootNavigation,
-    useNavigationPersistence,
 } from "./navigators"
 import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 import { theme } from "theme"
 import codePush from "react-native-code-push"
-
-
-// This puts screens in a native ViewController or Activity. If you want fully native
-// stack navigation, use `createNativeStackNavigator` in place of `createStackNavigator`:
-// https://github.com/kmagiera/react-native-screens#using-native-stack-navigator
 import { enableScreens } from "react-native-screens"
 import { ThemeProvider } from "@shopify/restyle"
 import { Async } from "react-async"
 import { Box, Text } from "./components"
 import Toast from "react-native-simple-toast"
+
+
 
 enableScreens()
 
@@ -63,7 +57,7 @@ function App () {
 
         try {
 
-            // await codePush.sync()
+            await codePush.sync()
 
             const rootStore = await setupRootStore()
             setRootStore( rootStore )
@@ -92,13 +86,11 @@ function App () {
             <Async.Resolved>
                 <ThemeProvider {...{ theme }}>
                     <RootStoreProvider value={rootStore}>
-                        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-                            <SafeAreaView style={styles.rootContainer}>
-                                <RootNavigator
-                                    ref={navigationRef}
-                                />
-                            </SafeAreaView>
-                        </SafeAreaProvider>
+                        <SafeAreaView style={styles.rootContainer}>
+                            <RootNavigator
+                                ref={navigationRef}
+                            />
+                        </SafeAreaView>
                     </RootStoreProvider>
                 </ThemeProvider>
             </Async.Resolved>
