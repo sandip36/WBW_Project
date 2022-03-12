@@ -41,10 +41,10 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
                     bg="primary"
                     flexDirection="row"
                 >
-                    <Box flex={0.7} padding="large">
+                    <Box flex={0.7} padding="regular">
                         <Text variant="body" color="white">{observation?.ObservationNumber}</Text>
                     </Box>
-                    <Box flex={0.3}>
+                    <Box flex={0.3} alignItems="flex-end" mr={"regular"}>
                         <Text variant="body" color="white">{observation?.Status}</Text>
                     </Box>
                 </Box>
