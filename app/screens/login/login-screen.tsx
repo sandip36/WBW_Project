@@ -71,8 +71,8 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
         resetForm,
     } = useFormik( {
         initialValues: {
-            username: "w1@swordmfg",
-            password: "chemistry7",
+            username: "",
+            password: "",
         },
         validationSchema: object( {
             username: string()
