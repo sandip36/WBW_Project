@@ -60,7 +60,7 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
                     </Text>
                 </Box>
                 {
-                    auditAndInspectionDetails?.Status !== "Complete"
+                    auditAndInspectionDetails?.Status === "In Process"
                         ? <TouchableBox flex={0.1} justifyContent="center" mx="regular" alignItems="flex-end" onPress={onEditInspection}>
                             <Icon size={32} name="edit" color="background" type="material" />
                         </TouchableBox>
