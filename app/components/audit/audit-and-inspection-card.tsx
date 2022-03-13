@@ -49,8 +49,8 @@ export const AuditAndInspectionCard: React.FunctionComponent<AuditAndInspectionC
                 borderTopRightRadius="large"
                 flexDirection="row"
                 bg="primary">
-                <Box flex={0.6} padding="large">
-                    <Text variant="body" fontWeight="bold" color="white">
+                <Box flex={0.6} padding={"regular"} alignContent={"flex-start"} justifyContent="center">
+                    <Text variant="body" fontWeight="bold" color="white" >
                         {auditAndInspectionDetails?.RecordNumber}
                     </Text>
                 </Box>
