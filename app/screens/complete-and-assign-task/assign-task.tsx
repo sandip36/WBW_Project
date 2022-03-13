@@ -191,9 +191,13 @@ export const AssignTaskScreen: React.FC<AssignTaskScreenProps> = observer( ( pro
             } as IAssignTaskPayload
             const response = await TaskStore.assignTask( payload, TaskStore.taskImage )
             if( response?.Comments ) {
+                await TaskStore.setcurrentDueDateValue()
+                await TaskStore.resetDatePicker()
+                await TaskStore.resetTimePicker()
                 await attributeData.setComments( response.Comments )
                 await attributeData.setHazardIDClone( TaskStore.currentHazardId )
                 await setTimeout( ( ) => {
+                   
                     setLoadingForSubmit ( false )
                     navigation.dispatch( StackActions.pop( 1 ) )
                     //  navigation.goBack()

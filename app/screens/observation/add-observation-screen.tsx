@@ -166,6 +166,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         await ObservationStore.removeDocument()
         await ObservationStore.removeImages()
         await ObservationStore.resetSwitch()
+        await TaskStore.setcurrentDueDateValue()
         await TaskStore.resetDatePicker()
         await TaskStore.resetTimePicker()
         await ObservationStore.resetSelectedUser()
@@ -421,7 +422,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         }
     }
 
-
     if( isDataFetched ) {
         return (
             <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
@@ -429,6 +429,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             </Box>
         )
     }
+
 
     return (
         <Box flex={1}>

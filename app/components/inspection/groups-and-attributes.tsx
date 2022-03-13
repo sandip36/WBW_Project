@@ -2,7 +2,7 @@ import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "component
 import React, { useEffect, useState } from "react"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { AuditStore, IAttributes, IAtttributeImages, IAudit, IImages, useStores } from "models"
-import { FlatList, ImageStyle, StyleProp, ViewStyle, Modal, TouchableOpacity, View, Dimensions } from "react-native"
+import { FlatList, ImageStyle, StyleProp, ViewStyle, Modal, TouchableOpacity, View, Dimensions, Alert } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
 import { ImageLibraryOptions } from "react-native-image-picker"
@@ -174,14 +174,31 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
     const [ showZoomViewer,setShowZoomViewer ] = useState( false )
 
     const onDeleteImage = async ( item: IAtttributeImages, index: number ) => {
-        const payload = {
-            UserID: AuthStore.user?.UserID,
-            AccessToken: AuthStore.token,
-            CustomForm_Attribute_Instance_ImageID: item?.CustomForm_Attribute_Instance_ImageID
-        } as IDeleteAttributeImages
-        await AuditStore.deleteImageFromServer( payload )
-        await attributeData.removeAttributeImageByIndex( index )
-        setRefresh( !refresh )
+        Alert.alert(
+            "Delete Image?",
+            "Are you sure you want to delete image?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null
+                },
+                {
+                    text: "Yes",
+                    onPress: async ( ) => {
+                        const payload = {
+                            UserID: AuthStore.user?.UserID,
+                            AccessToken: AuthStore.token,
+                            CustomForm_Attribute_Instance_ImageID: item?.CustomForm_Attribute_Instance_ImageID
+                        } as IDeleteAttributeImages
+                        await AuditStore.deleteImageFromServer( payload )
+                        await attributeData.removeAttributeImageByIndex( index )
+                        setRefresh( !refresh )
+                    }
+                }
+            ],
+        );
+        return true
+       
     }
 
     const onImagePress = ( ) => {

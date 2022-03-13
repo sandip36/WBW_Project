@@ -301,6 +301,10 @@ export const TaskStore = types.model( "TaskModel" )
         const setCurrentTitle = flow( function * ( value: string ) {
             self.currentTitle = value
         } )
+        const setcurrentDueDateValue = flow( function *() {
+            self.currentDueDateValue = ""
+        } )
+
 
         const displaySearchableModal = flow( function * ( ) {
             self.showModal = true
@@ -355,7 +359,8 @@ export const TaskStore = types.model( "TaskModel" )
             showTimePicker,
             hideTimePicker,
             formatTime,
-            resetTimePicker
+            resetTimePicker,
+            setcurrentDueDateValue
         }
     } )
 
