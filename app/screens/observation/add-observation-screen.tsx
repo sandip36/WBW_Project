@@ -346,6 +346,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         if( resultAnonymously === "Success" ){
             await ObservationStore.removeDocument()
             await ObservationStore.removeImages()
+            await ObservationStore.setRadioValue( "0" )
             setLoadingForAnonymous( false )
             navigation.navigate( "ObservationHistory" )
         }
