@@ -104,7 +104,7 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
                 <Async.Resolved>
                     <Box flex={1}>
                         <FormHeader 
-                            title={dashboard?.Category}
+                            title={dashboard?.Title}
                             navigation={navigation}
                         />
                         <Box mt="regular">

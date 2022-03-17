@@ -432,7 +432,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                 </Async.Rejected>
                 <Async.Resolved>
                     <FormHeader 
-                        title={dashboard?.Category}
+                        title={dashboard?.Title}
                         navigation={navigation}
                     />                        
                     <Box flex={1}>

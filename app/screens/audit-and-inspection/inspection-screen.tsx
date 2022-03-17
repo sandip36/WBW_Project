@@ -435,7 +435,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     return (
         <Box flex={1}>
             <FormHeader 
-                title={dashboard?.Category}
+                title={dashboard?.Title}
                 navigation={navigation}
                 customBackHandler={_handleBackPress}
             />                        

@@ -72,7 +72,8 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                 <Async.Resolved>
                     <Box flex={1}>
                         <FormHeader 
-                            title={AuditStore?.audit?.TemplateDetails?.Title}
+                            title={dashboard?.Title}
+                            // title={AuditStore?.audit?.TemplateDetails?.Title}
                             navigation={navigation}
                         />
                         <Box mt="medium" marginHorizontal="regular">
