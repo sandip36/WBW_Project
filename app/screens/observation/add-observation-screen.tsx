@@ -2,7 +2,7 @@ import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
 import { ActivityIndicator, Image, ImageStyle, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
-import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { StackActions, useFocusEffect, useNavigation } from "@react-navigation/native"
 import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
 import { IDocument, ILocationsModel, useStores } from "models"
@@ -163,6 +163,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
    
     const fetchAllFilterData = useCallback( async () => {
         setIsDataFetched( true )
+        await ObservationStore.setRadioValue( "0" )
+
         await ObservationStore.removeDocument()
         await ObservationStore.removeImages()
         await ObservationStore.resetSwitch()
@@ -260,13 +262,10 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             } as ISubmitObservation
             const saveRecordResult = await ObservationStore.saveObservation( payload )
             if( saveRecordResult === "Success" ){
-                await ObservationStore.removeDocument()
-                await ObservationStore.removeImages()
-                setLoadingForSubmit( false )
-
-                navigation.navigate( "ObservationHistory" )
-
-              
+                setTimeout( () => {
+                    setLoadingForSubmit( false )
+                    navigation.dispatch( StackActions.pop( 1 ) )
+                }, 3000 )
             }
         }
     }
@@ -303,11 +302,13 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             DescribeWhereTheIncidentHappened: values.whereObservationHappened
         } as ISubmitObservation
         const resultsaveAndComeBackObservationy = await ObservationStore.saveAndComeBackObservation( payload )
-        setLoadingForSave( false )
+        // 
         if( resultsaveAndComeBackObservationy === "Success" ){
-            await ObservationStore.removeDocument()
-            await ObservationStore.removeImages()
-            navigation.navigate( "ObservationHistory" )
+            setTimeout( () => {
+                setLoadingForSave( false )
+                navigation.dispatch( StackActions.pop( 1 ) )
+            }, 3000 )
+           
         }
     }
 
@@ -344,11 +345,13 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         const resultAnonymously =  await ObservationStore.saveObservationAnonymously( payload )
        
         if( resultAnonymously === "Success" ){
-            await ObservationStore.removeDocument()
-            await ObservationStore.removeImages()
-            await ObservationStore.setRadioValue( "0" )
-            setLoadingForAnonymous( false )
-            navigation.navigate( "ObservationHistory" )
+            setTimeout( () => {
+                setLoadingForAnonymous( false )
+                navigation.dispatch( StackActions.pop( 1 ) )
+            }, 3000 )
+          
+            // setLoadingForAnonymous( false )
+            // navigation.navigate( "ObservationHistory" )
         }
     }
 
@@ -362,7 +365,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
     const documentPicker = async ( ) => {
         try {
-            await ObservationStore.removeDocument()
+            // await ObservationStore.removeDocument()
             const res = await DocumentPicker.pick( {
                 // type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
                 type: [ DocumentPicker.types.pdf ],
@@ -376,7 +379,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 uri: `${res[0].uri}`
                 // .replace( "%3A17", ".pd f" )
             } as IDocument
-    
+            await ObservationStore.removeDocument()
             await ObservationStore.setDocument( documentobject ) 
 
         } catch ( err ) {

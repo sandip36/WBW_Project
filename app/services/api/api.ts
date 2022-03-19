@@ -389,7 +389,6 @@ export class Api {
 
   async uploadImages ( payload: any, userId: string, auditAndInspectionId: string ) {
       const finalUploadUrl = `/AuditAndInspection/UploadAttributesInstanceImage?UserID=${userId}&AuditAndInspectionID=${auditAndInspectionId}`
-      //   const finalUploadUrl = `/AuditAndInspection/UploadAttributesInstanceImage?UserID=${userId}`
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( finalUploadUrl, payload, {
           "headers": {
               'Content-Type': 'multipart-formdata'

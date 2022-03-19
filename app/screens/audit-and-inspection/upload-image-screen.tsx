@@ -111,6 +111,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                 navigation.dispatch( StackActions.pop( 2 ) );
             } ).catch( ( error )=>{
                 console.log( "error while uploading ",error )
+                setIsLoading( false )
                 
             } )
         }else{

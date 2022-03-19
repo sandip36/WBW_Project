@@ -10,7 +10,6 @@ import { useStores } from "models"
 import { isEmpty } from "lodash"
 import { IAuditHistoryFetchPayload } from "services/api"
 import { observer } from "mobx-react-lite"
-import { reset } from "utils/keychain"
 
 export type AuditAndInspectionScreenProps = {
 

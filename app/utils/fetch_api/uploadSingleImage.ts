@@ -33,10 +33,9 @@ const imageUpload = async ( props ) => {
             return response.text()
         } )
         .then( ( res ) => {
-            const stringifiedJson = JSON.stringify( res )
-            const parsedJson = JSON.parse( stringifiedJson )
-            Toast.showWithGravity( result?.Message || 'File Saved Successfully', Toast.LONG, Toast.CENTER );
-            return parsedJson;
+            const parsedJson = JSON.parse( res )
+            Toast.showWithGravity( parsedJson?.Message, Toast.LONG, Toast.CENTER );
+            return res;
         } )
         .catch( error => {
             Toast.showWithGravity( error?.message || 'Something went wrong', Toast.LONG, Toast.CENTER );
