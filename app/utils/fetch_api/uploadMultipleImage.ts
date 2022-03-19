@@ -7,7 +7,7 @@ function createFormDataForAll ( media ) {
         media.map( item => {
             const localUri = item.uri
             const filename = localUri.split( "/" ).pop()
-            data.append( "file", {
+            data.append( filename, {
                 name: filename,
                 uri: localUri,
                 type: item.mime || item.type || "image/jpeg",
@@ -41,7 +41,6 @@ const uploadAllImages = async ( props ) => {
             return parsedJson;
         } )
         .catch( error => {
-            console.log( 'error while uploading multiple images',JSON.stringify( error ) )
             Toast.showWithGravity( error.message || 'Error while submitting multiple images', Toast.LONG, Toast.CENTER );
             return null;
         } )
