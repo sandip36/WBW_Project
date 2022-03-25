@@ -3,16 +3,20 @@ import React, { FunctionComponent } from "react"
 import { StyleProp, TextStyle, ViewStyle } from "react-native"
 import { Header as RNEHeader } from "react-native-elements"
 import { makeStyles, useTheme } from "theme"
+import { Box } from "../box"
 
 const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle: StyleProp<TextStyle>, leftContainerStyle: StyleProp<ViewStyle> }>( ( theme ) => ( {
     containerStyle: {
         paddingTop: theme.spacing.small - 4,
         height: 48 + theme.STATUS_BAR_HEIGHT,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     centerStyle: {
         color: theme.colors.white,
         fontSize: theme.spacing.large,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginTop: theme.spacing.mini
     },
     leftContainerStyle: {
         marginTop: theme.spacing.mini,
@@ -51,15 +55,17 @@ export const FormHeader: FunctionComponent<HeaderProps> = props => {
     }
     const backHandler = customBackHandler || navigateToGoBack
     return (
-        <RNEHeader
-            statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
-            leftComponent={{ icon: 'arrow-left', type: 'material-community', color: theme.colors.white, onPress: backHandler }}
-            leftContainerStyle={[ STYLES.leftContainerStyle, leftContainerStyle ]}
-            centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
-            rightComponent={rightComponent}
-            rightContainerStyle={[ STYLES.leftContainerStyle, rightContainerStyle ]}
-            backgroundColor={theme.colors.primary}
-            containerStyle={[ STYLES.containerStyle, containerStyle ]}
-        />
+        <Box justifyContent="center" alignItems="center">
+            <RNEHeader
+                statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
+                leftComponent={{ icon: 'arrow-left', type: 'material-community', color: theme.colors.white, onPress: backHandler }}
+                leftContainerStyle={[ STYLES.leftContainerStyle, leftContainerStyle ]}
+                centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
+                rightComponent={rightComponent}
+                rightContainerStyle={[ STYLES.leftContainerStyle, rightContainerStyle ]}
+                backgroundColor={theme.colors.primary}
+                containerStyle={[ STYLES.containerStyle, containerStyle ]}
+            />
+        </Box>
     )
 }
