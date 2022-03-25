@@ -11,9 +11,10 @@ export type DashboardHomeScreenProps = {
 }
 
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
-    const { DashboardStore, AuthStore } = useStores()
+    const { DashboardStore, AuthStore, ObservationStore } = useStores()
 
     const fetchDashboard = useCallback( async () => {
+        await ObservationStore._clear()
         await DashboardStore.fetch()
     }, [] )
 
