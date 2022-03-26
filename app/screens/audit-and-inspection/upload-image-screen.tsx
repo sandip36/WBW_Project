@@ -144,7 +144,7 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
                         : null
                 }
             </Box>
-            <Box flex={0.1}>
+            <Box flex={0.12}>
                 <Box flexDirection="row">
                     <Box width={"50%"}>
                         <Button

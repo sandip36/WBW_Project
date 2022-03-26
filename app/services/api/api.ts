@@ -411,7 +411,7 @@ export class Api {
           images: images,
           url: finalUrl
       } )
-      return JSON.parse( response ) 
+      return response 
   }
 
   

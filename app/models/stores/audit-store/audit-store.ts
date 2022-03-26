@@ -519,6 +519,18 @@ export const AuditStore = types
             self.refreshInspectionImage = !self.refreshInspectionImage
         } )
     
+        const resetStore = flow( function * ( ) {
+            self.audit = {} as any
+            self.getTypesForStartInspection = {} as any
+            self.refreshing = false
+            self.page = 0
+            self.currentInspectionId = ""
+            self.inspection = {} as any
+            self.isPassingValuesSelected = false
+            self.currentPrimaryListID = ""
+            self.currentSecondaryListID = ""
+        } )
+    
 
         return {
             fetch,
@@ -543,7 +555,8 @@ export const AuditStore = types
             resetSecondaryListID,
             toggleRerender,
             deleteImageFromServer,
-            toggleRefreshInspectionImage
+            toggleRefreshInspectionImage,
+            resetStore
         }
     } )
 
