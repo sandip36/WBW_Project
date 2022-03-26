@@ -1,10 +1,10 @@
 import { StackActions, useNavigation, useRoute } from "@react-navigation/native"
 import { Box } from "components"
-import React, {  useRef, useState } from "react"
+import React, {  useEffect, useRef, useState } from "react"
 import { makeStyles } from "theme"
 import {  Icon } from "react-native-elements"
 import { RNCamera } from "react-native-camera"
-import { Platform, StyleProp, ViewStyle } from "react-native"
+import { Alert, BackHandler, Platform, StyleProp, ViewStyle } from "react-native"
 import { Asset, ImageLibraryOptions, launchImageLibrary } from "react-native-image-picker"
 import Toast from "react-native-simple-toast"
 import { IImages, useStores } from "models"
@@ -51,6 +51,20 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
     const STYLES = useStyles()
     const camera = useRef<any>()
     const [ cameraType, setCameraType ] = useState( "back" )
+
+    useEffect( () => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            _handleBackPress
+        );
+        return () => backHandler.remove();
+    }, [] )
+
+    const _handleBackPress = ( ) => {
+        // Works on both iOS and Android
+        navigation.goBack()
+        return true
+    }
 
     
     function toggleCameraType () {
