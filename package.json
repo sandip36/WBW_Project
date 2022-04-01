@@ -144,6 +144,11 @@
       "node_modules/(?!(jest-)?react-native|@react-native|@react-navigation|@storybook|@react-native-community|expo-localization|@unimodules)"
     ]
   },
+  "rnpm":{
+    "assets":[
+        "./assests/fonts/"
+    ]
+},
   "prettier": {
     "printWidth": 100,
     "semi": false,

@@ -32,8 +32,6 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* WBWTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WBWTests.m; sourceTree = "<group>"; };
 		016CDED9761D47FA803BAAFF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		04F0ABD13A7C4EF3AF056F6A /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		0CF6B9FE793344609B6BF5A2 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -48,6 +46,8 @@
 		2E0A11FA968E4BB6B2494F77 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		301BE758935A381A571F5B21 /* libPods-WBW-WBWTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WBW-WBWTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B04630CC446F19212E357A /* Pods-WBW-WBWTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW-WBWTests.release.xcconfig"; path = "Target Support Files/Pods-WBW-WBWTests/Pods-WBW-WBWTests.release.xcconfig"; sourceTree = "<group>"; };
+		399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Bold.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Bold.ttf"; sourceTree = "<group>"; };
+		399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Regular.ttf"; sourceTree = "<group>"; };
 		3B37DFBF3C5D4B438F07ECE9 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		3ECD546F3378FD459F4E82B0 /* Pods-WBW.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.debug.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.debug.xcconfig"; sourceTree = "<group>"; };
 		4D40708BE521DBE7DC6E68C8 /* Pods-WBW.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.release.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.release.xcconfig"; sourceTree = "<group>"; };
@@ -80,23 +80,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* WBWTests */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F21AD99517003FC87E /* WBWTests.m */,
-				00E356F01AD99517003FC87E /* Supporting Files */,
-			);
-			path = WBWTests;
-			sourceTree = "<group>";
-		};
-		00E356F01AD99517003FC87E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* WBW */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,7 +129,6 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* WBW */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* WBWTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				71ED362ACEA45F9F60DCD285 /* Pods */,
@@ -170,6 +152,8 @@
 			children = (
 				C037141E6AAF4F4ABBC4F3FE /* AntDesign.ttf */,
 				D4C6AC81E1974B4394385E33 /* Entypo.ttf */,
+				399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */,
+				399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */,
 				3B37DFBF3C5D4B438F07ECE9 /* EvilIcons.ttf */,
 				04F0ABD13A7C4EF3AF056F6A /* Feather.ttf */,
 				C09D666BE91C44AFB4D99F33 /* FontAwesome.ttf */,
@@ -375,6 +359,7 @@
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -401,6 +386,7 @@
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -443,7 +429,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODEPUSH_KEY = "";
+				CODEPUSH_KEY = "pv-E11K1wRYfrMWJbO0N9SjGaR-7-tjRo488M";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -465,7 +451,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
-				MULTI_DEPLOYMENT_CONFIG = "";
+				MULTI_DEPLOYMENT_CONFIG = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -485,6 +471,7 @@
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -527,7 +514,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODEPUSH_KEY = "";
+				CODEPUSH_KEY = "o270jfAxkIP-74BxuF-YsvwHpYmP5nfX7AhnO";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -556,7 +543,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				MULTI_DEPLOYMENT_CONFIG = "";
+				MULTI_DEPLOYMENT_CONFIG = "$(BUILD_DIR)/Debug$(EFFECTIVE_PLATFORM_NAME)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -591,7 +578,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODEPUSH_KEY = "";
+				CODEPUSH_KEY = "6t-d7mNTGzBAhuCHoGZvWvEaLuCL7UJ_N7wXW";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -613,7 +600,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = "(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				MULTI_DEPLOYMENT_CONFIG = "";
+				MULTI_DEPLOYMENT_CONFIG = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
