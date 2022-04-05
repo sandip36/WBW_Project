@@ -17,19 +17,19 @@ export type LoginScreenProps = {
 const BUILD_BASE_URL = [
     {
         label: "Unit test - Demo",
-        value: "http://198.71.63.116/Demo/MobileAPI/api"
+        value: "https://198.71.63.116/Demo/MobileAPI/api"
     },
     {
         label: "Unit test -Sandbox",
-        value: "http://198.71.63.116/MySite/MobileAPI/api"
+        value: "https://198.71.63.116/MySite/MobileAPI/api"
     },
     {
         label: "Demo",
-        value: "http://demo.wisebusinessware.com/MobileAPI/api"
+        value: "https://demo.wisebusinessware.com/MobileAPI/api"
     },
     {
         label: "Sandbox",
-        value: "http://sandbox.wisebusinessware.com/MobileAPI/api"
+        value: "https://sandbox.wisebusinessware.com/MobileAPI/api"
     }
 ]
 
