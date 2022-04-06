@@ -300,15 +300,18 @@ export const AuditStore = types
             try {
                 self.loading = true
                 const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
+                console.log( 'result is ',JSON.stringify( result ) )
                 if ( result?.data && !isEmpty( result.data ) ) {
-                    const finalData = result.data.GroupsAndAttributes.Groups.map( item => {
+                    const handledEdgeCasesResult = isEmpty( result.data?.SystemFields?.SystemFields ) ? result.data.SystemFields.SystemFields = [] : result.data?.SystemFields?.SystemFields
+                    self.inspection = { ...handledEdgeCasesResult, ...result.data }
+                    const finalData = self.inspection.GroupsAndAttributes.Groups.map( item => {
                         return item.Attributes.map( val => {
                             val.GivenAnswerIDClone = val.GivenAnswerID
                             val.HazardsIDClone = val.HazardsID
                             return val
                         } )
                     } )
-                    self.inspection = { ...result.data, ...finalData }
+                    self.inspection = { ...self.inspection, ...finalData }
                     self.loading = false
                     self.refreshing = false
                     return 'success'
@@ -346,7 +349,8 @@ export const AuditStore = types
                 const result: GeneralResponse<any> = yield self.environment.api.fetchDataForEditInspection( payload )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     const handledEdgeCasesResult = isEmpty( result.data?.GroupsAndAttributes?.SourceList ) ? result.data.GroupsAndAttributes.SourceList = [] : result.data?.GroupsAndAttributes?.SourceList
-                    self.inspection = { ...handledEdgeCasesResult, ...result.data }
+                    const handledSystemFieldsEdgeCasesResult = isEmpty( result.data?.SystemFields?.SystemFields ) ? result.data.SystemFields.SystemFields = [] : result.data?.SystemFields?.SystemFields
+                    self.inspection = { ...handledEdgeCasesResult, ...result.data, ...handledSystemFieldsEdgeCasesResult }
                     const finalData = self.inspection.GroupsAndAttributes.Groups.map( item => {
                         return item.Attributes.map( val => {
                             val.GivenAnswerIDClone = val.GivenAnswerID
@@ -361,7 +365,6 @@ export const AuditStore = types
                 }
                 return result
             } catch( error ) {
-                console.tron.log( 'error is ',error.message )
                 Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
                 return null
             }
