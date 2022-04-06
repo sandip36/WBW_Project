@@ -273,7 +273,7 @@ export const AuditStore = types
                 }
                 return result
             } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while fetching audit history', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
@@ -291,7 +291,7 @@ export const AuditStore = types
                 }
                 return result
             } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while fetching observations', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while fetching data for start inspection', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
@@ -300,7 +300,6 @@ export const AuditStore = types
             try {
                 self.loading = true
                 const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
-                console.log( 'result is ',JSON.stringify( result ) )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     const handledEdgeCasesResult = isEmpty( result.data?.SystemFields?.SystemFields ) ? result.data.SystemFields.SystemFields = [] : result.data?.SystemFields?.SystemFields
                     self.inspection = { ...handledEdgeCasesResult, ...result.data }
@@ -401,7 +400,7 @@ export const AuditStore = types
                     return 'fail'
                 }
             } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while saving inspection record', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
@@ -419,7 +418,7 @@ export const AuditStore = types
                     return 'fail'
                 }
             } catch( error ) {
-                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while submitting inspection record', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )
@@ -461,7 +460,7 @@ export const AuditStore = types
                 }
             } catch( error ) {
                 console.log( 'error is ',JSON.stringify( error ) )
-                Toast.showWithGravity( error.message || 'Something went wrong while delting inspection record', Toast.LONG, Toast.CENTER )
+                Toast.showWithGravity( error.message || 'Something went wrong while uploading images', Toast.LONG, Toast.CENTER )
                 return null
             }
         } )

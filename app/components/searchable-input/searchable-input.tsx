@@ -1,7 +1,7 @@
 import { Box, TouchableBox } from 'components'
 import { IUserList } from 'models/models/task-model/user-list-model'
 import React, { useState } from 'react'
-import { FlatList, ListRenderItem, Modal, StyleProp, ViewStyle } from 'react-native'
+import { FlatList, ListRenderItem, Modal, SafeAreaView, StyleProp, ViewStyle } from 'react-native'
 import { Avatar, Divider, ListItem, SearchBar } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 
@@ -105,27 +105,29 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
     };
 
     return (
-        <Modal
-            visible={isModalVisible}
-            onRequestClose={closeModal}
-            style={STYLES.containerStyle}
-        >
-            <Box>
-                <SearchBar
-                    placeholder="Type Here..."
-                    platform='default'
-                    containerStyle={STYLES.searchBarContainerStyle}
-                    value={searchedValue}
-                    onChangeText={searchFilterFunction}
-                />
-            </Box>
-            <Box flex={1} mt="medium">
-                <FlatList 
-                    data={filteredUserList.length === 0 ? actualUserList : filteredUserList }
-                    renderItem={renderItem}
-                    keyExtractor={ ( item, index ) => item?.UserID || item[key] || String( index ) }
-                />
-            </Box>
-        </Modal>
+        <SafeAreaView style={STYLES.containerStyle}>
+            <Modal
+                visible={isModalVisible}
+                onRequestClose={closeModal}
+                style={STYLES.containerStyle}
+            >
+                <Box>
+                    <SearchBar
+                        placeholder="Type Here..."
+                        platform='default'
+                        containerStyle={STYLES.searchBarContainerStyle}
+                        value={searchedValue}
+                        onChangeText={searchFilterFunction}
+                    />
+                </Box>
+                <Box flex={1} mt="medium">
+                    <FlatList 
+                        data={filteredUserList.length === 0 ? actualUserList : filteredUserList }
+                        renderItem={renderItem}
+                        keyExtractor={ ( item, index ) => item?.UserID || item[key] || String( index ) }
+                    />
+                </Box>
+            </Modal>
+        </SafeAreaView>
     )
 }
