@@ -361,7 +361,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
 
         const isValidScoresItem = AuditStore.requiredScoreData
         if( !isValidScoresItem ) {
-            Toast.showWithGravity( 'Please select a score from the Score column', Toast.LONG, Toast.CENTER );
+            Toast.showWithGravity( `Please select a score from the ${AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable} column`, Toast.LONG, Toast.CENTER );
             setLoadingForSubmit( false )
             return null 
         }

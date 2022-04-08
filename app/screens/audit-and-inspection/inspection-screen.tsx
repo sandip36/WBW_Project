@@ -2,18 +2,17 @@ import { StackActions, useNavigation } from "@react-navigation/native"
 import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { IReportingPeriodDueDatesModel, useStores } from "models"
-import React, { useCallback, useEffect, useState } from "react"
-import { Async } from "react-async"
-import { ActivityIndicator, Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
+import React, { useEffect, useState } from "react"
+import { Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
-import { IDeleteInspectionRecord, IFetchEditInspectionDetailsPayload, ISaveAuditPayload } from "services/api"
+import { IDeleteInspectionRecord, ISaveAuditPayload } from "services/api"
 import { makeStyles, theme } from "theme"
 import { GroupsAndAttributes } from "components/inspection"
-import { Observer, observer, useObserver } from "mobx-react-lite"
+import { observer } from "mobx-react-lite"
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row"
 import { Dropdown } from "components/core/dropdown"
 import { CheckBox } from "react-native-elements"
-import { ISystemFieldsInnerModel, SystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
+import { ISystemFieldsInnerModel } from "models/models/audit-model/system-fields-outer-model"
 import Toast from "react-native-simple-toast"
 import { LabelWithAsterisk } from "screens/observation/add-observation-screen"
 
@@ -378,7 +377,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         
         const isValidScoresItem = AuditStore.requiredScoreData
         if( !isValidScoresItem ) {
-            Toast.showWithGravity( 'Please select a score from the Score column', Toast.LONG, Toast.CENTER );
+            Toast.showWithGravity( `Please select a score from the ${AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable} column`, Toast.LONG, Toast.CENTER );
             setLoadingForSubmit( false )
             return null 
         }
