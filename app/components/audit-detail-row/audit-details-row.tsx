@@ -24,7 +24,7 @@ export const AuditDetailsRow: React.FunctionComponent<AuditDetailsRowProps> = ( 
                 <Text pl="medium" pr="small" color="black" variant="heading5" fontWeight="bold">{title}</Text>
             </Box>
             <Box flex={1}>
-                <Text pl="small" pr="small" color="black" variant="body" textAlign={"justify"} numberOfLines={0}>{value} </Text>
+                <Text pl="small" pr="small" color="black" variant="body" numberOfLines={0}>{value} </Text>
             </Box>
         </Box>
     )

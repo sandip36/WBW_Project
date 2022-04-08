@@ -1,3 +1,4 @@
+import { Platform } from "@unimodules/core"
 import { Box } from "components"
 import React, { FunctionComponent } from "react"
 import { StyleProp, TextProps, TextStyle, ViewStyle } from "react-native"
@@ -7,7 +8,8 @@ import { makeStyles, useTheme } from "theme"
 
 const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle: StyleProp<TextStyle> }>( ( theme ) => ( {
     containerStyle: {
-        height: 48 + theme.STATUS_BAR_HEIGHT,
+        
+        height: Platform.OS==="ios"? theme.STATUS_BAR_HEIGHT : 48+ theme.STATUS_BAR_HEIGHT,
         paddingTop: 0,
         justifyContent: 'center',
         alignItems: 'center'

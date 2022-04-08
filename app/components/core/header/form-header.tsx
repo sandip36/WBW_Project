@@ -1,6 +1,6 @@
 import { StackActions } from "@react-navigation/native"
 import React, { FunctionComponent } from "react"
-import { StyleProp, TextStyle, ViewStyle } from "react-native"
+import { Platform, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { Header as RNEHeader } from "react-native-elements"
 import { makeStyles, useTheme } from "theme"
 import { Box } from "../box"
@@ -8,7 +8,7 @@ import { Box } from "../box"
 const useStyles = makeStyles<{containerStyle: StyleProp<ViewStyle>, centerStyle: StyleProp<TextStyle>, leftContainerStyle: StyleProp<ViewStyle> }>( ( theme ) => ( {
     containerStyle: {
         paddingTop: theme.spacing.small - 4,
-        height: 48 + theme.STATUS_BAR_HEIGHT,
+        height: Platform.OS==="ios"? theme.STATUS_BAR_HEIGHT : 48+ theme.STATUS_BAR_HEIGHT,
         justifyContent: 'center',
         alignItems: 'center'
     },

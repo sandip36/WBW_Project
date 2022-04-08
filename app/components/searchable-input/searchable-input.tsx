@@ -1,8 +1,8 @@
 import { Box, TouchableBox } from 'components'
 import { IUserList } from 'models/models/task-model/user-list-model'
 import React, { useState } from 'react'
-import { FlatList, ListRenderItem, Modal, SafeAreaView, StyleProp, ViewStyle } from 'react-native'
-import { Avatar, Divider, ListItem, SearchBar } from 'react-native-elements'
+import { FlatList, ListRenderItem, Modal, Platform, StyleProp, View, ViewStyle } from 'react-native'
+import { Avatar, ListItem, SearchBar } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 
 export interface SearchableListProps {
@@ -19,7 +19,9 @@ export type SearchableInputStyleProps = {
     containerStyle: StyleProp<ViewStyle>,
     listItemContainerStyle: StyleProp<ViewStyle>,
     iconContainerStyle: StyleProp<ViewStyle>,
-    searchBarContainerStyle: StyleProp<ViewStyle>
+    searchBarContainerStyle: StyleProp<ViewStyle>,
+    headerContainer: StyleProp<ViewStyle>
+
 }
 
 const useStyles = makeStyles<SearchableInputStyleProps>( ( theme ) => ( {
@@ -38,6 +40,10 @@ const useStyles = makeStyles<SearchableInputStyleProps>( ( theme ) => ( {
         padding: 10,
         borderBottomColor: theme.colors.transparent,
         borderTopColor: theme.colors.transparent
+    },
+    headerContainer: {
+        height: theme.STATUS_BAR_HEIGHT,
+        backgroundColor: theme.colors.primary
     }
 } ) )
 
@@ -105,29 +111,30 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
     };
 
     return (
-        <SafeAreaView style={STYLES.containerStyle}>
-            <Modal
-                visible={isModalVisible}
-                onRequestClose={closeModal}
-                style={STYLES.containerStyle}
-            >
-                <Box>
-                    <SearchBar
-                        placeholder="Type Here..."
-                        platform='default'
-                        containerStyle={STYLES.searchBarContainerStyle}
-                        value={searchedValue}
-                        onChangeText={searchFilterFunction}
-                    />
-                </Box>
-                <Box flex={1} mt="medium">
-                    <FlatList 
-                        data={filteredUserList.length === 0 ? actualUserList : filteredUserList }
-                        renderItem={renderItem}
-                        keyExtractor={ ( item, index ) => item?.UserID || item[key] || String( index ) }
-                    />
-                </Box>
-            </Modal>
-        </SafeAreaView>
+        <Modal
+            visible={isModalVisible}
+            onRequestClose={closeModal}
+            style={STYLES.containerStyle}
+        >
+            {Platform.OS === "ios" ?<Box style={STYLES.headerContainer}
+            
+            /> :null}
+            <Box >
+                <SearchBar
+                    placeholder="Type Here..."
+                    platform='default'
+                    containerStyle={STYLES.searchBarContainerStyle}
+                    value={searchedValue}
+                    onChangeText={searchFilterFunction}
+                />
+            </Box>
+            <Box flex={1} mt="medium">
+                <FlatList 
+                    data={filteredUserList.length === 0 ? actualUserList : filteredUserList }
+                    renderItem={renderItem}
+                    keyExtractor={ ( item, index ) => item?.UserID || item[key] || String( index ) }
+                />
+            </Box>
+        </Modal>
     )
 }
