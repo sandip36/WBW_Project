@@ -299,6 +299,7 @@ export const AuditStore = types
         const submitDataForStartInspection = flow( function * ( payload: ISubmitStartInspectionPayload ) {
             try {
                 self.loading = true
+                self.inspection = {} as any
                 const result: GeneralResponse<any> = yield self.environment.api.submitDataForStartInspection( payload )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     const handledEdgeCasesResult = isEmpty( result.data?.SystemFields?.SystemFields ) ? result.data.SystemFields.SystemFields = [] : result.data?.SystemFields?.SystemFields
@@ -345,6 +346,7 @@ export const AuditStore = types
         
         const fetchDataForEditInspection = flow( function * ( payload: IFetchEditInspectionDetailsPayload ) {
             try {
+                self.inspection = {} as any
                 const result: GeneralResponse<any> = yield self.environment.api.fetchDataForEditInspection( payload )
                 if ( result?.data && !isEmpty( result.data ) ) {
                     const handledEdgeCasesResult = isEmpty( result.data?.GroupsAndAttributes?.SourceList ) ? result.data.GroupsAndAttributes.SourceList = [] : result.data?.GroupsAndAttributes?.SourceList

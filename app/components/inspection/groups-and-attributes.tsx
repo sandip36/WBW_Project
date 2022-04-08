@@ -347,6 +347,16 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         )
     }   
 
+    const checkForMultipleCorrectAnswers = ( item: IAttributes ) => {
+        let correctAnswerID = item.CorrectAnswerID
+        let correctAnswerIDs = []
+        correctAnswerID = correctAnswerID.replace( " or ", "," )
+        correctAnswerIDs = correctAnswerID.split( "," )
+        const result = !correctAnswerIDs.includes( item.GivenAnswerID )
+        console.log( 'result  for multiple',result )
+        return result
+    }
+
     const renderItem = ( { item }: {item:IAttributes } ) => {
         return (
             <Observer>
@@ -380,7 +390,10 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
                                     : (
                                         AuditStore.shouldShowHazard( item.DoNotShowHazard ) 
                                 && AuditStore.inspection.GroupsAndAttributes?.HazardList.length > 0
-                                && ( item.checkForTruthyValues ? Number( item.GivenAnswerID ) !== Number( item.CorrectAnswerID )
+                                && ( item.checkForTruthyValues 
+                                    ? item.CorrectAnswerID.includes( "or" )
+                                        ? checkForMultipleCorrectAnswers( item )
+                                        : Number( item.GivenAnswerID ) !== Number( item.CorrectAnswerID )
                                     : Number( item.GivenAnswerID ) < Number( item.CorrectAnswerID ) )
                                             ? 
                                             showHazard( item )
