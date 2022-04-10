@@ -140,18 +140,22 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         value={AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionNumber} 
                     />
                 </Box>  
-                <Box>
-                    <Box>
-                        <CheckBox
-                            title="Select Passing Values for Incomplete Tasks:"
-                            checked={isChecked}
-                            onPress={onCheckBoxValueChange}
-                            iconRight={true}
-                            textStyle={STYLES.checkboxTextStyle}
-                            containerStyle={STYLES.checkboxContainerStyle}
-                        />
-                    </Box> 
-                </Box>          
+                {
+                    AuditStore.totalNumberOfAttributes >= 35
+                        ? null
+                        : <Box>
+                            <Box>
+                                <CheckBox
+                                    title="Select Passing Values for Incomplete Tasks:"
+                                    checked={isChecked}
+                                    onPress={onCheckBoxValueChange}
+                                    iconRight={true}
+                                    textStyle={STYLES.checkboxTextStyle}
+                                    containerStyle={STYLES.checkboxContainerStyle}
+                                />
+                            </Box> 
+                        </Box>
+                }
                 <Box>
                     <AuditDetailsRow 
                         title= "Action Taken By: " 
