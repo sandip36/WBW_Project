@@ -160,6 +160,7 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
                 items={AuditStore.getDropdownData( item.ScoreList )}
                 value={AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0  ? item.MaxCorrectAnswerID : item.GivenAnswerID }
                 onValueChange={onScoreValueChange}
+                key= {item.CustomFormResultID}
                 isRequired={true}
             />
         </Box>
@@ -224,7 +225,6 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
     }
 
     const onRequestClose = ( ) => {
-        console.log( 'on request close' )
         setShowZoomViewer( false )
     }
 
@@ -353,7 +353,6 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
         correctAnswerID = correctAnswerID.replace( " or ", "," )
         correctAnswerIDs = correctAnswerID.split( "," )
         const result = !correctAnswerIDs.includes( item.GivenAnswerID )
-        console.log( 'result  for multiple',result )
         return result
     }
 

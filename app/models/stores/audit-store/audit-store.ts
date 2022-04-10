@@ -461,7 +461,7 @@ export const AuditStore = types
                     return 'fail'
                 }
             } catch( error ) {
-                console.log( 'error is ',JSON.stringify( error ) )
+                // console.log( 'error is ',JSON.stringify( error ) )
                 Toast.showWithGravity( error.message || 'Something went wrong while uploading images', Toast.LONG, Toast.CENTER )
                 return null
             }

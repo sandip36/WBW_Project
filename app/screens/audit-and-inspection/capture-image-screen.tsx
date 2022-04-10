@@ -40,7 +40,7 @@ export const CaptureImageScreen: React.FC<CaptureImageScreenProps> = ( props ) =
         ObservationStore
     }= useStores()
 
-    console.log( 'route for capture image',route )
+    // console.log( 'route for capture image',route )
 
     const IMAGE_OPTIONS = {
         mediaType: 'photo',

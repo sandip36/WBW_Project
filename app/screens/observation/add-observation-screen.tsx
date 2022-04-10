@@ -133,7 +133,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     );
 
     const refreshObservationImages = ( ) => {
-        console.log( 'refreshing' )
+        //  console.log( 'refreshing' )
         setRefreshing( !refreshing )
     }
 

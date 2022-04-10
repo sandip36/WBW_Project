@@ -76,16 +76,20 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const STYLES = useStyles()
 
     const openInAppBrowser = async ( link ) => {
+        const url = `${link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
         try {
             // const token = await AsyncStorage.getItem( 'Token' )
-            const url = `${link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
+           
             if ( await InAppBrowser.isAvailable() ) {
-                const result = await InAppBrowser.openAuth( url, STYLES.inAppBrowserStyle )
+                const result = await InAppBrowser.open( url )
             }
             else Linking.openURL( url )
         } catch ( error ) {
-            console.log( 'error is ',JSON.stringify( error ) )
-            Alert.alert( error.message )
+            await InAppBrowser.close()
+            if ( await InAppBrowser.isAvailable() ) {
+                const result = await InAppBrowser.open( url )
+            }
+            else Linking.openURL( url )
         }
     }
 
