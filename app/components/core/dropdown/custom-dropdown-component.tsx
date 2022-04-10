@@ -12,7 +12,9 @@ export type DropdownProps = {
     customIcon?: React.ReactNode,
     onDonePress?: ( ) => any,
     customContainerStyle?: StyleProp<ViewStyle>,
-    isRequired?: boolean
+    isRequired?: boolean,
+    // key?: any,
+    // itemKey?: any
 }
 
 const defaultIcon = () => {
@@ -29,7 +31,9 @@ export const Dropdown: React.FC<DropdownProps> = ( props ) => {
         onDonePress,
         value,
         customContainerStyle,
-        isRequired    
+        isRequired
+        // itemKey,
+        // key   
     } = props
 
     const myPickerStyles = Platform.OS === "android" ? 
@@ -85,6 +89,8 @@ export const Dropdown: React.FC<DropdownProps> = ( props ) => {
                 items={items}
                 value={value}
                 onValueChange={onValueChange}
+                // key={key}
+                // itemKey={itemKey}
                 useNativeAndroidPickerStyle={false}
                 style={myPickerStyles}
                 Icon={Icon}

@@ -122,6 +122,20 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
     const { AuditStore } = useStores()
     const [ scoreValue, setScoreValue ] = useState( item.GivenAnswerID )
 
+    // useEffect( ()=>{
+    //     if( AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0 ){
+    //         console.log( 'Inside IF' )
+    //         if( item.AttributeID === "204931ca-9912-4fd4-8b98-54556d68ed8a" ) {
+    //             console.log( 'called ---->' )
+    //         }
+    //         setScoreValue( item.MaxCorrectAnswerID )
+    //         item.setGivenAnswerId( item.MaxCorrectAnswerID )
+    //     }else{
+    //         setScoreValue( item.GivenAnswerID )
+    //         item.setGivenAnswerId( item.GivenAnswerID )
+    //     }
+    // }, [ AuditStore.isPassingValuesSelected ] )
+
     // useEffect( ( ) => {
     //     onCheckboxValueChange()
     // }, [ AuditStore.isPassingValuesSelected ] )
@@ -159,8 +173,9 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
                 title={AuditStore?.inspection?.AuditAndInspectionDetails?.ScoringLable}
                 items={AuditStore.getDropdownData( item.ScoreList )}
                 value={AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0  ? item.MaxCorrectAnswerID : item.GivenAnswerID }
+                // key={item.CustomFormResultID}
+                // itemKey={item.CustomFormResultID}
                 onValueChange={onScoreValueChange}
-                key= {item.CustomFormResultID}
                 isRequired={true}
             />
         </Box>
@@ -227,8 +242,6 @@ export const RenderAttributeImages: React.FunctionComponent<RenderAttributeImage
     const onRequestClose = ( ) => {
         setShowZoomViewer( false )
     }
-
-    console.log( attributeData.attributeImageForZoom( AuthStore.environment.api.apisauce.getBaseURL() ) )
 
     return (
         <Box flex={1} flexDirection="row" marginHorizontal="regular">

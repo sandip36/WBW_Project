@@ -165,18 +165,22 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                         value={AuditStore?.inspection?.AuditAndInspectionDetails?.AuditAndInspectionNumber} 
                     />
                 </Box>  
-                <Box>
-                    <Box>
-                        <CheckBox
-                            title="Select Passing Values for Incomplete Tasks:"
-                            checked={isChecked}
-                            onPress={onCheckBoxValueChange}
-                            iconRight={true}
-                            textStyle={STYLES.checkboxTextStyle}
-                            containerStyle={STYLES.checkboxContainerStyle}
-                        />
-                    </Box> 
-                </Box>          
+                {
+                    AuditStore.totalNumberOfAttributes >= 35
+                        ? null
+                        : <Box>
+                            <Box>
+                                <CheckBox
+                                    title="Select Passing Values for Incomplete Tasks:"
+                                    checked={isChecked}
+                                    onPress={onCheckBoxValueChange}
+                                    iconRight={true}
+                                    textStyle={STYLES.checkboxTextStyle}
+                                    containerStyle={STYLES.checkboxContainerStyle}
+                                />
+                            </Box> 
+                        </Box>
+                }          
                 <Box>
                     <AuditDetailsRow 
                         title= "Action Taken By: " 
@@ -444,7 +448,6 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     nestedScrollEnabled
                     ListHeaderComponent={renderSystemFieldsData}
                     renderItem={( { item } ) => 
-                                
                     {
                         return (
                             <Box flex={0.85}>

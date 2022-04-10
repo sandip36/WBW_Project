@@ -71,6 +71,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                 data={DashboardStore.sortDashboardByPageOrder}
                                 renderItem={renderItem}
                                 keyExtractor={( item, index ) => item.id }
+                                contentContainerStyle={{ paddingBottom: 100 }}
                             />
                         </Box>     
                     </Box>

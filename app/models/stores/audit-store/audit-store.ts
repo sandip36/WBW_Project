@@ -247,7 +247,18 @@ export const AuditStore = types
             }else{
                 return false
             }
-        }    ,
+        },
+        get totalNumberOfAttributes ( ) {
+            let total = 0
+            self.inspection.GroupsAndAttributes?.Groups.map( item => {
+                if( item.Attributes?.length > 0 ) {
+                    total = total + item.Attributes.length
+                }
+                return item
+            } ) 
+            console.log( 'total is ',total )
+            return total
+        }
     
     } ) )
     .actions( self => {
