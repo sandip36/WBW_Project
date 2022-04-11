@@ -57,7 +57,7 @@ function App () {
 
         try {
 
-            await codePush.sync()
+            // await codePush.sync()
 
             const rootStore = await setupRootStore()
             setRootStore( rootStore )

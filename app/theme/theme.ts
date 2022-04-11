@@ -8,7 +8,8 @@ export const BASE_FONT_SIZE = 12
 export const STATUS_BAR_HEIGHT = getStatusBarHeight()
 
 export const assets = {
-    wbwLogo: images.WBW_Logo
+    wbwLogo: images.WBW_Logo,
+    livelogo: images.WBW_Live_Logo
 }
 
 export const NORMALIZED_FONT_SIZE = scale( BASE_FONT_SIZE )

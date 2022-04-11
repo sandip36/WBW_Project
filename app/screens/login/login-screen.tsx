@@ -1,6 +1,6 @@
 import React from "react"
 import { Box, Text, Input, SecureInput, Button } from "components"
-import { Image, ImageStyle, ScrollView, StyleProp, ViewStyle } from "react-native"
+import { Dimensions, Image, ImageStyle, ScrollView, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, useTheme } from "theme"
 import { useFormik } from "formik"
 import { string, object } from 'yup'
@@ -30,6 +30,10 @@ const BUILD_BASE_URL = [
     {
         label: "Sandbox",
         value: "https://sandbox.wisebusinessware.com/MobileAPI/api"
+    },
+    {
+        label: "Production",
+        value:"https://mysite.wisebusinessware.com/MobileAPI/api"
     }
 ]
 

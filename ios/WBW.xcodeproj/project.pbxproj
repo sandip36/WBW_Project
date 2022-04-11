@@ -12,6 +12,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		270B8CD9EFAC4B568FC15506 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C09D666BE91C44AFB4D99F33 /* FontAwesome.ttf */; };
 		2C8EA5DC54CA4831B61F8E9B /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8902D6460BF4CBD9766FCB1 /* Zocial.ttf */; };
+		39E0F72928043640007D2450 /* NunitoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */; };
+		39E0F72A28043640007D2450 /* NunitoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */; };
+		39E0F72C280443E3007D2450 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39E0F72B280443E3007D2450 /* AppCenter-Config.plist */; };
 		6F699EBFAE6E4CB8834BE076 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4C6AC81E1974B4394385E33 /* Entypo.ttf */; };
 		7969DEB6E0C741A7B025EEB3 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 516BBED3F5E34F9687607B5A /* FontAwesome5_Solid.ttf */; };
 		7BC74005EE7B4073B250AFEC /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AAB5BF9DBD14D948FB3B48E /* FontAwesome5_Brands.ttf */; };
@@ -48,6 +51,7 @@
 		32B04630CC446F19212E357A /* Pods-WBW-WBWTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW-WBWTests.release.xcconfig"; path = "Target Support Files/Pods-WBW-WBWTests/Pods-WBW-WBWTests.release.xcconfig"; sourceTree = "<group>"; };
 		399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Bold.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Bold.ttf"; sourceTree = "<group>"; };
 		399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Regular.ttf"; sourceTree = "<group>"; };
+		39E0F72B280443E3007D2450 /* AppCenter-Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
 		3B37DFBF3C5D4B438F07ECE9 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		3ECD546F3378FD459F4E82B0 /* Pods-WBW.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.debug.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.debug.xcconfig"; sourceTree = "<group>"; };
 		4D40708BE521DBE7DC6E68C8 /* Pods-WBW.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.release.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.release.xcconfig"; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				39E0F72B280443E3007D2450 /* AppCenter-Config.plist */,
 			);
 			name = WBW;
 			sourceTree = "<group>";
@@ -234,6 +239,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39E0F72928043640007D2450 /* NunitoSans-Bold.ttf in Resources */,
+				39E0F72A28043640007D2450 /* NunitoSans-Regular.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				9C0E96DFDF1043A1B6B52059 /* AntDesign.ttf in Resources */,
@@ -249,6 +256,7 @@
 				E0B182DAEA924592AE71E067 /* Ionicons.ttf in Resources */,
 				97D8C715C54A47A0A5A2FCC6 /* MaterialCommunityIcons.ttf in Resources */,
 				BC184DF98B24422BBC583C75 /* MaterialIcons.ttf in Resources */,
+				39E0F72C280443E3007D2450 /* AppCenter-Config.plist in Resources */,
 				B6C319B3CA9E4503972BE3CF /* Octicons.ttf in Resources */,
 				BC2EBA43E853496DA3572CA4 /* SimpleLineIcons.ttf in Resources */,
 				2C8EA5DC54CA4831B61F8E9B /* Zocial.ttf in Resources */,
@@ -270,7 +278,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		105C9A386D6F7A14EE348052 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -481,7 +489,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wisebusiness.ehssoftware;
 				PRODUCT_NAME = WBW;
-				PROVISIONING_PROFILE_SPECIFIER = Adhoc_EHSSoftware;
+				PROVISIONING_PROFILE_SPECIFIER = Prod_EHSSoftware;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
