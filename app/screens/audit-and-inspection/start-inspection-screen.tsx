@@ -35,6 +35,8 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
         await AuditStore.fetchDataForStartInspection( payload )
     }, [] )
 
+
+
     const handleSubmit = async ( ) => {
         const payload = {
             UserID: AuthStore.user.UserID,
@@ -76,12 +78,24 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                             // title={AuditStore?.audit?.TemplateDetails?.Title}
                             navigation={navigation}
                         />
+                        { AuditStore.shouldDisableStartInspection
+                            ?
+                            ( <Box mt="medium" marginHorizontal="regular">
+                                <Text color="lightRed" fontWeight="bold">
+                                There is an Audit in process for Area 'Area1' by 'xyz,admin'. Please complete previous Audit and then start new.
+                                </Text> 
+                            </Box> )
+                            : null
+                           
+
+                        }
                         <Box mt="medium" marginHorizontal="regular">
                             <Text>
                                 {`Select ${AuditStore?.audit?.TemplateDetails?.Type} that you want to audit and click start audit button`}
                             </Text> 
                         </Box>
-                        <Box flex={AuditStore.shouldShowSecondaryList ? 0.40: 0.25 }>
+                      
+                        <Box flex={AuditStore.shouldShowSecondaryList ? 0.40: 0.25 } height ={40}>
                             <Dropdown
                                 title={ `Select ${AuditStore?.audit?.TemplateDetails?.Type}` }
                                 isRequired={true}

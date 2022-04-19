@@ -73,14 +73,16 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
             _handleBackPress
         );
         return () => backHandler.remove();
-    }, [] )
+    }, [ attributeData ] )
+
+    
 
     const _handleBackPress = ( ) => {
         setIsLoading( false )
         // Works on both iOS and Android
         Alert.alert(
             "Discard changes?",
-            "Are you sure you want to discard the changes?",
+            "Are you sure, discard the changes?",
             [
                 {
                     text: "No",

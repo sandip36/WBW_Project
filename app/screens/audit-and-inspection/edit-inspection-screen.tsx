@@ -32,8 +32,8 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, input
     },
     checkboxTextStyle: {
         fontSize: theme.textVariants.heading5?.fontSize,
-        color: theme.colors.black,
-        fontWeight: "bold",
+        color: theme.colors.primary,
+        // fontWeight: "bold",
     },
     checkboxContainerStyle: {
         padding: 0,
@@ -451,7 +451,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                 return (
                                     <Box flex={0.85}>
                                         <Box flex={1} marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
-                                            <Text color="background" variant="heading5" fontWeight="bold">{item.GroupName}</Text>
+                                            <Text color="background" fontWeight="bold">{item.GroupName}</Text>
                                         </Box>
                                         <Box flex={0.9} mt="medium">
                                             <GroupsAndAttributes groupId={item.GroupID}/>
