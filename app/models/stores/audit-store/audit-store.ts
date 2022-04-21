@@ -1,5 +1,5 @@
 import { Instance, flow, types, getRoot } from "mobx-state-tree"
-import { GeneralResponse, IAuditHistoryFetchPayload, IDeleteAttributeImages, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
+import { GeneralResponse, IAnyAuditInProcessPayload, IAuditHistoryFetchPayload, IDeleteAttributeImages, IDeleteInspectionRecord, IFetchDataForStartInspectionPayload, IFetchEditInspectionDetailsPayload, ISaveAuditPayload, ISubmitStartInspectionPayload } from "services/api"
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
@@ -19,7 +19,10 @@ export const AuditStoreProps = {
     currentPrimaryListID: types.maybeNull( types.string ), 
     currentSecondaryListID: types.maybeNull( types.string ), 
     rerender: types.optional( types.boolean, false ),
-    refreshInspectionImage: types.optional( types.boolean, false )
+    refreshInspectionImage: types.optional( types.boolean, false ),
+    AnyAuditInProcess: types.maybeNull( types.string ), 
+    Message: types.maybeNull( types.string ), 
+
 }
 
 export const AuditStore = types
@@ -214,13 +217,20 @@ export const AuditStore = types
 
     } ) )
     .views( self => ( {
-        get shouldDisableStartInspection ( ) {
+        get shouldStartInspection ( ) {
             const isSecondaryPresent = self.shouldShowSecondaryList
             if( isSecondaryPresent ) {
                 return isEmpty( self.currentPrimaryListID ) || isEmpty( self.currentSecondaryListID )
             }else{
                 return isEmpty( self.currentPrimaryListID )
             }
+        },
+
+        get shouldDisableStartInspection ( ) {
+            if( self.AnyAuditInProcess === "0"  ){
+                return false
+            }
+            return true
         },
         get formattedSystemFieldsData ( ) {
             const finalData = self.inspection.SystemFields.SystemFields.map( ( { DisplayOrder,ControlType,ControlLabel,IsMandatory,ControlValues,...rest } ) => {
@@ -256,7 +266,6 @@ export const AuditStore = types
                 }
                 return item
             } ) 
-            console.log( 'total is ',total )
             return total
         }
     
@@ -337,6 +346,30 @@ export const AuditStore = types
                 return 'fail'
             }
         } )
+
+
+        const checkAnyuditInProcess = flow( function * ( payload: IAnyAuditInProcessPayload ) {
+            try {
+                self.loading = true
+                const result: GeneralResponse<any> = yield self.environment.api.checkAnyAuditInProcess( payload )
+                if ( result?.data && !isEmpty( result.data ) ) {
+                   
+                    self.loading = false
+                    self.AnyAuditInProcess = result?.data?.AnyAuditInProcess
+                    self.Message =  result?.data?.Message
+                    return 'success'
+                }else{
+                    self.loading = false
+                    return 'fail'
+                }
+            } catch( error ) {
+                self.loading = false
+                Toast.showWithGravity( error.message || 'Something went wrong while check AnyAuditInProcess', Toast.LONG, Toast.CENTER )
+                return 'fail'
+            }
+        } )
+
+
         const deleteImageFromServer = flow( function * ( payload: IDeleteAttributeImages ) {
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.deleteImageFromServer( payload )
@@ -389,7 +422,7 @@ export const AuditStore = types
                 self.rerender = true
                 if ( result?.data && !isEmpty( result.data ) ) {
                     self.refreshing = false
-                    Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
+                    // Toast.showWithGravity( result.data?.Message, Toast.LONG, Toast.CENTER )
                 }else{
                     self.refreshing = false
                 }
@@ -472,7 +505,6 @@ export const AuditStore = types
                     return 'fail'
                 }
             } catch( error ) {
-                // console.log( 'error is ',JSON.stringify( error ) )
                 Toast.showWithGravity( error.message || 'Something went wrong while uploading images', Toast.LONG, Toast.CENTER )
                 return null
             }
@@ -489,6 +521,13 @@ export const AuditStore = types
             self.rerender = false
         } )
 
+        const setAnyAuditInProcess = flow( function * ( id: string ) {
+            self.AnyAuditInProcess = id
+        } )
+    
+        const setMessage = flow( function * ( id: string ) {
+            self.Message = id
+        } )
         const setCurrentInspectionId = flow( function * ( id: string ) {
             self.currentInspectionId = id
         } )
@@ -571,7 +610,11 @@ export const AuditStore = types
             toggleRerender,
             deleteImageFromServer,
             toggleRefreshInspectionImage,
-            resetStore
+            resetStore,
+            checkAnyuditInProcess,
+            setAnyAuditInProcess,
+            setMessage
+
         }
     } )
 

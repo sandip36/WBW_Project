@@ -2,13 +2,14 @@ import { useNavigation } from "@react-navigation/native"
 import { Box, Button, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator } from "react-native"
 import { isEmpty  } from "lodash"
-import { IFetchDataForStartInspectionPayload, ISubmitStartInspectionPayload } from "services/api"
+import { IAnyAuditInProcessPayload, IFetchDataForStartInspectionPayload, ISubmitStartInspectionPayload } from "services/api"
 import { Dropdown } from "components/core/dropdown"
 import { observer, Observer } from "mobx-react-lite"
+import { async } from "validate.js"
 
 export type StartInspectionScreenProps = {
 
@@ -23,6 +24,26 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
         return null
     }
 
+    useEffect( ( ) => {
+        ( async () => {
+            await AuditStore.setAnyAuditInProcess( null )
+            await AuditStore.setMessage( null )     
+        } )();
+     
+        if( !isEmpty( AuditStore.currentPrimaryListID ) ) {
+            // checked for the secondary behalf of 
+            if( AuditStore.shouldShowSecondaryList )
+            {
+                if( AuditStore.currentSecondaryListID ){
+                    checkAnyAuditInProcess()
+                }
+            }else{
+                checkAnyAuditInProcess()
+            }
+        }
+        
+    }, [ AuditStore.shouldStartInspection,AuditStore.currentPrimaryListID,AuditStore.currentSecondaryListID ] )
+
     const fetchDataForStartInspection = useCallback( async () => {
         await AuditStore.resetPrimaryListID()
         await AuditStore.resetSecondaryListID()
@@ -36,6 +57,23 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
     }, [] )
 
 
+    const checkAnyAuditInProcess = async ( ) => {
+        const payload = {
+            UserID: AuthStore.user.UserID,
+            AccessToken: AuthStore.token,
+            AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+            TypeID: AuditStore.currentPrimaryListID,
+            PrimaryUserID: isEmpty( AuditStore.currentSecondaryListID ) ? AuthStore.user.UserID : AuditStore.currentSecondaryListID,
+            Type: AuditStore?.audit?.TemplateDetails?.Type,
+            // CompanyID: AuthStore.user.CompanyID,
+            // CustomFormID: dashboard?.CustomFormID,
+
+        } as IAnyAuditInProcessPayload
+        const result = await AuditStore.checkAnyuditInProcess( payload )
+        if( result === 'success' ) {
+            //  navigation.navigate( 'Inspection' )
+        }
+    }
 
     const handleSubmit = async ( ) => {
         const payload = {
@@ -78,24 +116,25 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                             // title={AuditStore?.audit?.TemplateDetails?.Title}
                             navigation={navigation}
                         />
-                        { AuditStore.shouldDisableStartInspection
+
+                        <Box mt="medium" marginHorizontal="regular">
+                            <Text>
+                                {`Select ${AuditStore?.audit?.TemplateDetails?.Type} that you want to audit and click start audit button`}
+                            </Text> 
+                        </Box>
+                        { AuditStore.AnyAuditInProcess === "1"
                             ?
-                            ( <Box mt="medium" marginHorizontal="regular">
-                                <Text color="lightRed" fontWeight="bold">
-                                There is an Audit in process for Area 'Area1' by 'xyz,admin'. Please complete previous Audit and then start new.
+                            (  <Box  marginHorizontal="regular" >
+                                <Text color="lightRed"  fontWeight="500">
+                                    { AuditStore.Message}
                                 </Text> 
                             </Box> )
                             : null
                            
 
                         }
-                        <Box mt="medium" marginHorizontal="regular">
-                            <Text>
-                                {`Select ${AuditStore?.audit?.TemplateDetails?.Type} that you want to audit and click start audit button`}
-                            </Text> 
-                        </Box>
                       
-                        <Box flex={AuditStore.shouldShowSecondaryList ? 0.40: 0.25 } height ={40}>
+                        <Box flex={AuditStore.shouldShowSecondaryList ? 0.40: 0.28 } height = {40}>
                             <Dropdown
                                 title={ `Select ${AuditStore?.audit?.TemplateDetails?.Type}` }
                                 isRequired={true}
@@ -116,7 +155,7 @@ export const StartInspectionScreen: React.FC<StartInspectionScreenProps> = obser
                                     )
                                     : null
                             }
-                            <Box mt="medium">
+                            <Box mt="mini" justifyContent="flex-end">
                                 <Button 
                                     title="Start"
                                     onPress={handleSubmit}

@@ -1,7 +1,6 @@
 import React from "react"
 import { GestureResponderEvent, StyleProp, Text, TextStyle, ViewStyle } from "react-native"
 import { Input, TouchableBox } from "components"
-import { placeholder } from "i18n-js"
 import { IconNode } from "react-native-elements/dist/icons/Icon"
 import { makeStyles } from "theme"
 import DateTimePickerModal from "react-native-modal-datetime-picker"

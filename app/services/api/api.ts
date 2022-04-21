@@ -3,11 +3,8 @@ import { getGeneralApiProblem } from "./api-problem"
 import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
-import { GeneralResponse, IAllCommanFilterPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IDeleteAttributeImages, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
+import { GeneralResponse, IAllCommanFilterPayload, IAnyAuditInProcessPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IDeleteAttributeImages, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IObservationFetchPayload } from "./api.types"
 import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitObservation, ISubmitStartInspectionPayload, IUpdateHazard } from "."
-import { IImages } from "models/models/audit-model/groups-and-attributes.model"
-import { AsyncStorage } from "utils/storage/async-storage"
-import { conformsTo } from "lodash"
 import { uploadAllImages } from "utils/fetch_api"
 
 /**
@@ -215,6 +212,24 @@ export class Api {
           data: response.data
       } as GeneralResponse
   }
+
+
+
+
+  async checkAnyAuditInProcess ( payload: IAnyAuditInProcessPayload ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/CheckIsAnyAuditInProcess", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+
 
   async fetchDataForEditInspection ( payload: IFetchEditInspectionDetailsPayload ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/GetAuditDetails", payload )

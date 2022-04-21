@@ -124,9 +124,7 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
 
     // useEffect( ()=>{
     //     if( AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0 ){
-    //         console.log( 'Inside IF' )
     //         if( item.AttributeID === "204931ca-9912-4fd4-8b98-54556d68ed8a" ) {
-    //             console.log( 'called ---->' )
     //         }
     //         setScoreValue( item.MaxCorrectAnswerID )
     //         item.setGivenAnswerId( item.MaxCorrectAnswerID )
@@ -297,7 +295,6 @@ export const GroupsAndAttributes: React.FunctionComponent<GroupsAndAttributesPro
     }
 
     // useEffect( ( ) => {
-    //     console.log( 'Inside useEffecrt' )
     //     setRefreshing( !refreshing )
     // }, [ AuditStore.refreshInspectionImage ] )
 

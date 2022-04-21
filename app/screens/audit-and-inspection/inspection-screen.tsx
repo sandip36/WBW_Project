@@ -62,6 +62,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     const [ isChecked, setIsChecked ] = useState( false )
     const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
     const [ loadingForSave, setLoadingForSave ] = useState( false )
+    const [ isBackHandlerPresent, setIsBackHandlerPresent ] = useState( true )
+
     if( isEmpty( dashboard ) ) {
         return null
     }
@@ -84,21 +86,24 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
 
     const _handleBackPress = ( ) => {
         // Works on both iOS and Android
-        Alert.alert(
-            "Discard changes?",
-            "Are you sure you want to discard the changes?",
-            [
-                {
-                    text: "No",
-                    onPress: () => null
-                },
-                {
-                    text: "Yes",
-                    onPress: deleteInspectionRecord
-                }
-            ],
-        );
-        return true
+        if( isBackHandlerPresent ){
+            Alert.alert(
+                "Discard changes?",
+                "Are you sure you want to discard the changes?",
+                [
+                    {
+                        text: "No",
+                        onPress: () => null
+                    },
+                    {
+                        text: "Yes",
+                        onPress: deleteInspectionRecord
+                    }
+                ],
+            );
+            return true
+        }
+        navigation.dispatch( StackActions.pop( 2 ) );
     }
 
     const deleteInspectionRecord = async ( ) => {
@@ -345,7 +350,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         setLoadingForSave( false )
         if( response === 'success' ) {
             setTimeout( ( ) => {
-                navigation.dispatch( StackActions.pop( 2 ) );
+                setIsBackHandlerPresent( false )
+                // navigation.dispatch( StackActions.pop( 2 ) );
                 // navigation.pop( 2 )
             }, 1000 )
         }
@@ -466,7 +472,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                 />
             </Box>
             <Box flexDirection="row">
-                <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
+                <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "50%"}>
                     <Button
                         title="Submit"
                         onPress={onSubmit}
@@ -474,15 +480,16 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
                     />
                 </Box>
                 {
-                    AuditStore.shouldShowReportingPeriod
-                        ? <Box width="50%">
-                            <Button 
-                                title="Save"
-                                onPress={saveAndComeBack}
-                                loading={loadingForSave}
-                            />
-                        </Box>
-                        : null
+                    // AuditStore.shouldShowReportingPeriod
+                    // ?
+                    <Box width="50%">
+                        <Button 
+                            title="Save"
+                            onPress={saveAndComeBack}
+                            loading={loadingForSave}
+                        />
+                    </Box>
+                    //  : null
                 }
             </Box>
         </Box>

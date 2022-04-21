@@ -74,7 +74,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
         },
         get HazardLabel () {
             if( !isEmpty( self.currentActOrConditions ) ){
-                //  console.log( "self.currentActOrConditions", self.currentActOrConditions?.Value.startsWith( "Unsafe" ) ? "Hazard" : "Preventive Hazard" )
                 return self.currentActOrConditions?.Value.startsWith( "Unsafe" ) ? "Hazard" : "Preventive Hazard"
             }else{
                 return "Hazard"
@@ -119,7 +118,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 return result
             } 
             catch( error ) {
-                //  console.log( 'error is ',JSON.stringify( error ) )
                 if( error?.kind === "rejected" || error?.Message === "No Records Found" ) {
                     if( self.items?.length > 0 ) {
                         return null
@@ -152,7 +150,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                         image: self.UploadDocument[0],
                         url: url
                     } )
-                    console.log( 'response after uploading document from store',JSON.stringify( response ) )
                     if( isEmpty( response ) ) {
                         return null
                     }

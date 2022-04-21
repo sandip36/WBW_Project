@@ -43,7 +43,6 @@ export const UploadImageScreen: React.FC<UploadImageScreenProps> = observer( ( p
     const { AuthStore, AuditStore } = useStores()
     const [ isLoading, setIsLoading ] = useState( false )
 
-    //  console.log( 'route is ',route )
 
     const deleteImage = async ( index: number ) => {
         await attributeData.removeImageByIndex( index )

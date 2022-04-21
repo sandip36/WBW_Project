@@ -130,6 +130,14 @@ export interface ISubmitStartInspectionPayload {
     Type: string,
     CompanyID: string
 }
+export interface IAnyAuditInProcessPayload {
+    UserID: string,
+    AccessToken: string,
+    AuditAndInspectionTemplateID: string,
+    TypeID: string,
+    PrimaryUserID: string,
+    Type: string,
+}
 export interface IDeleteInspectionRecord {
     UserID: string,
     AccessToken: string,

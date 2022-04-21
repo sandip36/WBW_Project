@@ -63,7 +63,6 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
     const [ isChecked, setIsChecked ] = useState( false )
     const [ loadingForSave, setLoadingForSave ] = useState( false )
     const [ loadingForSubmit, setLoadingForSubmit ] = useState( false )
-    const [ loadingForAnonymous, setLoadingForAnonymous ] = useState( false )
 
     useEffect( ( ) => {
         resetChecked()
@@ -329,7 +328,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             setTimeout( () => {
                 // eslint-disable-next-line no-unused-expressions
                 setLoadingForSave( false )
-                navigation.dispatch( StackActions.pop( 1 ) )
+                // navigation.dispatch( StackActions.pop( 1 ) )
                 //  navigation.goBack
             }, 1000 )
         }
@@ -465,6 +464,25 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                         />
                     </Box>
                     <Box flexDirection="row">
+                        <Box width="50%">
+                            <Button
+                                title="Submit"
+                                onPress={onSubmit}
+                                loading={loadingForSubmit}
+                            />
+                        </Box>
+                       
+                        <Box width="50%">
+                            <Button 
+                                title="Save"
+                                onPress={saveAndComeBack}
+                                loading={loadingForSave}
+                            />
+                        </Box>
+                        
+                    </Box>
+
+                    {/* <Box flexDirection="row">
                         <Box width={AuditStore.shouldShowReportingPeriod ? "50%" : "100%"}>
                             <Button
                                 title="Submit"
@@ -483,7 +501,7 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                                 </Box>
                                 : null
                         }
-                    </Box>
+                    </Box> */}
 
                 </Async.Resolved>
             </Async>
