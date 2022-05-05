@@ -4,7 +4,7 @@ import { FormHeader } from "components/core/header/form-header"
 import { useStores } from "models"
 import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
 import { IFetchEditInspectionDetailsPayload, ISaveAuditPayload } from "services/api"
 import { makeStyles, theme } from "theme"
@@ -66,10 +66,48 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
 
     useEffect( ( ) => {
         resetChecked()
+
+    }, [] )
+
+    useEffect( () => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            _handleBackPress
+        );
+        return () => backHandler.remove();
     }, [] )
 
     const resetChecked = async ( ) => {
         await AuditStore.resetPassingValueSelected()
+    }
+    const _handleBackPress = ( ) => {
+        // const isWarnMessageShow = SyncStorage.get( 'isWarnMessageShow' );
+        // Works on both iOS and Android
+       
+        if( AuditStore.isWarnMessageShow ){
+            Alert.alert(
+                "Discard changes?",
+                "Are you sure you want to discard the changes?",
+                [
+                    {
+                        text: "No",
+                        onPress: () => null
+                    },
+                    {
+                        text: "Yes",
+                        onPress: ()=>{
+                            AuditStore.setIsWarnMessage( false )
+                            navigation.dispatch( StackActions.pop( ) )
+
+                        }
+                    }
+                ],
+            );
+            return true
+
+        }
+       
+        navigation.dispatch( StackActions.pop( ) );
     }
 
 
@@ -86,6 +124,10 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             CompanyID: AuthStore?.user?.CompanyID
         } as IFetchEditInspectionDetailsPayload
         await AuditStore.fetchDataForEditInspection( payload )
+        setTimeout( ( ) => {
+            AuditStore.setIsWarnMessage( false )
+            //  navigation.pop( 2 )
+        }, 1000 )
     }, [] )
 
     const renderItem = ( { item }: {item: ISystemFieldsInnerModel } )  => {
@@ -282,14 +324,23 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
          *  check for valid reporting period
          */
         setLoadingForSave( true )
-        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        // const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        // if( !isValidReportingPeriod ) {
+        //     Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+        //     setLoadingForSave( false )
+
+        //     return null 
+        // }
+        
+
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
-            setLoadingForSave( false )
-
+            setLoadingForSubmit( false )
             return null 
         }
-        
+
+
         /**
          * check for valid skipped reason value
          */
@@ -328,6 +379,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
             setTimeout( () => {
                 // eslint-disable-next-line no-unused-expressions
                 setLoadingForSave( false )
+                AuditStore.setIsWarnMessage( false )
+
                 // navigation.dispatch( StackActions.pop( 1 ) )
                 //  navigation.goBack
             }, 1000 )
@@ -410,6 +463,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
         // const response = await AuditStore.saveAuditAndInspection( payload )
         if( response === 'success' ) {
             setTimeout( () => {
+                AuditStore.setIsWarnMessage( false )
+
                 navigation.dispatch( StackActions.pop( 1 ) )
                 // navigation.goBack()
             }, 3000 )
@@ -437,7 +492,8 @@ export const EditInspectionScreen: React.FC<EditInspectionScreenProps> = observe
                     <FormHeader 
                         title={dashboard?.Title}
                         navigation={navigation}
-                    />                        
+                        customBackHandler={_handleBackPress}
+                    />                          
                     <Box flex={1}>
                         <FlatList 
                             data={AuditStore.dynamicFieldsData}

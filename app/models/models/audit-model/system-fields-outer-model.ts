@@ -1,4 +1,5 @@
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree";
+import { flow, getRoot, Instance, SnapshotOut, types } from "mobx-state-tree";
+import { AuditStoreType } from "models/stores";
 
 
 export const SystemFieldsInnerModel = types.model( {
@@ -11,7 +12,13 @@ export const SystemFieldsInnerModel = types.model( {
     ControlValues: types.maybeNull( types.string ),  
 } )
     .actions( self => {
+
+        const rootStore = getRoot<{
+            AuditStore: AuditStoreType,
+        }>( self )
+        
         const setSelectedValue = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.SelectedValue = value
         } )
         

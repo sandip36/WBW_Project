@@ -65,6 +65,7 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
 
     const fetchNextObservationHistory = useCallback( async () => {
         if( ObservationStore.isComplete ) {
+            setShowLoading( false )
             return null
         }
         await ObservationStore.setRefreshing()
@@ -86,7 +87,7 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
         )
     }
 
-    const onRefresh = async ( ) => {
+    const onRefresh  = async ( ) => {
         ObservationStore.setRefreshing()
         fetchObservationHistory()
         ObservationStore.setRefreshing()
@@ -135,12 +136,12 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
                             }}
                             onEndReachedThreshold={0.01}
                             onMomentumScrollBegin = {() => {onEndReachedCalledDuringMomentum = false;}}
-                            refreshControl={
-                                <RefreshControl 
-                                    refreshing={ObservationStore.refreshing} 
-                                    onRefresh={onRefresh}
-                                />
-                            }
+                            // refreshControl={
+                            //     // <RefreshControl 
+                            //     //     refreshing={ObservationStore.refreshing} 
+                            //     //     onRefresh={onRefresh}
+                            //     // />
+                            // }
                             contentContainerStyle={STYLES.contentContainerStyle}
                             keyExtractor={( item, index ) => String( item.id ) }
                         />

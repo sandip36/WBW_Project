@@ -103,7 +103,7 @@ export const ObservationStore = createModelCollection( ObservationModel )
             try {
                 const result: GeneralResponse<any> = yield self.environment.api.fetchObservations( payload )
                 if ( result?.data ) {
-                    if( result.data?.Message === "No Records found" ) {
+                    if( result.data?.Message === "No Records Found" ) {
                         self.isComplete = true
                         self.refreshing = false
                         return null
@@ -115,6 +115,7 @@ export const ObservationStore = createModelCollection( ObservationModel )
                     self.page = Number( payload.PageNumber )
                     self.isComplete = false
                 }
+                self.refreshing = false
                 return result
             } 
             catch( error ) {

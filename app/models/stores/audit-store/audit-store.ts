@@ -3,8 +3,8 @@ import { GeneralResponse, IAnyAuditInProcessPayload, IAuditHistoryFetchPayload, 
 import Toast from "react-native-simple-toast"
 import { AuditModel, IAudit  } from "models/models/audit-model/audit-model"
 import { withEnvironment } from "models/environment"
-import { isEmpty, uniqBy, sortBy, omit, map } from "lodash"
-import { GetTypesModel, IAttributes, IGroups, IImages } from "models/models/audit-model"
+import { isEmpty, uniqBy, sortBy } from "lodash"
+import { GetTypesModel, IGroups, IImages } from "models/models/audit-model"
 import { InspectionModel } from "models/models/audit-model/inspection-model"
 import { AuthStoreType } from "../auth-store"
 
@@ -22,6 +22,8 @@ export const AuditStoreProps = {
     refreshInspectionImage: types.optional( types.boolean, false ),
     AnyAuditInProcess: types.maybeNull( types.string ), 
     Message: types.maybeNull( types.string ), 
+    isWarnMessageShow: types.optional( types.boolean, false ),
+
 
 }
 
@@ -405,6 +407,8 @@ export const AuditStore = types
                     } )
                     self.inspection = { ...self.inspection, ...finalData }
                     self.refreshing = false
+                    self.isWarnMessageShow=false
+
                 }else{
                     self.refreshing = false
                 }
@@ -528,15 +532,20 @@ export const AuditStore = types
         const setMessage = flow( function * ( id: string ) {
             self.Message = id
         } )
+        const setIsWarnMessage = flow( function * ( id: boolean ) {
+            self.isWarnMessageShow = id
+        } )
         const setCurrentInspectionId = flow( function * ( id: string ) {
             self.currentInspectionId = id
         } )
 
         const setInspectionNotes = flow( function * ( value: string ) {
+            self.isWarnMessageShow=true
             self.inspection.AuditAndInspectionDetails.Notes = value
         } )
 
         const setPrimaryUserId = flow( function * ( id: string ) {
+            self.isWarnMessageShow=true
             self.inspection.AuditAndInspectionDetails.PrimaryUserID = id
         } )
 
@@ -549,14 +558,17 @@ export const AuditStore = types
         } )
 
         const setSkippedReason = flow( function * ( value: string ) {
+            self.isWarnMessageShow=true
             self.inspection.AuditAndInspectionDetails.SkippedReason = value
         } )
 
         const setCurrentPrimaryListID = flow( function * ( value: string ) {
             self.currentSecondaryListID = ""
+            self.isWarnMessageShow=true
             self.currentPrimaryListID = value
         } )
         const setCurrentSecondaryListID = flow( function * ( value: string ) {
+            self.isWarnMessageShow=true
             self.currentSecondaryListID = value
         } )
         const resetPrimaryListID = flow( function * ( ) {
@@ -613,7 +625,8 @@ export const AuditStore = types
             resetStore,
             checkAnyuditInProcess,
             setAnyAuditInProcess,
-            setMessage
+            setMessage,
+            setIsWarnMessage
 
         }
     } )
