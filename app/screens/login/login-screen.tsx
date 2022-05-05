@@ -40,13 +40,13 @@ const BUILD_BASE_URL = [
 
 const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     imageStyle: {
-        width: theme.spacing.massive * 2,
-        height: theme.spacing.massive * 2,
-        borderRadius: ( theme.spacing.massive * 2 )/2,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: "white"
+        width: '100%',
+        // Without height undefined it won't work
+        height:'auto',
+        // figure out your image aspect ratio
+        aspectRatio: 135 / 76,
     },
+    
     inputContainerStyle: {
         borderBottomWidth: 1,
         borderColor: theme.colors.primary
@@ -83,7 +83,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                 .required(),
             password: string()
                 .required()
-                .min( 6 )
+                .min( 1 )
         } ),
         async onSubmit ( values ) {
             const payload = {
@@ -100,7 +100,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
             <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
                 <Box mt="huge" mb="large" alignItems="center">
                     <Image 
-                        source={theme.assets.wbwLogo}
+                        source={theme.assets.livelogo}
                         style={STYLES.imageStyle}
                     />
                 </Box>
