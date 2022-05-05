@@ -73,7 +73,10 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
     }, [] )
 
     const resetChecked = async ( ) => {
+      
+        AuditStore.setIsWarnMessage( false )        
         await AuditStore.resetPassingValueSelected()
+
     }
 
     useEffect( () => {
@@ -89,7 +92,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         if( isBackHandlerPresent ){
             Alert.alert(
                 "Discard changes?",
-                "Are you sure you want to discard the changes?",
+                "Are you sure you want to delete the record",
                 [
                     {
                         text: "No",
@@ -103,8 +106,38 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
             );
             return true
         }
+        
+        if( AuditStore.isWarnMessageShow ){
+            Alert.alert(
+                "Discard changes?",
+                "Are you sure you want to discard the changes?",
+                [
+                    {
+                        text: "No",
+                        onPress: () => null
+                    },
+                    {
+                        text: "Yes",
+                        onPress: ()=>{
+                            AuditStore.setIsWarnMessage( false )
+                            navigation.dispatch( StackActions.pop( 2 ) )
+
+                        }
+                    }
+                ],
+            );
+            return true
+
+        }
+       
         navigation.dispatch( StackActions.pop( 2 ) );
     }
+   
+    const goBack = ( ) => {
+        // Works on both iOS and Android
+        navigation.goBack()
+    }
+
 
     const deleteInspectionRecord = async ( ) => {
         const payload = {
@@ -310,12 +343,19 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
 
     const saveAndComeBack = async ( ) => {
         setLoadingForSave( true )
-        const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        // const isValidReportingPeriod = AuditStore.shouldShowReportingPeriod === true && !isEmpty( reportingPeriod )
+        // if( !isValidReportingPeriod ) {
+        //     Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
+        //     setLoadingForSave( false )
+        //     return null 
+        // }
+        const isValidReportingPeriod = AuditStore.checkForValidReportingPeriod( reportingPeriod )
         if( !isValidReportingPeriod ) {
             Toast.showWithGravity( 'Last day of schedule period is required.', Toast.LONG, Toast.CENTER );
             setLoadingForSave( false )
             return null 
         }
+
         
         const isValidSkippedReason = checkForSkippedReason()
         if( !isValidSkippedReason ) {
@@ -351,6 +391,8 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         if( response === 'success' ) {
             setTimeout( ( ) => {
                 setIsBackHandlerPresent( false )
+                AuditStore.setIsWarnMessage( false )
+                setLoadingForSave( false )
                 // navigation.dispatch( StackActions.pop( 2 ) );
                 // navigation.pop( 2 )
             }, 1000 )
@@ -434,6 +476,7 @@ export const InspectionScreen: React.FC<InspectionScreenProps> = observer( ( ) =
         if( response === 'success' ) {
             setTimeout( ( ) => {
                 setLoadingForSubmit( false )
+                AuditStore.setIsWarnMessage( false )
                 navigation.dispatch( StackActions.pop( 2 ) );
                 //  navigation.pop( 2 )
             }, 1000 )

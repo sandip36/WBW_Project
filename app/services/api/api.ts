@@ -128,7 +128,6 @@ export class Api {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
       }
-
       return {
           kind: 'ok',
           data: response.data

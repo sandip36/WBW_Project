@@ -1,4 +1,5 @@
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree";
+import { flow, Instance, SnapshotOut, types,getRoot } from "mobx-state-tree";
+import { AuditStoreType } from "models/stores";
 
 export const HazardModel = types.model( {
     ID: types.maybeNull( types.string ),
@@ -259,22 +260,33 @@ export const AttributesModel = types
         }
     } ) )
     .actions( self => {
+        const rootStore = getRoot<{
+            AuditStore: AuditStoreType,
+        }>( self )
+      
         const setGivenAnswerId = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.GivenAnswerID = value
         } )
         const setSourceId = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.SourceID = value
         } )
         const setHazardId = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.HazardsID = value
         } )
         const setHazardIDClone = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.HazardsIDClone = value
         } )
         const setComments = flow( function * ( value: string  ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
             self.Comments = value
         } )
         const setImages = flow( function * ( payload: IImages  ) {
+        //    self.isWarnMessageShow = true
+
             self.auditImage.push( payload )
         } )
 
@@ -291,15 +303,22 @@ export const AttributesModel = types
             self.AttributeImages.splice( index, 1 )
         } )
 
+
         const resetHazardIDClone = flow( function * ( ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
+
             self.HazardsIDClone = ""
         } )
 
         const setIsHazardRequired = flow( function * ( value: boolean ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
+
             self.isHazardRequired = value
         } )
 
         const saveImagesForAuditAndInspection = flow( function * ( response: any ) {
+            rootStore.AuditStore.setIsWarnMessage( true )
+
             self.AttributeImages = response.AttributeImages
             self.auditImage = [] as any
 

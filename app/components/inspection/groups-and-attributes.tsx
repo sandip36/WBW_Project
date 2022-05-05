@@ -1,13 +1,13 @@
 import { Box, InputWithIcon, Text, TextAreaInput, TouchableBox } from "components"
 import React, { useEffect, useState } from "react"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
-import { AuditStore, IAttributes, IAtttributeImages, IAudit, IImages, useStores } from "models"
-import { FlatList, ImageStyle, StyleProp, ViewStyle, Modal, TouchableOpacity, View, Dimensions, Alert } from "react-native"
+import { IAttributes, IAtttributeImages, IImages, useStores } from "models"
+import { FlatList, ImageStyle, StyleProp, ViewStyle, Modal,  Alert } from "react-native"
 import { makeStyles, theme } from "theme"
 import { Dropdown } from "components/core/dropdown"
 import { ImageLibraryOptions } from "react-native-image-picker"
 import { Observer, observer } from "mobx-react-lite"
-import { Avatar, Icon, Image } from "react-native-elements"
+import { Avatar, Image } from "react-native-elements"
 import { isEmpty } from "lodash"
 import { Item } from "react-native-picker-select"
 import { IDeleteAttributeImages } from "services/api"
@@ -122,38 +122,7 @@ export const ScoreDropdown: React.FunctionComponent<ScoreDropdownProps> = ( prop
     const { AuditStore } = useStores()
     const [ scoreValue, setScoreValue ] = useState( item.GivenAnswerID )
 
-    // useEffect( ()=>{
-    //     if( AuditStore.isPassingValuesSelected === true && Number( item.GivenAnswerID ) === 0 ){
-    //         if( item.AttributeID === "204931ca-9912-4fd4-8b98-54556d68ed8a" ) {
-    //         }
-    //         setScoreValue( item.MaxCorrectAnswerID )
-    //         item.setGivenAnswerId( item.MaxCorrectAnswerID )
-    //     }else{
-    //         setScoreValue( item.GivenAnswerID )
-    //         item.setGivenAnswerId( item.GivenAnswerID )
-    //     }
-    // }, [ AuditStore.isPassingValuesSelected ] )
-
-    // useEffect( ( ) => {
-    //     onCheckboxValueChange()
-    // }, [ AuditStore.isPassingValuesSelected ] )
-
-    // const onCheckboxValueChange = ( ) => {
-    //     if( !AuditStore.isPassingValuesSelected ) {
-    //         if( item.GivenAnswerID !== "0" || item.GivenAnswerID !== null || item.GivenAnswerID !== undefined ) {
-    //             setScoreValue( item.GivenAnswerIDClone )
-    //         }
-    //         else{
-    //             setScoreValue( "0" )
-    //         }
-    //     }else{
-    //         if( item.GivenAnswerID === "0" || item.GivenAnswerID === null || item.GivenAnswerID === undefined ) {
-    //             setScoreValue( item.MaxCorrectAnswerID )                
-    //         }else{
-    //             setScoreValue( item.GivenAnswerID )
-    //         }
-    //     }
-    // }
+   
 
     const onScoreValueChange = ( value ) => {
         if( isEmpty( value ) ) {
