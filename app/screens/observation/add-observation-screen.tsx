@@ -117,7 +117,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const [ loadingForAnonymous, setLoadingForAnonymous ] = useState( false )
     const [ refreshing, setRefreshing ] = useState( false )
     const [ isDataFetched, setIsDataFetched ] = useState( false )
-
+   
     useEffect( ( ) => {
         fetchAllFilterData()
     }, [] )
@@ -163,7 +163,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const fetchAllFilterData = useCallback( async () => {
         setIsDataFetched( true )
         await ObservationStore.setRadioValue( "0" )
-
         await ObservationStore.removeDocument()
         await ObservationStore.removeImages()
         await ObservationStore.resetSwitch()
@@ -468,6 +467,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                         label={<LabelWithAsterisk label="Describe where the Observation happened"/>}
                         labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                         placeholder="Type Here"
+                        defaultValue={ObservationStore.editObservationData?.DescribeWhereTheIncidentHappened}    
                         onChangeText={handleChange( "whereObservationHappened" )}
                         onBlur={handleBlur( "whereObservationHappened" )}
                         error={touched.whereObservationHappened && errors.whereObservationHappened}
@@ -554,6 +554,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                         label={<LabelWithAsterisk label="Observation" />}
                         labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                         placeholder="Type Here"
+                        defaultValue={ObservationStore.editObservationData?.Observation}
                         onChangeText={handleChange( "observation" )}
                         onBlur={handleBlur( "observation" )}
                         error={touched.observation && errors.observation}

@@ -1,13 +1,11 @@
 import { Instance, flow, types } from "mobx-state-tree"
-import { GetAllfiltersModel, ISections, LocationsModel, ObservationModel } from "models/models/observation-model/observation-model"
+import { EditObservationModel, GetAllfiltersModel, LocationsModel, ObservationModel } from "models/models/observation-model/observation-model"
 import { DocumentModel, IDocument, IImages, ImagesModel, IObservation } from "models/models"
-import { GeneralResponse, IAllCommanFilterPayload, IObservationFetchPayload, ISubmitObservation } from "services/api"
+import { GeneralResponse, IAllCommanFilterPayload, IEditObervationPayload, IObservationFetchPayload, ISubmitObservation } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import Toast from "react-native-simple-toast"
 import { isEmpty } from "lodash"
 import { imageUpload } from "utils/fetch_api/uploadSingleImage"
-import { nullType } from "mobx-state-tree/dist/internal"
-
 
 export const ObservationStore = createModelCollection( ObservationModel )
     .props( {
@@ -26,7 +24,8 @@ export const ObservationStore = createModelCollection( ObservationModel )
         UploadImage: types.optional( types.array( ImagesModel ), [] ),
         UploadDocument: types.optional( types.array( DocumentModel ), [] ),
         isComplete: types.optional( types.boolean, false ),
-        isImageSelected: types.optional( types.boolean, false )
+        isImageSelected: types.optional( types.boolean, false ),
+        editObservationData:types.optional( EditObservationModel,{} )
 
     } )
     .views( self => ( {
@@ -241,6 +240,22 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 return null
             }
         } )
+        // OneditObservation api
+        const editObservationApi = flow( function * ( payload: IEditObervationPayload ) {
+            try {
+                const result: GeneralResponse<IObservation[]> = yield self.environment.api.editObervation( payload )
+                if ( result?.data ) {
+                    console.log( "data for edit ",result.data )
+                    self.editObservationData = result.data as any
+                }
+                return result
+            } catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while edit observations', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
+
 
         const displaySearchableModal = flow( function * ( ) {
             self.showModal = true
@@ -312,6 +327,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
             } )
             self.startobservation.Sections = updatedSectionList as any
         } )
+        const resetEditStore = flow( function * ( ) {
+            self.editObservationData = {} as any
+        } )
 
         return {
             fetch,
@@ -338,7 +356,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
             setDocument,
             removeDocument,
             resetSwitch,
-            toggleIsImageSelected
+            toggleIsImageSelected,
+            editObservationApi,
+            resetEditStore
         }
     } )
 

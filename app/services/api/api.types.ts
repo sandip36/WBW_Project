@@ -213,3 +213,10 @@ export interface IDeleteAttributeImages {
 }
 
 
+// Added payload for edit Observation
+export interface IEditObervationPayload{
+    UserID:string,
+    AccessToken:string,
+    ObservationGUID:string
+}
+

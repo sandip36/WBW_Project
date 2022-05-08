@@ -68,4 +68,27 @@ export interface IGetAllfiltersModelType extends GetAllfiltersSnapshotType {}
 
 
 
+export const EditObservationModel = types.model( {
+    ObservationID: types.maybeNull( types.number ),
+    ObservationGUID: types.maybeNull( types.string ),
+    Observation: types.maybeNull( types.string ),
+    CategoryID: types.maybeNull( types.string ),
+    SectionID: types.maybeNull( types.string ),
+    TopicID: types.maybeNull( types.string ),
+    PreventiveHazardID: types.maybeNull( types.string ),
+    HazardID: types.maybeNull( types.string ),
+    IsFollowUpNeeded: types.maybeNull( types.string ),
+    DateCreated: types.maybeNull( types.string ),
+    Status: types.maybeNull( types.string ),
+    LevelID: types.maybeNull( types.string ),
+    ObservationDate: types.maybeNull( types.string ),
+    ObservationTime: types.maybeNull( types.string ),
+    DescribeWhereTheIncidentHappened: types.maybeNull( types.string ),
+} )
+
+export type EditObservationType = Instance<typeof EditObservationModel>
+export interface IEditObservationModel extends EditObservationType {}
+type EditObservationSnapshotType = SnapshotOut<typeof EditObservationModel>
+export interface IEEditObservationModelType extends EditObservationSnapshotType {}
+
 

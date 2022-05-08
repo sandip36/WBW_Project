@@ -1,7 +1,9 @@
-import { Box, Text } from "components"
-import { IObservation } from "models"
+import { Box, Icon, Text, TouchableBox } from "components"
+import { IObservation, ObservationStore, useStores } from "models"
 import React from "react"
 import { isEmpty } from "lodash"
+import { useNavigation } from "@react-navigation/native"
+import { IEditObervationPayload } from "services/api/api.types"
 
 export interface ObservationHistoryCardProps {
     observation: IObservation
@@ -28,6 +30,24 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
     const {
         observation
     } = props
+
+    const navigation = useNavigation()
+    const { AuthStore,ObservationStore } = useStores()
+
+    const onEditObservation = async ( ) => {
+        // await  ObservationStore.resetEditStore()
+        const payload = {
+            UserID:AuthStore?.user?.UserID,
+            AccessToken:AuthStore?.token,
+            ObservationGUID:observation?.ObservationGUID
+        } as IEditObervationPayload
+        await ObservationStore.editObservationApi( payload )
+        navigation.navigate( "AddObservation",{ 
+            calledFrom:"EditObservation"
+        }
+        )
+        // navigation.navigate( 'AddObservation' )
+    }
     
     return (
         <Box flex={1} mx="regular" my="medium">
@@ -46,6 +66,15 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
                     </Box>
                     <Box flex={0.3} alignItems="flex-end" mr={"regular"}>
                         <Text variant="body" color="white">{observation?.Status}</Text>
+                    </Box>
+                    <Box>
+                        {
+                            observation?.Status === "In Process"
+                                ? <TouchableBox flex={0.1} justifyContent="center" mx="regular" alignItems="flex-end" onPress={onEditObservation}>
+                                    <Icon size={32} name="edit" color="background" type="material" />
+                                </TouchableBox>
+                                : null
+                        }
                     </Box>
                 </Box>
                 <Box my="medium">

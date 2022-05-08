@@ -95,6 +95,7 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
 
 
     const navigateToAddObservation = ( ) => {
+        ObservationStore.resetEditStore()
         navigation.navigate( 'AddObservation' )
     }
 
