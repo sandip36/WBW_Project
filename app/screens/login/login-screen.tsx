@@ -42,7 +42,7 @@ const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerS
     imageStyle: {
         width: '95%',
         // Without height undefined it won't work
-        height:"60%"
+        height:"65%"
         // backgroundColor:"red",
         // figure out your image aspect ratio
         // aspectRatio: 135 / 40,

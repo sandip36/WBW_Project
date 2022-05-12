@@ -161,12 +161,12 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         },
         validationSchema: object( {
             whereObservationHappened: string()
-                .required( 'Where the observation happened is required' ),
+                .required( '' ),
             observation: string()
                 .required( 'Observation is required' )
         } ),
         async onSubmit ( values ) {
-            //
+            // Where the observation happened is required
         },
     } )
     
