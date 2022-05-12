@@ -477,7 +477,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const renderImageItem = ( { item, index } ) => {
         let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
         formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
-        console.log( "dsbfjhcbsdjhfbjs",formattedUrl )
         return (
             <Box flex={1} flexDirection="row" marginHorizontal="medium">
                 <RenderImage 
