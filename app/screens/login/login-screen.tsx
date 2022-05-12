@@ -40,11 +40,12 @@ const BUILD_BASE_URL = [
 
 const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     imageStyle: {
-        width: '100%',
+        width: '95%',
         // Without height undefined it won't work
-        height:'30%',
+        height:"60%"
+        // backgroundColor:"red",
         // figure out your image aspect ratio
-        aspectRatio: 135 / 40,
+        // aspectRatio: 135 / 40,
     },
     
     inputContainerStyle: {
@@ -97,14 +98,14 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
 
     return (
         <Box flex={1} bg="white">
-            <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
-                <Box mt="huge" mb="large" alignItems="center">
+            <ScrollView  contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
+                <Box flex={0.45}  mt="huge" mb="medium" alignItems="center" justifyContent="center">
                     <Image 
                         source={theme.assets.livelogo}
                         style={STYLES.imageStyle}
                     />
                 </Box>
-                <Box mb="large" justifyContent="center" alignItems="center">
+                <Box mb="medium" mt="huge"  justifyContent="center" alignItems="center" >
                     <Text fontSize={theme.typography.large} textAlign="center" fontWeight="bold" mt="negative8" mb="medium"> Login </Text>
                 </Box>
                 <Box mx="small" mt="massive">
@@ -141,6 +142,8 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                         loading={isValidating || isSubmitting}
                     />
                 </Box>
+
+                
             </ScrollView>
         </Box>
     )

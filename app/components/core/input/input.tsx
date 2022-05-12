@@ -24,7 +24,7 @@ const useStyles = makeStyles<InputStyleProps>( ( theme ) => ( {
     inputStyle: {
         padding: theme.typography.medium,
         textAlign: 'auto',
-        fontSize: theme.spacing.regular
+        fontSize: 16,
     }
 } ) )
 

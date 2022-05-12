@@ -38,7 +38,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
                 return dropdownRecord
             } )
         },
-    
         get currentActOrConditions () {
             return self.actOrConditions && self.startobservation.ActOrConditions.find( item => item.ID === self.actOrConditions )
         },
@@ -80,6 +79,19 @@ export const ObservationStore = createModelCollection( ObservationModel )
         },
         get observationImage () {
             return self.UploadImage[0]
+        },
+        ImageForZoom ( baseUrl: string ) {
+            if( self.editObservationData.ObservationFiles.length > 0 ) {
+                return self.editObservationData.ObservationFiles.map( ( item ) => {
+                    let formattedUrl = `${baseUrl}${item.FilePath}`
+                    formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
+                    return {
+                        url: formattedUrl
+                    }
+                } )
+            }else{
+                return []
+            }
         }
     } ) )
     .actions( self => {
@@ -245,7 +257,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
             try {
                 const result: GeneralResponse<IObservation[]> = yield self.environment.api.editObervation( payload )
                 if ( result?.data ) {
-                    console.log( "data for edit ",result.data )
                     self.editObservationData = result.data as any
                 }
                 return result
@@ -298,7 +309,6 @@ export const ObservationStore = createModelCollection( ObservationModel )
             self.actOrConditions = ''
             self.hazards = ''
         } )
-        
         const displayShowTopic = flow( function * ( ) {
             self.showTopic = true
         } )
@@ -331,6 +341,22 @@ export const ObservationStore = createModelCollection( ObservationModel )
             self.editObservationData = {} as any
         } )
 
+
+        const setSectionId = flow( function * ( id: string ) {
+            self.section = id
+        } )
+        const setTopicId = flow( function * ( id: string ) {
+            self.topic = id
+        } )
+        const setActOrConditionId = flow( function * ( id: string ) {
+            self.actOrConditions = id
+        } )
+        const sethazardsId = flow( function * ( id: string ) {
+            self.hazards = id
+        } )
+        
+        
+
         return {
             fetch,
             setRefreshing,
@@ -358,7 +384,12 @@ export const ObservationStore = createModelCollection( ObservationModel )
             resetSwitch,
             toggleIsImageSelected,
             editObservationApi,
-            resetEditStore
+            resetEditStore,
+            setSectionId,
+            setTopicId,
+            setActOrConditionId,
+            sethazardsId
+
         }
     } )
 

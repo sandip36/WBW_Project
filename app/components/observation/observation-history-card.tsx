@@ -42,11 +42,7 @@ export const ObservationHistoryCard: React.FunctionComponent<ObservationHistoryC
             ObservationGUID:observation?.ObservationGUID
         } as IEditObervationPayload
         await ObservationStore.editObservationApi( payload )
-        navigation.navigate( "AddObservation",{ 
-            calledFrom:"EditObservation"
-        }
-        )
-        // navigation.navigate( 'AddObservation' )
+        navigation.navigate( "AddObservation" )
     }
     
     return (

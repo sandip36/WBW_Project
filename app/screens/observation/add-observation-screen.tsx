@@ -1,6 +1,6 @@
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
-import { ActivityIndicator, Image, ImageStyle, StyleProp, Switch, ViewStyle } from "react-native"
+import { ActivityIndicator, FlatList, Image, ImageStyle, Modal, StyleProp, Switch, ViewStyle } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
 import { StackActions, useFocusEffect, useNavigation } from "@react-navigation/native"
 import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
@@ -14,6 +14,8 @@ import { isEmpty, } from "lodash"
 import { Dropdown } from "components/core/dropdown/custom-dropdown-component"
 import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
+import ImageViewer from "react-native-image-zoom-viewer"
+import { RenderImage } from "components/inspection"
 
 
 
@@ -29,6 +31,8 @@ export type AddObservationStyleProps = {
     iconContainerStyle: StyleProp<ViewStyle>,
     searchBarContainerStyle: StyleProp<ViewStyle>,
     imageStyle:StyleProp<ImageStyle>
+    modalContainerStyle:StyleProp<ViewStyle>
+    avatarContainerStyle:StyleProp<ViewStyle>
     
 }
 
@@ -55,7 +59,12 @@ const useStyles = makeStyles<AddObservationStyleProps>( ( theme ) => ( {
         borderRadius: theme.borderRadii.medium,
         flexDirection: 'row',
         alignItems: 'center'
-    }
+    },
+    modalContainerStyle: {
+        flex: 1
+    },  avatarContainerStyle: {
+        backgroundColor: theme.colors.primary
+    },
 } ) )
 
 const RADIO_LIST = [
@@ -117,6 +126,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const [ loadingForAnonymous, setLoadingForAnonymous ] = useState( false )
     const [ refreshing, setRefreshing ] = useState( false )
     const [ isDataFetched, setIsDataFetched ] = useState( false )
+    const [ showZoomViewer,setShowZoomViewer ] = useState( false )
+
    
     useEffect( ( ) => {
         fetchAllFilterData()
@@ -145,8 +156,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         isValid
     } = useFormik( {
         initialValues: {
-            whereObservationHappened: "",
-            observation: "",
+            whereObservationHappened: isEmpty( ObservationStore.editObservationData.DescribeWhereTheIncidentHappened )?"":ObservationStore.editObservationData.DescribeWhereTheIncidentHappened,
+            observation: isEmpty( ObservationStore.editObservationData.Observation )?"":ObservationStore.editObservationData.Observation,
         },
         validationSchema: object( {
             whereObservationHappened: string()
@@ -179,6 +190,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         } as IAllCommanFilterPayload
         await ObservationStore.fetchAllCommanfilter( payload )
         setIsDataFetched( false )
+        setDefaultValueForEdit ()
+
     }, [] )
 
     const onUserSelect = async ( item: ILocationsModel ) => {
@@ -256,12 +269,15 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 IsFollowUpNeeded: ObservationStore.radioValue,
                 ObservationDate: TaskStore.datePicker?.value,
                 ObservationTime: TaskStore.timePicker?.value,	
-                DescribeWhereTheIncidentHappened: values.whereObservationHappened
+                DescribeWhereTheIncidentHappened: values.whereObservationHappened,
+                ObservationID: ObservationStore?.editObservationData?.ObservationID
+
             } as ISubmitObservation
             const saveRecordResult = await ObservationStore.saveObservation( payload )
             if( saveRecordResult === "Success" ){
                 setTimeout( () => {
                     setLoadingForSubmit( false )
+                    ObservationStore.setRadioValue( "0" )
                     navigation.dispatch( StackActions.pop( 1 ) )
                 }, 3000 )
             }
@@ -271,11 +287,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const onSave = async ( ) => {
         setLoadingForSave( true )
         setLoadingForAnonymous( true )
-        const validArray = [ values.whereObservationHappened, TaskStore.datePicker?.value,
-            TaskStore.timePicker?.value, ObservationStore?.currentActOrConditions?.Value, ObservationStore.actOrConditions, values.observation ]
+        const validArray = [  TaskStore.datePicker?.value, values.observation ]
+
         const notValid = validArray.includes( "" )
         if( notValid ) {
-            Toast.showWithGravity( 'Please fill all mandatory fields', Toast.LONG, Toast.CENTER );
+            Toast.showWithGravity( 'Please fill Date and  Observation fields', Toast.LONG, Toast.CENTER );
             setLoadingForSave( false )
             return null
         }else if( ObservationStore.selectedUser && isEmpty( ObservationStore?.selectedUser?.Value ) ) {
@@ -297,13 +313,17 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
             IsFollowUpNeeded: ObservationStore.radioValue,
             ObservationDate: TaskStore.datePicker?.value,
             ObservationTime: TaskStore.timePicker?.value,	
-            DescribeWhereTheIncidentHappened: values.whereObservationHappened
+            DescribeWhereTheIncidentHappened: values.whereObservationHappened,
+            ObservationID: ObservationStore?.editObservationData?.ObservationID
+
         } as ISubmitObservation
+
         const resultsaveAndComeBackObservationy = await ObservationStore.saveAndComeBackObservation( payload )
         // 
         if( resultsaveAndComeBackObservationy === "Success" ){
             setTimeout( () => {
                 setLoadingForSave( false )
+                ObservationStore.setRadioValue( "0" )
                 navigation.dispatch( StackActions.pop( 1 ) )
             }, 3000 )
            
@@ -345,10 +365,11 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
         if( resultAnonymously === "Success" ){
             setTimeout( () => {
                 setLoadingForAnonymous( false )
+                ObservationStore.setRadioValue( "0" )
                 navigation.dispatch( StackActions.pop( 1 ) )
             }, 3000 )
           
-            // setLoadingForAnonymous( false )
+            setLoadingForAnonymous( false )
             // navigation.navigate( "ObservationHistory" )
         }
     }
@@ -363,9 +384,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
     const documentPicker = async ( ) => {
         try {
-            // await ObservationStore.removeDocument()
             const res = await DocumentPicker.pick( {
-                // type: [ DocumentPicker.types.pdf, DocumentPicker.types.doc,DocumentPicker.types.docx,DocumentPicker.types.csv ],
                 type: [ DocumentPicker.types.pdf ],
 
             } );
@@ -375,14 +394,12 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 size: res[0]?.size,
                 name: res[0]?.name,
                 uri: `${res[0].uri}`
-                // .replace( "%3A17", ".pd f" )
             } as IDocument
             await ObservationStore.removeDocument()
             await ObservationStore.setDocument( documentobject ) 
 
         } catch ( err ) {
             if ( DocumentPicker.isCancel( err ) ) {
-                // User cancelled the picker, exit any dialogs or menus and move on
                 Toast.showWithGravity( err.Message, Toast.LONG, Toast.TOP );
                 return null
             } else {
@@ -433,13 +450,66 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
 
+    const setDefaultValueForEdit = async ()=>{
+        if( ObservationStore.editObservationData.ObservationID != null ){
+         
+            const userItem = ObservationStore.startobservation.Locations.find( item => item.ID === ObservationStore.editObservationData.LevelID )
+            await ObservationStore.setSelectedUser( userItem )
+            await ObservationStore.setRadioValue( ObservationStore.editObservationData.IsFollowUpNeeded )
+            await TaskStore.formatTimeStringPass( ObservationStore.editObservationData.ObservationTime )
+            await TaskStore.formatDateStringPass( ObservationStore.editObservationData.ObservationDate )
+            await ObservationStore.setSectionId( ObservationStore.editObservationData.SectionID )
+            const topicsBasedOnSections = ObservationStore.startobservation.Sections.find( item => item.ID === ObservationStore.editObservationData.SectionID )
+            const topics = topicsBasedOnSections.Topics.map( item => {
+                const topic = { label: item.Value, value: item.ID }
+                return topic
+            } )
+            await setTopicList( topics )
+            setTopicValue( ObservationStore.editObservationData.TopicID )
+            await ObservationStore.setActOrConditionId( ObservationStore.editObservationData.ActOrConditionID )
+            await ObservationStore.sethazardsId( ObservationStore.editObservationData.HazardID )
+
+        }
+
+
+        
+    }
+    const renderImageItem = ( { item, index } ) => {
+        let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${item.FilePath}`
+        formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
+        console.log( "dsbfjhcbsdjhfbjs",formattedUrl )
+        return (
+            <Box flex={1} flexDirection="row" marginHorizontal="medium">
+                <RenderImage 
+                    image={item}
+                    customUri={`${formattedUrl}`}
+                    style={STYLES.imageStyle as StyleProp<ImageStyle>}
+                    showDeleteIcon={false}
+                    onImagePress={onImagePress}
+                />
+            </Box>
+        )
+    }
+    const onImagePress = ( ) => {
+        setShowZoomViewer( true )
+    }
+
+    const onRequestClose = ( ) => {
+        setShowZoomViewer( false )
+    }
+
+
+ 
+
     return (
         <Box flex={1}>
             <FormHeader 
-                title="Add Observation"
+                title={ObservationStore.editObservationData.ObservationID == null ?"Add Observation" :"Edit Observation"}
                 navigation={navigation}
-                rightComponent={<RightSwitch  isEnabled={ObservationStore.isSwitchOn} toggleSwitch={ObservationStore.toggleSwitch}/>}
-            />                        
+                rightComponent={
+                    ObservationStore.editObservationData.ObservationID == null  ?   <RightSwitch  isEnabled={ObservationStore.isSwitchOn} toggleSwitch={ObservationStore.toggleSwitch}/> :null
+        
+                }    />                        
             <ScrollBox flex={1} mt="regular">
                 {
                     ObservationStore.showModal 
@@ -463,7 +533,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                 }
                 <Box mx="medium">
                     <TextAreaInput 
-                        // label="Describe where the Observation happened *"
                         label={<LabelWithAsterisk label="Describe where the Observation happened"/>}
                         labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
                         placeholder="Type Here"
@@ -507,6 +576,7 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                         radioList={RADIO_LIST}
                         label="Followup Needed"
                         onPress={onRadioPress}
+                        initial= {  Number( ObservationStore.editObservationData.IsFollowUpNeeded ) == null ?  Number( ObservationStore.radioValue ):  Number( ObservationStore.editObservationData.IsFollowUpNeeded )}
                     />
                 </Box>
                 <Box>
@@ -561,21 +631,53 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                     /> 
                 </Box>
                 <Box alignItems={"center"} flexDirection={"row"}>
-                    {
+                    {/* {
                         renderDocument()
-                                   
-                    }
+                    } */}
                     {
                         renderImage()
+                    }{
+                        <Box flex={1} flexDirection="row" marginHorizontal="regular">
+                            {
+                                showZoomViewer 
+                                    ? <Modal 
+                                        style={STYLES.modalContainerStyle}
+                                        visible={showZoomViewer}
+                                        onRequestClose={onRequestClose}
+                                    >
+                                        <ImageViewer
+                                            imageUrls={ObservationStore.ImageForZoom( AuthStore.environment.api.apisauce.getBaseURL() ) as any}
+                                            index={0}
+                                        />
+                                        <Box position="absolute" top={20} right={10}>
+                                            <Avatar size="medium" onPress={onRequestClose} rounded icon={{ name: 'close' }} containerStyle={STYLES.avatarContainerStyle}/>
+                                        </Box>
+                                    </Modal>
+                                    : <FlatList 
+                                        data={ObservationStore.editObservationData.ObservationFiles}
+                                        // extraData={refresh}
+                                        keyExtractor={( item,index ) => String( index ) }
+                                        renderItem={renderImageItem}
+                                        horizontal={true}
+                                    /> 
+                            }
+                        </Box>
                     }                 
                 </Box>  
             </ScrollBox>
             <Box>
-                <Box position="absolute" bottom={20} right={10}>
-                    <Avatar size="medium"  rounded icon={{ name: 'camera', type: 'feather' }} containerStyle={STYLES.iconContainerStyle} onPress={onpressCamera}/>
-                    <Box mt="regular">
+                <Box position="absolute" bottom={20} right={10}>{
+
+                    ObservationStore.editObservationData.ObservationFiles.length <=3 
+                        ? <Avatar size="medium"  rounded icon={{ name: 'camera', type: 'feather' }} containerStyle={STYLES.iconContainerStyle} onPress={onpressCamera}/>
+                        :null
+                 
+                    
+
+                }
+                {/* <Box mt="regular">
                         <Avatar size="medium"  rounded icon={{ name: 'file-pdf-o', type: 'font-awesome' }} containerStyle={STYLES.iconContainerStyle}onPress={documentPicker}/>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Box>
             <Box>

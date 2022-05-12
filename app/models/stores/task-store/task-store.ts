@@ -292,6 +292,23 @@ export const TaskStore = types.model( "TaskModel" )
             self.timePicker.datePickerValue = new Date( selectedDate )
             self.timePicker.show = false
         } )
+        const formatTimeStringPass = flow( function * ( timeString:string ) {
+            // const selectedDate = new Date( timeString ); 
+            //  const formattedTime = moment( selectedDate ).format( "h:mm A" )
+            self.timePicker.value = timeString
+            self.timePicker.datePickerValue = new Date()
+            self.timePicker.show = false
+        } )
+
+        const formatDateStringPass = flow( function * ( dateString: string ) {
+            const selectedDate =  new Date( dateString ); 
+            const formattedDate = moment( selectedDate ).format( "MM/DD/YYYY" )
+            self.datePicker.value = formattedDate
+            self.datePicker.datePickerValue = new Date( selectedDate )
+            self.datePicker.show = false
+        } )
+
+
         const resetTimePicker = flow( function * ( ) {
             self.timePicker.mode = ""
             self.timePicker.show = false
@@ -360,7 +377,9 @@ export const TaskStore = types.model( "TaskModel" )
             hideTimePicker,
             formatTime,
             resetTimePicker,
-            setcurrentDueDateValue
+            setcurrentDueDateValue,
+            formatDateStringPass,
+            formatTimeStringPass
         }
     } )
 

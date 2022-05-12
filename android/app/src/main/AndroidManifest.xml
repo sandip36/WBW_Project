@@ -31,7 +31,12 @@
             <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
 
         </intent-filter>
+        <supports-screens android:smallScreens="true"
+                      android:normalScreens="true"       
+                      android:largeScreens="false"       
+                      android:xlargeScreens="false"/> 
       </activity>
+      
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
 </manifest>

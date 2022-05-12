@@ -1,5 +1,6 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { createModel } from '../../factories/model.factory'
+import { AtttributeImagesModel } from "../audit-model"
 
 
 /**
@@ -72,7 +73,7 @@ export const EditObservationModel = types.model( {
     ObservationID: types.maybeNull( types.number ),
     ObservationGUID: types.maybeNull( types.string ),
     Observation: types.maybeNull( types.string ),
-    CategoryID: types.maybeNull( types.string ),
+    ActOrConditionID: types.maybeNull( types.string ),
     SectionID: types.maybeNull( types.string ),
     TopicID: types.maybeNull( types.string ),
     PreventiveHazardID: types.maybeNull( types.string ),
@@ -84,6 +85,7 @@ export const EditObservationModel = types.model( {
     ObservationDate: types.maybeNull( types.string ),
     ObservationTime: types.maybeNull( types.string ),
     DescribeWhereTheIncidentHappened: types.maybeNull( types.string ),
+    ObservationFiles: types.optional( types.array( AtttributeImagesModel ), [] )
 } )
 
 export type EditObservationType = Instance<typeof EditObservationModel>
