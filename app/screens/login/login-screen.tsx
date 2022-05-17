@@ -42,7 +42,7 @@ const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerS
     imageStyle: {
         width: '95%',
         // Without height undefined it won't work
-        height:"65%"
+        height:"50%"
         // backgroundColor:"red",
         // figure out your image aspect ratio
         // aspectRatio: 135 / 40,
@@ -125,14 +125,14 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                         onBlur={handleBlur( "password" )}
                         error={touched.password && errors.password}
                     />
-                    <Box mx="negative8">
+                    {/* <Box mx="negative8">
                         <Dropdown
                             title="Base URL"
                             items={BUILD_BASE_URL}
                             value={AuthStore.baseUrl}
                             onValueChange={( value )=>AuthStore.setBaseUrl( value )}
                         />
-                    </Box>
+                    </Box> */}
                 </Box>
                 <Box mt="medium">
                     <Button 
