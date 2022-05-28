@@ -1,22 +1,117 @@
 import { useNavigation } from "@react-navigation/native"
-import { Box, Text } from "components"
+import { Box, Input, Text, TextAreaInput } from "components"
+import { Dropdown } from "components/core/dropdown"
 import { FormHeader } from "components/core/header/form-header"
-import { useStores } from "models"
+import { isEmpty } from "lodash"
+import { IDynamicControlsModel, IDynamicForm, useStores } from "models"
 import React, { useCallback } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator } from "react-native"
+import { ActivityIndicator, FlatList, StyleProp, ViewStyle } from "react-native"
+import { CheckBox } from "react-native-elements"
+import { makeStyles, theme } from "theme"
 
 export type DynamicFormScreenProps = {
 
 }
 
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
+    contentContainerStyle: {
+        flexGrow: 1,
+        paddingBottom: 50
+    }
+} ) )
+
 export const DynamicFormScreen: React.FunctionComponent<DynamicFormScreenProps> = ( ) => {
     const { DynamicFormStore } = useStores()
     const navigation = useNavigation()
+    const STYLES = useStyles()
 
     const fetchDashboard = useCallback( async () => {
         await DynamicFormStore.fetch()
     }, [] )
+
+    const ItemSeparatorComponent = ( ) => {
+        return (
+            <Box height={24} />
+        )
+    }
+
+    const renderDynamicControls = ( { item }: { item: IDynamicControlsModel } ) => {
+        switch( item.ControlType ) {
+        case 'Textbox': {
+            return (
+                <Box my="medium">
+                    <Input  
+                        label={item.ControlLabel}
+                        value={item.SelectedValue}
+                    // onChangeText={item.setSelectedValue}
+                    />
+                </Box>
+            )
+        }
+        case 'DropDownList':                               
+            return (
+                <Box my="medium">
+                    <Dropdown
+                        title={item.ControlLabel}
+                        items={item.dropdownList}
+                        value={item.SelectedValue}
+                        onValueChange={( value )=>{
+                            if( !isEmpty( value ) ){
+                                item.setSelectedValueForDropdown( value )
+                            }
+                        }}
+                    />
+                </Box>
+            )
+        case 'Calendar':
+            return (
+                null
+            )
+        case 'Checkbox':
+            return (
+                null
+            )
+        case 'CheckBoxList':
+            return (
+            // <CustomMultiSelectCheckbox value={value} />
+                null
+            )
+        case 'RadioButtonList':
+            return (
+                null
+            )
+        case 'TextArea':
+            return (
+                <Box my="medium">
+                    <TextAreaInput 
+                        label={item.ControlLabel}
+                        inputContainerStyle={{ marginHorizontal: theme.spacing.small }}
+                        labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize, marginHorizontal: theme.spacing.small, marginVertical: theme.spacing.small  }}
+                        defaultValue={item.SelectedValue}                        
+                        // onChangeText={item.setSelectedValue}
+                    />
+                </Box>
+            )
+        }
+    }
+
+    const renderItem = ( { item }: {item: IDynamicForm } ) => {
+        return (
+            <Box flex={1}>
+                <Box flex={1} mt="small" marginHorizontal="regular" p="regular" borderRadius="medium" justifyContent="center" alignItems="center" backgroundColor="primary">
+                    <Text color="background"  fontWeight="bold">{item.GroupName}</Text>
+                </Box>
+                <FlatList 
+                    data={item.sortDynamicControlsByDisplayOrder}
+                    renderItem={renderDynamicControls}
+                    keyExtractor={( item, index ) => String( index )}
+                    contentContainerStyle={STYLES.contentContainerStyle}
+                    ItemSeparatorComponent={ItemSeparatorComponent}
+                />
+            </Box>
+        )
+    }
 
     return (
         <Box flex={1}>
@@ -41,6 +136,15 @@ export const DynamicFormScreen: React.FunctionComponent<DynamicFormScreenProps> 
                             title="Dynamic Form"
                             navigation={navigation}
                         />
+                        <Box>
+                            <FlatList 
+                                data={DynamicFormStore.items.slice()}
+                                renderItem={renderItem}
+                                keyExtractor={( item, index ) => String( index )}
+                                contentContainerStyle={STYLES.contentContainerStyle}
+                                ItemSeparatorComponent={ItemSeparatorComponent}
+                            />
+                        </Box>    
                     </Box>
                 </Async.Resolved>
             </Async>
