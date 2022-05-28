@@ -107,6 +107,21 @@ export class Api {
       } as GeneralResponse
   }
 
+  async fetchData ( ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/POC/GetCustomFormDesign" )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          console.log( "data result ",response )
+
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
   // started add obervation maodule
   async fetchAllCommanfilter ( payload:IAllCommanFilterPayload ){
       const response: ApiResponse<IAllCommanFilterPayload>= await this.apisauce.post( "/Common/GetAllFilters",payload )

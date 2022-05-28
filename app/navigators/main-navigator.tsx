@@ -29,18 +29,18 @@ export type PrimaryParamList = {
 // Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createStackNavigator<PrimaryParamList>()
 
-export function MainNavigator() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="welcome" component={WelcomeScreen} />
-      <Stack.Screen name="demo" component={DemoScreen} />
-      <Stack.Screen name="demoList" component={DemoListScreen} />
-    </Stack.Navigator>
-  )
+export function MainNavigator () {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <Stack.Screen name="welcome" component={WelcomeScreen} />
+            <Stack.Screen name="demo" component={DemoScreen} />
+            <Stack.Screen name="demoList" component={DemoListScreen} />
+        </Stack.Navigator>
+    )
 }
 
 /**
@@ -52,5 +52,5 @@ export function MainNavigator() {
  *
  * `canExit` is used in ./app/app.tsx in the `useBackButtonHandler` hook.
  */
-const exitRoutes = ["welcome"]
-export const canExit = (routeName: string) => exitRoutes.includes(routeName)
+const exitRoutes = [ "welcome" ]
+export const canExit = ( routeName: string ) => exitRoutes.includes( routeName )

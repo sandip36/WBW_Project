@@ -181,6 +181,8 @@ lintOptions {
         debug {
             signingConfig signingConfigs.debug
             resValue "string", "CodePushDeploymentKey", "o270jfAxkIP-74BxuF-YsvwHpYmP5nfX7AhnO"
+            matchingFallbacks = ['release', 'debug', 'staging']
+
 
 
         }
@@ -191,7 +193,7 @@ lintOptions {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             resValue "string", "CodePushDeploymentKey", "pv-E11K1wRYfrMWJbO0N9SjGaR-7-tjRo488M"
-            matchingFallbacks = ['release']
+            matchingFallbacks = ['release', 'debug', 'staging']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -200,6 +202,8 @@ lintOptions {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             resValue "string", "CodePushDeploymentKey", "6t-d7mNTGzBAhuCHoGZvWvEaLuCL7UJ_N7wXW"
+            matchingFallbacks = ['release', 'debug', 'staging']
+
 
         }
     }

@@ -6,6 +6,7 @@ import { AuthStoreModel } from "models/stores/auth-store"
 import { DashboardStore } from "models/stores/dashboard-store"
 import { ObservationStore } from "models/stores/observation-store/observation-store"
 import { TaskStore } from "models/stores/task-store"
+import { CustomFormStore } from "models/stores/customform-store"
 
 /**
  * A RootStore model.
@@ -18,7 +19,8 @@ export const RootStoreModel = types.model( "RootStore" )
         DashboardStore: types.optional( DashboardStore, {} ),
         ObservationStore: types.optional( ObservationStore, {} ),
         AuditStore: types.optional( AuditStore, {} ),
-        TaskStore: types.optional( TaskStore, {} )
+        TaskStore: types.optional( TaskStore, {} ),
+        CustomFormStore: types.optional( CustomFormStore,{} )
     } )
     .extend( withEnvironment )
     .actions( self => {

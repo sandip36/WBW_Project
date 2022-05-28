@@ -17,8 +17,7 @@ export type CardProps = {
     onPress?: ( ) => void
 } & BoxProps
 
-export const Card: FunctionComponent<CardProps> = ({
-    borderless,
+export const Card: FunctionComponent<CardProps> = ( {
     title,
     rightHeaderIcon,
     leftHeaderIcon,
@@ -27,7 +26,7 @@ export const Card: FunctionComponent<CardProps> = ({
     showHeader = false,
     onPress = ( ) => null,
     ...rest
-}) => {
+} ) => {
 
     if ( title || rightHeaderIcon || leftHeaderIcon ) {
         showHeader = true

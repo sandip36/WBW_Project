@@ -12,6 +12,8 @@ export type AuthNavigationRoutes = {
 export type ApplicationNavigationRoutes = {
     Home: undefined,
     ObservationHistory: undefined,
+    customForm:undefined,
+    CustomFormScreen:undefined
     AddObservation: undefined
     AuditAndInspectionScreen: undefined
     StartInspection: undefined

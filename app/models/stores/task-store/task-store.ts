@@ -7,7 +7,7 @@ import { IImages, ImagesModel } from "models/models/audit-model/groups-and-attri
 import { isEmpty, sortBy } from "lodash"
 import { TaskRatingFiltersModel } from "models/models/task-model/task-rating-filters-model"
 import moment from "moment"
-import { IUserList, UserListModel } from "models/models/task-model/user-list-model"
+import { UserListModel } from "models/models/task-model/user-list-model"
 import { imageUpload } from "utils/fetch_api"
 import { AuditStoreType } from ".."
 

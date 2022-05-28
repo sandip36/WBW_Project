@@ -37,6 +37,7 @@ export const createModelCollection =
                     snapshots = [ snapshots ]
                 }
                 const instances = []
+                // console.log( "snapshiots",JSON.stringify( snapshots ) )
                 snapshots.forEach( item => {
                     const instance = self.items.find( s => s.id === item?.id )
                     if ( instance ) {
@@ -44,8 +45,12 @@ export const createModelCollection =
                         applySnapshot( instance, mergedItem )
                         instances.push( instance )
                     } else {
+                        console.log( "items               ",JSON.stringify( item ) )
+
                         if ( pushToStart ) {
+                            
                             self.items.unshift( item )
+
                         } else {
                             self.items.push( item )
                         }
@@ -81,7 +86,7 @@ export const createModelCollection =
             }
         } )
         .views( self => ( {
-            _get( id: string| any ) {
+            _get ( id: string| any ) {
                 return self.items.find( item => item.id === id ) as Instance<M>
             }
         } ) )
