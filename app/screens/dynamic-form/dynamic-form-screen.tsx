@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native"
 import { Box, Input, Text, TextAreaInput } from "components"
+import { Calendar } from "components/core/calendar"
 import { Dropdown } from "components/core/dropdown"
 import { FormHeader } from "components/core/header/form-header"
 import { isEmpty } from "lodash"
+import { Observer } from "mobx-react-lite"
 import { IDynamicControlsModel, IDynamicForm, useStores } from "models"
 import React, { useCallback } from "react"
 import { Async } from "react-async"
@@ -22,11 +24,13 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>}>( ( t
 } ) )
 
 export const DynamicFormScreen: React.FunctionComponent<DynamicFormScreenProps> = ( ) => {
-    const { DynamicFormStore } = useStores()
+    const { DynamicFormStore, TaskStore } = useStores()
     const navigation = useNavigation()
     const STYLES = useStyles()
 
     const fetchDashboard = useCallback( async () => {
+        await TaskStore.setcurrentDueDateValue()
+        await TaskStore.resetDatePicker()
         await DynamicFormStore.fetch()
     }, [] )
 
@@ -66,7 +70,15 @@ export const DynamicFormScreen: React.FunctionComponent<DynamicFormScreenProps> 
             )
         case 'Calendar':
             return (
-                null
+                <Observer>
+                    {
+                        () => (
+                            <Box flex={1}>
+                                <Calendar item={item} />
+                            </Box>
+                        )
+                    }
+                </Observer>
             )
         case 'Checkbox':
             return (
