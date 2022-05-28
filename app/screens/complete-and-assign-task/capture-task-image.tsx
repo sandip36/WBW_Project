@@ -13,12 +13,12 @@ import { IImages } from "models"
 export type CaptureTaskImageScreenProps = {
 
 }
-export type CaptureImageScreenStyleProps = {
+export type CaptureTaskImageScreenStyleProps = {
     RNCamerContainerStyle: StyleProp<ViewStyle>,
     avatarContainerStyle: StyleProp<ViewStyle>
 }
 
-const useStyles = makeStyles<CaptureImageScreenStyleProps>( ( theme ) => ( {
+const useStyles = makeStyles<CaptureTaskImageScreenStyleProps>( ( theme ) => ( {
     RNCamerContainerStyle: {
         flex: 1
     },

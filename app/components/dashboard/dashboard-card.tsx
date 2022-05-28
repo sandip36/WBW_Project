@@ -95,15 +95,17 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-        if( dashboard?.LinkType === "WebsiteLink" ) {
-            openInAppBrowser( dashboard.Link )
-        }else if( dashboard?.Category === "POC" ) {
-            navigation.navigate( 'DynamicControls' )
-        }else if( dashboard?.Type === "Audit-originator" ) {
-            navigation.navigate( 'AuditAndInspectionScreen' )
-        }else{
-            navigation.navigate( 'ObservationHistory' )
-        }
+        // if( dashboard?.LinkType === "WebsiteLink" ) {
+        //     openInAppBrowser( dashboard.Link )
+        // }else if( dashboard?.Category === "POC" ) {
+        //     navigation.navigate( 'DynamicControls' )
+        // }else if( dashboard?.Type === "Audit-originator" ) {
+        //     navigation.navigate( 'AuditAndInspectionScreen' )
+        // }else{
+        //     navigation.navigate( 'ObservationHistory' )
+        // }
+        
+        navigation.navigate( 'DynamicForm' )
     }
 
     return (

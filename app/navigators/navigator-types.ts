@@ -34,4 +34,5 @@ export type ApplicationNavigationRoutes = {
     CaptureTaskImage: {
         callback: ( value: any ) => void,
     }
+    DynamicForm: undefined
 }
