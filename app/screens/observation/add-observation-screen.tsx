@@ -1,8 +1,8 @@
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
-import { ActivityIndicator, FlatList, Image, ImageStyle, Modal, StyleProp, Switch, ViewStyle } from "react-native"
+import { ActivityIndicator, FlatList, Image, ImageStyle, Modal, StyleProp, Switch, ViewStyle,Platform } from "react-native"
 import { Box, Button, CustomDateTimePicker, Input, Radio, ScrollBox, SearchableList, Text, TextAreaInput, TouchableBox } from "components"
-import { StackActions, useFocusEffect, useNavigation } from "@react-navigation/native"
+import { StackActions, useFocusEffect, useNavigation, useScrollToTop } from "@react-navigation/native"
 import { IAllCommanFilterPayload, ISubmitObservation } from "services/api"
 import { makeStyles, theme } from "theme"
 import { IDocument, ILocationsModel, useStores } from "models"
@@ -16,6 +16,7 @@ import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
 import ImageViewer from "react-native-image-zoom-viewer"
 import { RenderImage } from "components/inspection"
+import { useKeyboard } from "@react-native-community/hooks"
 
 
 
@@ -33,6 +34,7 @@ export type AddObservationStyleProps = {
     imageStyle:StyleProp<ImageStyle>
     modalContainerStyle:StyleProp<ViewStyle>
     avatarContainerStyle:StyleProp<ViewStyle>
+    keyboardStyle:StyleProp<ViewStyle>
     
 }
 
@@ -65,6 +67,11 @@ const useStyles = makeStyles<AddObservationStyleProps>( ( theme ) => ( {
     },  avatarContainerStyle: {
         backgroundColor: theme.colors.primary
     },
+    keyboardStyle:{
+        height: Platform.OS === 'ios' ? '30%' : '2%' 
+    }
+    // {{ height: Platform.OS === 'ios' ? '30%' : '3%' }
+    
 } ) )
 
 const RADIO_LIST = [
@@ -127,6 +134,8 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     const [ refreshing, setRefreshing ] = useState( false )
     const [ isDataFetched, setIsDataFetched ] = useState( false )
     const [ showZoomViewer,setShowZoomViewer ] = useState( false )
+    const keyboard = useKeyboard()
+
 
    
     useEffect( ( ) => {
@@ -498,8 +507,6 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
     }
 
 
- 
-
     return (
         <Box flex={1}>
             <FormHeader 
@@ -678,6 +685,12 @@ export const AddObservationScreen: React.FunctionComponent<AddObservationScreenP
                         <Avatar size="medium"  rounded icon={{ name: 'file-pdf-o', type: 'font-awesome' }} containerStyle={STYLES.iconContainerStyle}onPress={documentPicker}/>
                     </Box> */}
                 </Box>
+                {
+                    keyboard.keyboardShown
+                        ? <Box style={STYLES.keyboardStyle}
+                        />
+                        : null
+                }
             </Box>
             <Box>
                 {

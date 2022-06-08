@@ -8,7 +8,7 @@ export type TextAreaInputProps = CustomInputProps
 const useStyles = makeStyles<{ inputContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     inputContainerStyle: {
         minHeight: theme.spacing.massive,
-        maxHeight: theme.spacing.massive * 1.5
+        maxHeight: theme.spacing.massive * 3
     }
 } ) )
 

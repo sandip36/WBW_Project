@@ -3,7 +3,7 @@ import { Box, Button, Input, Text, TextAreaInput } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import { IReportingPeriodDueDatesModel, useStores } from "models"
 import React, { useEffect, useState } from "react"
-import { Alert, BackHandler, FlatList, StyleProp, TextStyle, ViewStyle } from "react-native"
+import { Alert, BackHandler, FlatList, Platform, StyleProp, TextStyle, ViewStyle } from "react-native"
 import { findIndex, isEmpty } from "lodash"
 import { IDeleteInspectionRecord, ISaveAuditPayload } from "services/api"
 import { makeStyles, theme } from "theme"
@@ -23,7 +23,7 @@ export type InspectionScreenProps = {
 
 const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>, checkboxTextStyle: StyleProp<TextStyle>, checkboxContainerStyle: StyleProp<ViewStyle>, skippedDataLabelStyle: StyleProp<TextStyle> }>( ( theme ) => ( {
     contentContainerStyle: {
-        paddingBottom: theme.spacing.massive
+        paddingBottom:Platform.OS === 'ios' ? theme.spacing.massive* 3 : theme.spacing.massive
     },
     inputContainerStyle: {
         marginVertical: -15

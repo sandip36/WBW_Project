@@ -17,6 +17,7 @@ import { ISystemFieldsInnerModel } from "models/models/audit-model/system-fields
 import { IReportingPeriodDueDatesModel } from "models/models/audit-model/audit-inspection-detail-model"
 import Toast from "react-native-simple-toast"
 import { LabelWithAsterisk } from "screens/observation/add-observation-screen"
+import { Platform } from "@unimodules/core"
 
 
 export type EditInspectionScreenProps = {
@@ -25,7 +26,7 @@ export type EditInspectionScreenProps = {
 
 const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, inputContainerStyle: StyleProp<ViewStyle>, checkboxTextStyle: StyleProp<TextStyle>, checkboxContainerStyle: StyleProp<ViewStyle>, skippedDataLabelStyle: StyleProp<TextStyle> }>( ( theme ) => ( {
     contentContainerStyle: {
-        paddingBottom: theme.spacing.massive
+        paddingBottom:Platform.OS === 'ios' ? theme.spacing.massive* 3 : theme.spacing.massive
     },
     inputContainerStyle: {
         marginVertical: -15
