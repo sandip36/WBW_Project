@@ -61,14 +61,15 @@ const styles = StyleSheet.create( {
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
     const { DashboardStore, AuthStore, ObservationStore, AuditStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
+    const [ infoVersion,setInfoVersion ]= useState( {} )
 
 
     const fetchDashboard = useCallback( async () => {
         const version = await checkVersion();
-        console.log( "Got version info:", version  );
-
+        //  console.log( "Got version info:", version  );
+        setInfoVersion( version )
         if ( version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
-            console.log( `App has a ${version.updateType} update pending.` );
+            //  console.log( `App has a ${version.updateType} update pending.` );
             setShouldUpdateApplication( true )
         }else{
             await ObservationStore._clear()
@@ -120,7 +121,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                             <Text style={styles.modalText}>Update is available. Please download the latest version.</Text>
                             <TouchableOpacity
                                 style={[ styles.button, styles.buttonOpen ]}
-                                onPress = {() => Linking.openURL( "market://details?id=com.wbw" )}
+                                onPress = {() => Linking.openURL( infoVersion?.url )}
                             >
                                 <Text style={styles.textStyle}>Update</Text>
                             </TouchableOpacity>
