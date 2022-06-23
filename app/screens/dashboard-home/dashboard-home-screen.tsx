@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native"
 import { Box, Header, Text, TouchableBox } from "components"
 import { DashboardCard } from "components/dashboard"
 import { useStores } from "models"
@@ -61,6 +62,7 @@ const styles = StyleSheet.create( {
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
     const { DashboardStore, AuthStore, ObservationStore, AuditStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
+    const navigation = useNavigation()
 
 
     const fetchDashboard = useCallback( async () => {
@@ -99,6 +101,10 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
             ],
         );
         return true
+    }
+
+    const onLeftIconPress = ( ) => {
+        navigation.navigate( 'MediaList' )
     }
 
     const skipUpdate = async ( ) => {
@@ -158,7 +164,8 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                         shouldUpdateApplication
                             ? updateDialogbox()
                             :  <Box flex={1}>
-                                <Header 
+                                <Header
+                                    leftComponent={{ icon: 'video-library', color: '#fff', type: 'material', onPress: onLeftIconPress, style: { marginHorizontal: theme.spacing.small } }} 
                                     title={AuthStore.user?.CompanyName}
                                     rightComponent={{ icon: 'logout', color: '#fff', type: 'material', onPress: onRightIconPress, style: { marginHorizontal: theme.spacing.small } }}
                                 />

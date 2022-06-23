@@ -39,6 +39,11 @@ allprojects {
                 excludeGroupByRegex "com\\.google\\.android\\.gms"
             }
        }
+       jcenter() {
+            content {
+                includeModule("com.yqritc", "android-scalablevideoview")
+            }
+        }
         // jcenter()
        // maven { url 'https://www.jitpack.io' }
     }

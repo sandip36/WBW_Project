@@ -6,7 +6,7 @@ import React, { Fragment } from "react"
 import { createStackNavigator } from "@react-navigation/stack"
 import { StatusBar } from "react-native"
 import { ApplicationNavigationRoutes } from "./navigator-types"
-import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen, CompleteOrAssignTaskScreen, CaptureTaskImageScreen, DynamicFormScreen } from "screens"
+import { AddObservationScreen, DashboardHomeScreen, ObservationHistoryScreen, CompleteOrAssignTaskScreen, CaptureTaskImageScreen, DynamicFormScreen, MediaListScreen } from "screens"
 import { AuditAndInspectionScreen, StartInspectionScreen, EditInspectionScreen, InspectionScreen } from "screens/audit-and-inspection"
 import { CompleteTaskScreen } from "screens/complete-and-assign-task/complete-task"
 import { AssignTaskScreen } from "screens/complete-and-assign-task/assign-task"
@@ -34,6 +34,7 @@ export const ApplicationNavigator = ( ) => {
                 <Screen name="CaptureImage" component={CaptureImageScreen} />
                 <Screen name="CaptureTaskImage" component={CaptureTaskImageScreen} />
                 <Screen name="DynamicForm" component={DynamicFormScreen} />
+                <Screen name="MediaList" component={MediaListScreen} />
             </Navigator>
         </Fragment>
     )

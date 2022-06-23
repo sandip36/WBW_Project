@@ -33,6 +33,7 @@ export type HeaderProps = {
     containerStyle?: StyleProp<ViewStyle>,
     centerStyle?: StyleProp<TextStyle>,
     rightComponent?: React.ReactElement<any> | TextProps | HeaderIcon;
+    leftComponent?: React.ReactElement<any> | TextProps | HeaderIcon;
 }
 
 export const Header: FunctionComponent<HeaderProps> = props => {
@@ -40,7 +41,8 @@ export const Header: FunctionComponent<HeaderProps> = props => {
         title,
         containerStyle,
         centerStyle,
-        rightComponent
+        rightComponent,
+        leftComponent
     } = props
     const STYLES = useStyles()
     const theme = useTheme()
@@ -50,6 +52,7 @@ export const Header: FunctionComponent<HeaderProps> = props => {
                 statusBarProps={{ barStyle: "light-content", translucent: true, backgroundColor: "transparent" }}
                 placement="center"
                 centerComponent={{ text: title, style: [ STYLES.centerStyle, centerStyle ] }}
+                leftComponent={leftComponent}
                 rightComponent={rightComponent}
                 backgroundColor={theme.colors.primary}
                 containerStyle={[ STYLES.containerStyle, containerStyle ]} />
