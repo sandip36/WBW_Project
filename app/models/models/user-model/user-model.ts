@@ -52,4 +52,3 @@ type UserType = Instance<typeof UserModel>
 export interface IUser extends UserType {}
 type UserSnapshotType = SnapshotOut<typeof UserModel>
 export interface IUserSnapshot extends UserSnapshotType {}
-

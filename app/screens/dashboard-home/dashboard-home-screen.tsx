@@ -63,14 +63,15 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     const { DashboardStore, AuthStore, ObservationStore, AuditStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
     const navigation = useNavigation()
+    const [ infoVersion,setInfoVersion ]= useState<any>( {} )
 
 
     const fetchDashboard = useCallback( async () => {
         const version = await checkVersion();
-        console.log( "Got version info:", version  );
-
-        if ( !version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
-            console.log( `App has a ${version.updateType} update pending.` );
+        //  console.log( "Got version info:", version  );
+        setInfoVersion( version )
+        if ( version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
+            //  console.log( `App has a ${version.updateType} update pending.` );
             setShouldUpdateApplication( true )
         }else{
             await ObservationStore._clear()
@@ -123,16 +124,16 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                 >
                     <Box style={styles.centeredView}>
                         <Box style={styles.modalView}>
-                            <Text style={styles.modalText}>A new update is available. Please download the latest version from Playstore.</Text>
+                            <Text style={styles.modalText}>Update is available. Please download the latest version.</Text>
                             <TouchableOpacity
                                 style={[ styles.button, styles.buttonOpen ]}
-                                onPress = {() => Linking.openURL( "market://details?id=com.wbw" )}
+                                onPress = {() => Linking.openURL( infoVersion?.url )}
                             >
-                                <Text style={styles.textStyle}>Update Application</Text>
+                                <Text style={styles.textStyle}>Update</Text>
                             </TouchableOpacity>
                             <TouchableBox justifyContent="center" marginTop="large" alignItems="center" onPress={skipUpdate}>
                                 <Text textAlign="center" fontSize={theme.spacing.regular * 1.2}>
-                                    Skip for Now
+                                Not Now
                                 </Text>
                             </TouchableBox>
                         </Box>
