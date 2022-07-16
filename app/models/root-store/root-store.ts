@@ -7,6 +7,7 @@ import { DashboardStore } from "models/stores/dashboard-store"
 import { DynamicFormStore } from "models/stores/dynamic-form-store/dynamic-form-store"
 import { ObservationStore } from "models/stores/observation-store/observation-store"
 import { TaskStore } from "models/stores/task-store"
+import { MediaStore } from "models/stores/media-store"
 
 /**
  * A RootStore model.
@@ -20,7 +21,8 @@ export const RootStoreModel = types.model( "RootStore" )
         ObservationStore: types.optional( ObservationStore, {} ),
         AuditStore: types.optional( AuditStore, {} ),
         TaskStore: types.optional( TaskStore, {} ),
-        DynamicFormStore: types.optional( DynamicFormStore, {} )
+        DynamicFormStore: types.optional( DynamicFormStore, {} ),
+        MediaStore: types.optional( MediaStore, {} )
     } )
     .extend( withEnvironment )
     .actions( self => {

@@ -219,4 +219,10 @@ export interface IEditObervationPayload{
     AccessToken:string,
     ObservationGUID:string
 }
+// payload for getting media related data
+export interface IMediaPayload {
+    UserID: string,
+    AccessToken: string,
+    PageNumber: string
+}
 

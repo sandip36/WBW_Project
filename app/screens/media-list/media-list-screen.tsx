@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native"
 import { Box, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
-import { RenderImage } from "components/inspection"
 import React, { useCallback, useState } from "react"
-import { Dimensions, FlatList, Image } from "react-native"
+import { Dimensions, FlatList, Image, ActivityIndicator } from "react-native"
 import { Avatar, ListItem } from "react-native-elements"
 import Video from "react-native-video"
+import Async from "react-async"
+import { useStores } from "models"
 
 export type MediaListScreenProps = {
 
@@ -65,6 +66,7 @@ const postsList = {
 
 export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( ) => {
     const navigation = useNavigation()
+    const { MediaStore } = useStores()
     const renderImage = ( item ) => {
         console.log( 'image',item )
         return (
@@ -80,6 +82,10 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
             </Box>
         )
     }
+
+    const fetchMedia = useCallback( async () => {
+        await MediaStore.fetch()
+    }, [] )
     
     const renderVideo = ( item ) => {
         return (
@@ -143,16 +149,46 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
         )
     }
     return (
-        <Box flex={1}>
-            <FormHeader 
-                title="Media"
-                navigation={navigation}
-            />    
-            <FlatList 
-                data={postsList.posts}
-                renderItem={renderItem}
-                keyExtractor={( item )=> String( item.id )}                
-            />
-        </Box>
+        // <Box flex={1}>
+        //     <FormHeader 
+        //         title="Media"
+        //         navigation={navigation}
+        //     />    
+        //     <FlatList 
+        //         data={postsList.posts}
+        //         renderItem={renderItem}
+        //         keyExtractor={( item )=> String( item.id )}                
+        //     />
+        // </Box>
+        <Async promiseFn={fetchMedia}>
+            <Async.Pending>
+                { ( ) => (
+                    <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                        <ActivityIndicator size={32} color="red" />
+                    </Box>
+                ) }
+            </Async.Pending>
+            <Async.Rejected>
+                { 
+                    ( error: any ) => {
+                        return (
+                            <Box justifyContent="center" alignItems="center" flex={1}>
+                                <Text>{error.reason || error.message || 'Something went wrong'}</Text>
+                            </Box>
+                        ) }
+                }
+            </Async.Rejected>
+            <Async.Resolved>
+                <Box flex={1}>
+                    <FormHeader 
+                        title="Media"
+                        navigation={navigation}
+                    />
+                    <Box>
+                        <Text>Inside Media Screen</Text>
+                    </Box>
+                </Box>
+            </Async.Resolved>
+        </Async>
     )
 }
