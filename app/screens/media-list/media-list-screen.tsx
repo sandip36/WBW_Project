@@ -8,6 +8,9 @@ import Video from "react-native-video"
 import Async from "react-async"
 import { useStores } from "models"
 import InAppBrowser from "react-native-inappbrowser-reborn"
+import { backgroundColor } from "@shopify/restyle"
+import { theme } from "theme"
+import { isEmpty } from "lodash"
 
 export type MediaListScreenProps = {
 
@@ -17,19 +20,52 @@ export type MediaListScreenProps = {
 const mediaList = [
     {
         BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
-        Title:"TestBulletine",
+        Title:"TestBulletine new",
         Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
         VideoPath:"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        ImagePath:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
+        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
+        ImagePath:"",
         PlayVideoOnDelivery:"True",
         Link1Name:"Register",
+        Link1:"https://demo.wisebusinessware.com/",
+        Link2Name:"Testing link 2",
+        Link2:"https://www.google.com",
+        CreatedOn:"7/6/202212:00:00AM",
+        CreatedByName:"admin,wardmfg",
+        FirstName:"wardmfg",
+        LastName:"admin"
+    },{
+        BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
+        Title:"TestBulletine",
+        Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
+        VideoPath:"",
+        ImagePath:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
+        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
+        PlayVideoOnDelivery:"True",
+        Link1Name:"hello sandesh",
         Link1:"https://demo.wisebusinessware.com/",
         Link2Name:"",
         Link2:"",
         CreatedOn:"7/6/202212:00:00AM",
         CreatedByName:"admin,wardmfg",
-        FirstName:"wardmfg",
-        LastName:"admin"
+        FirstName:"Sandip",
+        LastName:"Jadhav"
+    },{
+        BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
+        Title:"TestBulletine",
+        Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
+        VideoPath:"",
+        ImagePath:"",
+        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
+        PlayVideoOnDelivery:"True",
+        Link1Name:"hello sandesh",
+        Link1:"https://demo.wisebusinessware.com/",
+        Link2Name:"",
+        Link2:"",
+        CreatedOn:"7/6/202212:00:00AM",
+        CreatedByName:"admin,wardmfg",
+        FirstName:"Sandesh",
+        LastName:"kasliwal"
     }
 ]
 
@@ -118,29 +154,55 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
 
     const renderItem = ( { item, index } ) => {
         return (
-            <Box flex={1} mx="medium">
-                <ListItem>
-                    <Avatar rounded size="small" source={{ uri: item.ImagePath }} />
-                    <ListItem.Content>
-                        <ListItem.Title>{item.FirstName} {item.LastName}</ListItem.Title>
-                        <ListItem.Subtitle>{item.CreatedOn}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>
-                <Box flex={0.35}>
-                    <Video 
-                        source={{ uri: item.VideoPath }}   // Can be a URL or a local file.
-                    />
-                </Box>
-                <Box>
-                    <Text variant="body">{item.Description}</Text>
-                </Box>
-                <Box>
-                    <TouchableBox onPress={ ( ) => openInAppBrowser( item.Link1 ) }>
-                        <Text color="primary">{item.Link1Name}</Text>
-                    </TouchableBox>     
-                    <TouchableBox onPress={ ( ) => openInAppBrowser( item?.Link2 ) }>
-                        <Text color="primary">{item?.Link2Name}</Text>
-                    </TouchableBox>     
+            <Box margin="small" flex={1} mx="regular" my="medium" borderRadius="large" elevation={2} >
+                <Box p="regular" >
+               
+                    <ListItem containerStyle={{ padding:0, margin:0 , backgroundColor:"transparent" }}>
+                        <Avatar rounded size="medium" source={{ uri: item.logo }} />
+                        <ListItem.Content>
+                            <ListItem.Title style={{ fontSize:18 ,color:theme.colors.primary , fontWeight:"700" }} >{item.FirstName} {item.LastName}</ListItem.Title>
+                            <ListItem.Subtitle>{item.CreatedOn}</ListItem.Subtitle>
+                        </ListItem.Content>
+                    </ListItem>
+                    <Box >
+                        <Text variant="heading5" mt="regular" mb="medium">{item.Title}</Text>
+                    </Box>
+                    <Box  height={200} alignItems="center">
+                        {
+                            isEmpty( item.ImagePath ) && !isEmpty( item.VideoPath ) ?
+                                <Video 
+                                    source={{ uri: item.VideoPath }}
+                                    style={{ width:"100%" ,height:"100%" }}
+                                    controls ={true}
+                                    paused ={
+                                        true
+                                    }
+                                    playInBackground ={false}
+                                    resizeMode="cover"
+                                    // Can be a URL or a local file.
+                                /> 
+                                : !isEmpty( item.ImagePath ) && isEmpty( item.VideoPath ) ?
+                                    <Image 
+                                        source={{ uri: item.ImagePath }}
+                                        style={{ width:"100%" ,height:"100%" }}
+                                        resizeMode="contain"
+                                    /> 
+                                    :null
+                        } 
+                       
+                    </Box>
+                    
+                    <Box my="regular">
+                        <Text variant="body" textAlign="justify" lineHeight={20} color="lightGrey5">{item.Description}</Text>
+                    </Box>
+                    <Box alignItems="flex-end" mx="regular" my="regular">
+                        <TouchableBox onPress={ ( ) => openInAppBrowser( item.Link1 ) }>
+                            <Text color="primary" fontSize={16} fontWeight="700">{item.Link1Name}</Text>
+                        </TouchableBox>     
+                        <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link2 ) }>
+                            <Text color="primary" fontSize={16} fontWeight="700">{item?.Link2Name}</Text>
+                        </TouchableBox>     
+                    </Box>
                 </Box>
             </Box>
         )
