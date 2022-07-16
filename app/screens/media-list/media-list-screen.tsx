@@ -8,7 +8,6 @@ import Video from "react-native-video"
 import Async from "react-async"
 import { useStores } from "models"
 import InAppBrowser from "react-native-inappbrowser-reborn"
-import { backgroundColor } from "@shopify/restyle"
 import { theme } from "theme"
 import { isEmpty } from "lodash"
 
