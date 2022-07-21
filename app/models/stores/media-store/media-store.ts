@@ -7,7 +7,7 @@ import { AuthStoreType } from "../auth-store"
 
 export const MediaStore = createModelCollection( MediaModel )
     .props( {
-        pageNumber: types.optional( types.string, "1" )
+        pageNumber: types.optional( types.string, "1" ),
     } )
     .views( self => ( {
         
@@ -24,9 +24,33 @@ export const MediaStore = createModelCollection( MediaModel )
                     PageNumber: self.pageNumber
                 } as IMediaPayload
                 const result: GeneralResponse<any> = yield self.environment.api.fetchMedia( payload )
-                console.log( 'result is ',JSON.stringify( result ) )
                 if ( result?.data ) {
-                    //
+                    const mediaList = result.data.map( item => {
+                        return { ...item, id: item.BulletinID }
+                    } )
+                    self._insertOrUpdate( mediaList )
+                }
+                return result
+            } 
+            catch( error ) {
+                Toast.showWithGravity( error.message || 'Something went wrong while fetching media data', Toast.LONG, Toast.CENTER )
+                return null
+            }
+        } )
+
+        const fetchNextMedia = flow( function * ( ) {
+            try {
+                const payload = {
+                    UserID: rootStore.AuthStore?.user?.UserID,
+                    AccessToken: rootStore.AuthStore?.user?.AccessToken,
+                    PageNumber: String( ( Number( self.pageNumber ) + 1 ) )
+                } as IMediaPayload
+                const result: GeneralResponse<any> = yield self.environment.api.fetchMedia( payload )
+                if ( result?.data ) {
+                    const mediaList = result.data.map( item => {
+                        return { ...item, id: item.BulletinID }
+                    } )
+                    self._insertOrUpdate( mediaList )
                 }
                 return result
             } 
@@ -36,10 +60,9 @@ export const MediaStore = createModelCollection( MediaModel )
             }
         } )
         
-        
-
         return {
-            fetch
+            fetch,
+            fetchNextMedia
         }
     } )
 

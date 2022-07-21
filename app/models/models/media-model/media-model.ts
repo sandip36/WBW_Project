@@ -1,4 +1,5 @@
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { isEmpty } from "lodash"
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { createModel } from '../../factories/model.factory'
 
 
@@ -6,7 +7,7 @@ import { createModel } from '../../factories/model.factory'
  * Media model to store image and video details
  */
 export const MediaModel = createModel( {
-    BulletinID: types.maybeNull( types.string ),
+    id: types.maybeNull( types.string ),
     Title: types.maybeNull( types.string ),
     Description: types.maybeNull( types.string ),
     VideoPath: types.maybeNull( types.string ),
@@ -19,8 +20,27 @@ export const MediaModel = createModel( {
     CreatedOn: types.maybeNull( types.string ),
     CreatedByName: types.maybeNull( types.string ),
     FirstName: types.maybeNull( types.string ),
-    LastName: types.maybeNull( types.string )
+    LastName: types.maybeNull( types.string ),
+    Message1: types.maybeNull( types.string ),
+    Message1IsRead: types.maybeNull( types.string ),
+    Message1DateRead: types.maybeNull( types.string ),
+    isCompleted: types.optional( types.boolean, false )
+} ).views( self => ( {
+    get initials ( ) {
+        const firstInitial = !isEmpty( self?.FirstName ) ? self.FirstName.charAt( 0 ) :  ""
+        const secondInitial = !isEmpty( self?.LastName ) ? self.LastName.charAt( 0 ) : ""
+        return `${firstInitial}${secondInitial}`
+    },
+} ) ).actions( self => {
+    const setIsCompleted = flow( function * ( ) {
+        self.isCompleted = !self.isCompleted
+    } )
+
+    return {
+        setIsCompleted
+    }
 } )
+
 
 type MediaType = Instance<typeof MediaModel>
 export interface IMedia extends MediaType {}
