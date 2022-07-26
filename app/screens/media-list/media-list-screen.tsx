@@ -126,9 +126,6 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                     <Text variant="heading5" mt="regular" mb="medium">{item.Title}</Text>
                                 </Box>
                                 {
-                                    console.log( "image path",item.ImagePath )
-                                }
-                                {
                                     !isEmpty( item.ImagePath )|| !isEmpty( item.VideoPath ) ?
                                         <Box  height={200} alignItems="center">
                                             {

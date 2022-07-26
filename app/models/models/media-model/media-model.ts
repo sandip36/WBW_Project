@@ -45,6 +45,7 @@ export const MediaModel = createModel( {
     }
 } )
 
+
 type MediaType = Instance<typeof MediaModel>
 export interface IMedia extends MediaType {}
 type MediaSnapshotType = SnapshotOut<typeof MediaModel>
