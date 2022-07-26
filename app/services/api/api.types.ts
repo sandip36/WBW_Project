@@ -225,4 +225,9 @@ export interface IMediaPayload {
     AccessToken: string,
     PageNumber: string
 }
+export interface IMediaDeliverdPayload{
+    UserID: string,
+    AccessToken: string,
+    BulletinID: string
+}
 

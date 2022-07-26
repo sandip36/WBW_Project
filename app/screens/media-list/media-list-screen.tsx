@@ -1,223 +1,227 @@
-import { useNavigation } from "@react-navigation/native"
-import { Box, Text, TouchableBox } from "components"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { Box, Text, TouchableBox, Button } from "components"
 import { FormHeader } from "components/core/header/form-header"
-import React, { useCallback, useState } from "react"
-import { Dimensions, FlatList, Image, ActivityIndicator, Linking } from "react-native"
+import React, { useCallback } from "react"
+import { FlatList, Image, ActivityIndicator, Linking, ViewStyle, StyleProp, ImageStyle, TextStyle } from "react-native"
 import { Avatar, ListItem } from "react-native-elements"
 import Video from "react-native-video"
 import Async from "react-async"
-import { useStores } from "models"
+import { IMedia, useStores } from "models"
 import InAppBrowser from "react-native-inappbrowser-reborn"
-import { theme } from "theme"
+import { theme, makeStyles } from "theme"
 import { isEmpty } from "lodash"
+import  { Observer } from "mobx-react-lite"
 
 export type MediaListScreenProps = {
 
 }
 
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, listTitleStyle: StyleProp<TextStyle>, videoStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>, buttonContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
+    contentContainerStyle: { 
+        padding:0, 
+        margin:0 , 
+        backgroundColor:"transparent" 
+    },
+    listTitleStyle: { 
+        fontSize:18 ,
+        color:theme.colors.primary , 
+        fontWeight:"700" 
+    },
+    videoStyle: { 
+        width:"100%" ,
+        height:"100%" 
+    },
+    imageStyle: { 
+        width:"100%" ,
+        height:"100%" 
+    },
+    buttonContainerStyle: { 
+        marginHorizontal: 0, 
+        marginVertical: 0 
+    },
 
-const mediaList = [
-    {
-        BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
-        Title:"TestBulletine new",
-        Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
-        VideoPath:"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
-        ImagePath:"",
-        PlayVideoOnDelivery:"True",
-        Link1Name:"Register",
-        Link1:"https://demo.wisebusinessware.com/",
-        Link2Name:"Testing link 2",
-        Link2:"https://www.google.com",
-        CreatedOn:"7/6/202212:00:00AM",
-        CreatedByName:"admin,wardmfg",
-        FirstName:"wardmfg",
-        LastName:"admin"
-    },{
-        BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
-        Title:"TestBulletine",
-        Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
-        VideoPath:"",
-        ImagePath:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
-        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
-        PlayVideoOnDelivery:"True",
-        Link1Name:"hello sandesh",
-        Link1:"https://demo.wisebusinessware.com/",
-        Link2Name:"",
-        Link2:"",
-        CreatedOn:"7/6/202212:00:00AM",
-        CreatedByName:"admin,wardmfg",
-        FirstName:"Sandip",
-        LastName:"Jadhav"
-    },{
-        BulletinID:"82dace18-cf67-4fc3-87d4-8e1fe04d60fd",
-        Title:"TestBulletine",
-        Description:"Loremipsumdolorsitamet,consecteturadipiscingelit,seddoeiusmodtemporincididuntutlaboreetdoloremagnaaliqua.Utenimadminimveniam,quisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat.Duisauteiruredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnullapariatur.Excepteursintoccaecatcupidatatnonproident,suntinculpaquiofficiadeseruntmollitanimidestlaborum",
-        VideoPath:"",
-        ImagePath:"",
-        logo:"https://cdn1.iconfinder.com/data/icons/avatars-55/100/avatar_profile_user_music_headphones_shirt_cool-512.png",
-        PlayVideoOnDelivery:"True",
-        Link1Name:"hello sandesh",
-        Link1:"https://demo.wisebusinessware.com/",
-        Link2Name:"",
-        Link2:"",
-        CreatedOn:"7/6/202212:00:00AM",
-        CreatedByName:"admin,wardmfg",
-        FirstName:"Sandesh",
-        LastName:"kasliwal"
-    }
-]
-
+} ) )
 
 export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( ) => {
     const navigation = useNavigation()
     const { MediaStore } = useStores()
-    const renderImage = ( item ) => {
-        console.log( 'image',item )
-        return (
-            <Box width={500} height={500}>
-                <Text>{item.type}</Text>
-                <Image 
-                    source={{
-                        uri: 'https://reactnative.dev/img/tiny_logo.png',
-                    }}
-                    width={500}
-                    height={500}
-                />
-            </Box>
-        )
-    }
+    const STYLES = useStyles()
 
+    useFocusEffect(
+        React.useCallback( () => {
+            fetchMedia()
+        }, [] )
+    );
+    
     const fetchMedia = useCallback( async () => {
+        await MediaStore._clear()
         await MediaStore.fetch()
     }, [] )
-    
-    const renderVideo = ( item ) => {
-        return (
-            <Box width={Dimensions.get( 'screen' ).width * 0.95} height={Dimensions.get( 'screen' ).height * 0.5}>
-                <Video 
-                    source={{ uri: item.url }}   // Can be a URL or a local file.
-                    style={{ width: "100%",height: "100%" }} 
-                />
-            </Box>
-        )
-    }
-    
-    const renderPostMedia = ( { item, index } ) => {
-        if( item.type === "image" ) {
-            return (
-                <Box width={Dimensions.get( 'screen' ).width} height={Dimensions.get( 'screen' ).height * 0.5}>
-                    <Image 
-                        source={{ uri: item.uri }}
-                        style={{ width: Dimensions.get( 'screen' ).width, height: Dimensions.get( 'screen' ).height * 0.5 }}
-                    />
-                </Box>
-            )
-        }else{
-            return(
-                <Box flex={1}>
-                    <Video 
-                        source={{ uri: item.uri }}   // Can be a URL or a local file.
-                        style={{ width: Dimensions.get( 'screen' ).width, height: Dimensions.get( 'screen' ).height * 0.5 }}
-                        resizeMode="cover"
-                    />
-                </Box>
-            )
-        }
-       
-    }
 
-    const ItemSeparatorComponent = ( ) => {
-        return (
-            <Box height={20} />
-        )
-    }
-
+    const fetchNextMedia = useCallback( async () => {
+        await MediaStore.fetchNextMedia( )
+    }, [] )
+  
     const openInAppBrowser = async ( link ) => {
         try {
             // const token = await AsyncStorage.getItem( 'Token' )
             if( link ) {
                 if ( await InAppBrowser.isAvailable() ) {
-                    const result = await InAppBrowser.open( link )
+                    await InAppBrowser.open( link )
                 }
                 else Linking.openURL( link )
             }
         } catch ( error ) {
             await InAppBrowser.close()
             if ( await InAppBrowser.isAvailable() ) {
-                const result = await InAppBrowser.open( link )
+                await InAppBrowser.open( link )
             }
             else Linking.openURL( link )
         }
     }
 
-    const renderItem = ( { item, index } ) => {
+
+    // const onDCompletePress = async ( ) => {
+    //     await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
+    //     if( dashboard?.LinkType === "WebsiteLink" ) {
+    //         openInAppBrowser( dashboard.Link )
+    //     }else if( dashboard?.Category === "POC" ) {
+    //         navigation.navigate( 'DynamicControls' )
+    //     }else if( dashboard?.Type === "Audit-originator" ) {
+    //         navigation.navigate( 'AuditAndInspectionScreen' )
+    //     }else{
+    //         navigation.navigate( 'ObservationHistory' )
+    //     }
+        
+    // }
+
+    const renderItem = ( { item }: {item:IMedia } ) => {
         return (
-            <Box margin="small" flex={1} mx="regular" my="medium" borderRadius="large" elevation={2} >
-                <Box p="regular" >
-               
-                    <ListItem containerStyle={{ padding:0, margin:0 , backgroundColor:"transparent" }}>
-                        <Avatar rounded size="medium" source={{ uri: item.logo }} />
-                        <ListItem.Content>
-                            <ListItem.Title style={{ fontSize:18 ,color:theme.colors.primary , fontWeight:"700" }} >{item.FirstName} {item.LastName}</ListItem.Title>
-                            <ListItem.Subtitle>{item.CreatedOn}</ListItem.Subtitle>
-                        </ListItem.Content>
-                    </ListItem>
-                    <Box >
-                        <Text variant="heading5" mt="regular" mb="medium">{item.Title}</Text>
-                    </Box>
-                    <Box  height={200} alignItems="center">
-                        {
-                            isEmpty( item.ImagePath ) && !isEmpty( item.VideoPath ) ?
-                                <Video 
-                                    source={{ uri: item.VideoPath }}
-                                    style={{ width:"100%" ,height:"100%" }}
-                                    controls ={true}
-                                    paused ={
-                                        true
-                                    }
-                                    playInBackground ={false}
-                                    resizeMode="cover"
-                                    // Can be a URL or a local file.
-                                /> 
-                                : !isEmpty( item.ImagePath ) && isEmpty( item.VideoPath ) ?
-                                    <Image 
-                                        source={{ uri: item.ImagePath }}
-                                        style={{ width:"100%" ,height:"100%" }}
-                                        resizeMode="contain"
-                                    /> 
-                                    :null
-                        } 
-                       
-                    </Box>
+            <Observer>
+                {
                     
-                    <Box my="regular">
-                        <Text variant="body" textAlign="justify" lineHeight={20} color="lightGrey5">{item.Description}</Text>
-                    </Box>
-                    <Box alignItems="flex-end" mx="regular" my="regular">
-                        <TouchableBox onPress={ ( ) => openInAppBrowser( item.Link1 ) }>
-                            <Text color="primary" fontSize={16} fontWeight="700">{item.Link1Name}</Text>
-                        </TouchableBox>     
-                        <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link2 ) }>
-                            <Text color="primary" fontSize={16} fontWeight="700">{item?.Link2Name}</Text>
-                        </TouchableBox>     
-                    </Box>
-                </Box>
-            </Box>
+                    ( ) => (
+                       
+                        <Box margin="small" flex={1} mx="regular" my="medium" borderRadius="large" borderWidth={1} borderColor={
+                            !isEmpty( item?.Message1 ) 
+                                ?  item?.Message1IsRead === "False"
+                                    ? "error"
+                                    : "success"
+                                : "lightGreyBorder" 
+                        }>
+                            <Box p="regular" >
+                                <ListItem containerStyle={STYLES.contentContainerStyle}>
+                                    <Avatar 
+                                        rounded 
+                                        size="medium"  
+                                        title={item.initials}
+                                        overlayContainerStyle={{ backgroundColor: theme.colors.primary }} 
+                                    />
+                                    <ListItem.Content>
+                                        <ListItem.Title style={STYLES.listTitleStyle} >{item.FirstName} {item.LastName}</ListItem.Title>
+                                        <ListItem.Subtitle>{item.CreatedOn}</ListItem.Subtitle>
+                                    </ListItem.Content>
+                                </ListItem>
+                                <Box >
+                                    <Text variant="heading5" mt="regular" mb="medium">{item.Title}</Text>
+                                </Box>
+                                {
+                                    console.log( "image path",item.ImagePath )
+                                }
+                                {
+                                    !isEmpty( item.ImagePath )|| !isEmpty( item.VideoPath ) ?
+                                        <Box  height={200} alignItems="center">
+                                            {
+                                                isEmpty( item.ImagePath ) && !isEmpty( item.VideoPath ) ?
+                                                    <Video 
+                                                        source={{ uri: item.VideoPath }}
+                                                        style={STYLES.videoStyle}
+                                                        controls ={true}
+                                                        paused ={
+                                                            true
+                                                        }
+                                                        playInBackground ={false}
+                                                        resizeMode="cover"
+                                                    // Can be a URL or a local file.
+                                                    /> 
+                                                    : !isEmpty( item.ImagePath ) && isEmpty( item.VideoPath ) ?
+                                                        <Image 
+                                                            source={{ uri: item.ImagePath }}
+                                                            style={STYLES.imageStyle}
+                                                            resizeMode="contain"
+                                                        /> 
+                                                        :null
+                                            } 
+                                
+                                        </Box>  
+                                        : null
+                                }
+                               
+                                <Box my="regular">
+                                    <Text variant="body" textAlign="justify" lineHeight={20} color="lightGrey5">{item.Description}</Text>
+                                </Box>
+
+                                {     !isEmpty( item?.Link2 )||  !isEmpty( item?.Link1 ) ?
+                                    <Box alignItems="flex-end" mx="regular" my="medium">
+                                        {
+                                            !isEmpty( item?.Link1 )?
+                                                <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link1 ) }>
+                                                    <Text color="primary" fontSize={16} fontWeight="700">{item?.Link1Name}</Text>
+                                                </TouchableBox>  
+                                                :null
+                                        }    
+                                        {
+                                            !isEmpty( item?.Link2 )?
+                                                <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link2 ) }>
+                                                    <Text color="primary" fontSize={16} fontWeight="700">{item?.Link2Name}</Text>
+                                                </TouchableBox>  
+                                                :null
+                                        }    
+                                      
+                                    </Box>
+                                    :null
+                                }
+
+                                {
+                                    !isEmpty( item.Message1 )?
+                                        <Box flex={1} mb="regular" alignItems="center" flexDirection="row">
+                                            <Box flex={0.6}>
+                                                <Text variant="heading5" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
+                                            </Box>
+                                            <Box flex={0.05}/>
+                                            <Box flex={0.3}>
+                                                {
+                                                    item.Message1IsRead === "True"
+                                                        ? 
+                                                        <Button 
+                                                            containerStyle={STYLES.buttonContainerStyle}
+                                                            buttonStyle={{ padding: theme.spacing.regular }}
+                                                            title="Completed!"
+                                                            disabled
+                                                        />
+                                                        : <Button 
+                                                            containerStyle={STYLES.buttonContainerStyle}
+                                                            buttonStyle={{ padding: theme.spacing.regular }}
+                                                            title="Completed"
+                                                            // onPress={( ) => item.setMessage1IsRead( )}
+                                                            onPress={ async ( ) => {
+                                                                await MediaStore.readMessageFlag( item.id )
+                                                                await   item.setMessage1IsRead( "True" )                                                   }
+                                                            }
+                                                        />
+                                                }
+                                            </Box>
+                                        </Box>
+                                        :null
+                                }
+                            </Box>
+                        </Box>
+                    )
+                }
+            </Observer>
         )
     }
     return (
-        // <Box flex={1}>
-        //     <FormHeader 
-        //         title="Media"
-        //         navigation={navigation}
-        //     />    
-        //     <FlatList 
-        //         data={postsList.posts}
-        //         renderItem={renderItem}
-        //         keyExtractor={( item )=> String( item.id )}                
-        //     />
-        // </Box>
         <Async promiseFn={fetchMedia}>
             <Async.Pending>
                 { ( ) => (
@@ -244,9 +248,11 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                     />
                     <Box flex={1}>
                         <FlatList 
-                            data={mediaList}
+                            data={MediaStore.items }
                             renderItem={renderItem}
-                            keyExtractor={( item )=> String( item.BulletinID )}                
+                            onEndReached={fetchNextMedia}
+                            onEndReachedThreshold={0.01}
+                            keyExtractor={( item )=> String( item.id )}                
                         />
                     </Box>
                 </Box>

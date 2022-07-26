@@ -3,7 +3,7 @@ import { getGeneralApiProblem } from "./api-problem"
 import { ApiConfig, DEFAULT_API_CONFIG } from "./api-config"
 import { AxiosRequestConfig } from "axios"
 import { CreateQueryParams } from '@nestjsx/crud-request'
-import { GeneralResponse, IAllCommanFilterPayload, IAnyAuditInProcessPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IDeleteAttributeImages, IEditObervationPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IMediaPayload, IObservationFetchPayload } from "./api.types"
+import { GeneralResponse, IAllCommanFilterPayload, IAnyAuditInProcessPayload, IAuditHistoryFetchPayload, IDashboardFetchPayload, IDeleteAttributeImages, IEditObervationPayload, IFetchDataForStartInspectionPayload, IFetchTaskPayload, ILoginPayload, ILoginResponse, IMediaDeliverdPayload, IMediaPayload, IObservationFetchPayload } from "./api.types"
 import { IAssignTaskPayload, ICompleteTaskPayload, IDeleteInspectionRecord, IDeleteTask, IFetchEditInspectionDetailsPayload, IFetchRiskRatingPayload, IFetchTaskRatingDetailsPayload, ISaveAuditPayload, ISubmitObservation, ISubmitStartInspectionPayload, IUpdateHazard } from "."
 import { uploadAllImages } from "utils/fetch_api"
 
@@ -354,6 +354,19 @@ export class Api {
   // added new api
   async deleteImageFromServer ( payload: IDeleteAttributeImages ) {
       const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/AuditAndInspection/DeleteAttributesInstanceImage", payload )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
+  async Delivered ( payload: IMediaDeliverdPayload ) {
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( "/Bulletin/Delivered", payload )
       if ( !response.ok ) {
           const problem = getGeneralApiProblem( response )
           if ( problem ) throw problem
