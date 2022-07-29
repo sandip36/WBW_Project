@@ -24,7 +24,9 @@ export const MediaModel = createModel( {
     Message1: types.maybeNull( types.string ),
     Message1IsRead: types.maybeNull( types.string ),
     Message1DateRead: types.maybeNull( types.string ),
-    isCompleted: types.optional( types.boolean, false )
+    isCompleted: types.optional( types.boolean, false ),
+    IsDisplayCompleted: types.maybeNull( types.string ),
+
 } ).views( self => ( {
     get initials ( ) {
         const firstInitial = !isEmpty( self?.FirstName ) ? self.FirstName.charAt( 0 ).toUpperCase() :  ""

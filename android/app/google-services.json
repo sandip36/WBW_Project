@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "399465061043",
+    "project_id": "wise-buisness-97d41",
+    "storage_bucket": "wise-buisness-97d41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399465061043:android:8c5e36ead460b86c27eec6",
+        "android_client_info": {
+          "package_name": "com.wbw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "399465061043-thmgnp3e273964gu3u9nlg2r9ns46laq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXTR_2-FVs3bzMxeYBq_lB5_T2gRyLgKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "399465061043-thmgnp3e273964gu3u9nlg2r9ns46laq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "399465061043-hdo4up42p9tprdqpmgqn0n7e1hjiajao.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wisebusiness.ehssoftware",
+                "app_store_id": "1617467584"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

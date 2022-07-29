@@ -81,19 +81,6 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
     }
 
 
-    // const onDCompletePress = async ( ) => {
-    //     await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-    //     if( dashboard?.LinkType === "WebsiteLink" ) {
-    //         openInAppBrowser( dashboard.Link )
-    //     }else if( dashboard?.Category === "POC" ) {
-    //         navigation.navigate( 'DynamicControls' )
-    //     }else if( dashboard?.Type === "Audit-originator" ) {
-    //         navigation.navigate( 'AuditAndInspectionScreen' )
-    //     }else{
-    //         navigation.navigate( 'ObservationHistory' )
-    //     }
-        
-    // }
 
     const renderItem = ( { item }: {item:IMedia } ) => {
         return (
@@ -180,12 +167,12 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                 }
 
                                 {
-                                    !isEmpty( item.Message1 )?
+                                    item.IsDisplayCompleted === "True" ?
                                         <Box flex={1} mb="regular" alignItems="center" flexDirection="row">
                                             <Box flex={0.6}>
                                                 <Text variant="heading5" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
                                             </Box>
-                                            <Box flex={0.05}/>
+                                            <Box flex={0.05}/> 
                                             <Box flex={0.3}>
                                                 {
                                                     item.Message1IsRead === "True"
@@ -209,7 +196,16 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                                 }
                                             </Box>
                                         </Box>
-                                        :null
+                                        :
+                                        <Box flex={1}>
+                                            {
+                                                !isEmpty( item.Message1 ) ?
+                                                    <Box margin="regular">
+                                                        <Text variant="heading5" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
+                                                    </Box>:null
+                                            }
+                                        </Box>
+                                        
                                 }
                             </Box>
                         </Box>
