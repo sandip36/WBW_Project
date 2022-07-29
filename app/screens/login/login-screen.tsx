@@ -99,7 +99,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
     return (
         <Box flex={1} bg="white">
             <ScrollView  contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
-                <Box flex={0.45}  mt="huge" mb="medium" alignItems="center" justifyContent="center">
+                <Box flex={0.49}  mt="huge" mb="medium" alignItems="center" justifyContent="center">
                     <Image 
                         source={theme.assets.livelogo}
                         style={STYLES.imageStyle}
@@ -125,14 +125,14 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                         onBlur={handleBlur( "password" )}
                         error={touched.password && errors.password}
                     />
-                    <Box mx="negative8">
+                    {/* <Box mx="negative8">
                         <Dropdown
                             title="Base URL"
                             items={BUILD_BASE_URL}
                             value={AuthStore.baseUrl}
                             onValueChange={( value )=>AuthStore.setBaseUrl( value )}
                         />
-                    </Box>
+                    </Box> */}
                 </Box>
                 <Box mt="medium">
                     <Button 
