@@ -67,26 +67,27 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
 
     const fetchDashboard = useCallback( async () => {
-        await ObservationStore._clear()
-        await AuditStore.resetStore()
-        await MediaStore._clear()
-        await DashboardStore.fetch()
+        // await ObservationStore._clear()
+        // await AuditStore.resetStore()
+        // await MediaStore._clear()
+        // await DashboardStore.fetch()
         
-        // const version = await checkVersion();
-        // setInfoVersion( version )
-        // if ( version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
-        //     console.log( `App has a ${version.updateType} update pending.` );
-        //     setShouldUpdateApplication( true )
-        //     // await ObservationStore._clear()
-        //     // await AuditStore.resetStore()
-        //     // await MediaStore._clear()
-        //     // await DashboardStore.fetch()
-        // }else{
-        //     await ObservationStore._clear()
-        //     await AuditStore.resetStore()
-        //     await MediaStore._clear()
-        //     await DashboardStore.fetch()
-        // }
+        const version = await checkVersion();
+        setInfoVersion( version )
+        console.log( `App has a ${version} update pending.`,JSON.stringify( version ) );
+        if ( version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
+            console.log( `App has a ${version.updateType} update pending.` );
+            setShouldUpdateApplication( true )
+            // await ObservationStore._clear()
+            // await AuditStore.resetStore()
+            // await MediaStore._clear()
+            // await DashboardStore.fetch()
+        }else{
+            await ObservationStore._clear()
+            await AuditStore.resetStore()
+            await MediaStore._clear()
+            await DashboardStore.fetch()
+        }
     }, [] )
 
 
@@ -188,7 +189,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                             ? updateDialogbox()
                             :  <Box flex={1}>
                                 <Header
-                                    //  leftComponent={{ icon: 'video-library', color: '#fff', type: 'material', onPress: onLeftIconPress, style: { marginHorizontal: theme.spacing.small } }} 
+                                    leftComponent={{ icon: 'video-library', color: '#fff', type: 'material', onPress: onLeftIconPress, style: { marginHorizontal: theme.spacing.small } }} 
                                     title={AuthStore.user?.CompanyName}
                                     rightComponent={{ icon: 'logout', color: '#fff', type: 'material', onPress: onRightIconPress, style: { marginHorizontal: theme.spacing.small } }}
                                 />

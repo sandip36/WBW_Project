@@ -92,7 +92,9 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                         <Box margin="small" flex={1} mx="regular" my="medium" borderRadius="large" borderWidth={1} borderColor={
                             !isEmpty( item?.Message1 ) 
                                 ?  item?.Message1IsRead === "False"
-                                    ? "error"
+                                    ?  item.IsDisplayCompleted === "False" ?
+                                        "lightGreyBorder" :
+                                        "error"
                                     : "success"
                                 : "lightGreyBorder" 
                         }>
@@ -180,7 +182,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                                         <Button 
                                                             containerStyle={STYLES.buttonContainerStyle}
                                                             buttonStyle={{ padding: theme.spacing.regular }}
-                                                            title="Completed!"
+                                                            title="Completed"
                                                             disabled
                                                         />
                                                         : <Button 
