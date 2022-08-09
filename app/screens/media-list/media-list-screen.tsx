@@ -112,7 +112,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                     </ListItem.Content>
                                 </ListItem>
                                 <Box >
-                                    <Text variant="heading5" mt="regular" mb="medium">{item.Title}</Text>
+                                    <Text variant="heading3" mt="regular" mb="medium">{item.Title}</Text>
                                 </Box>
                                 {
                                     !isEmpty( item.ImagePath )|| !isEmpty( item.VideoPath ) ?
@@ -144,7 +144,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                 }
                                
                                 <Box my="regular">
-                                    <Text variant="body" textAlign="justify" lineHeight={20} color="lightGrey5">{item.Description}</Text>
+                                    <Text variant="heading4" textAlign="justify" lineHeight={20} color="lightGrey5">{item.Description}</Text>
                                 </Box>
 
                                 {     !isEmpty( item?.Link2 )||  !isEmpty( item?.Link1 ) ?
@@ -172,7 +172,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                     item.IsDisplayCompleted === "True" ?
                                         <Box flex={1} mb="regular" alignItems="center" flexDirection="row">
                                             <Box flex={0.6}>
-                                                <Text variant="heading5" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
+                                                <Text variant="heading4" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
                                             </Box>
                                             <Box flex={0.05}/> 
                                             <Box flex={0.3}>
@@ -203,7 +203,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                             {
                                                 !isEmpty( item.Message1 ) ?
                                                     <Box margin="regular">
-                                                        <Text variant="heading5" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
+                                                        <Text variant="heading4" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
                                                     </Box>:null
                                             }
                                         </Box>
