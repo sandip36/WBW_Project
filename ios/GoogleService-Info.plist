@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>399465061043-hdo4up42p9tprdqpmgqn0n7e1hjiajao.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.399465061043-hdo4up42p9tprdqpmgqn0n7e1hjiajao</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA51Omgg-02tB21_Kxe21mDfsmHI0nAoDY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>399465061043</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.wisebusiness.ehssoftware</string>
+	<key>PROJECT_ID</key>
+	<string>wise-buisness-97d41</string>
+	<key>STORAGE_BUCKET</key>
+	<string>wise-buisness-97d41.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:399465061043:ios:5448a1cb8ceabd2a27eec6</string>
+</dict>
+</plist>

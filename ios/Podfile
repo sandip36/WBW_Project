@@ -13,6 +13,10 @@ target 'WBW' do
     # to enable hermes on iOS, change `false` to `true` and then install pods
     :hermes_enabled => false
   )
+  $RNFirebaseAsStaticFramework = true
+
+  pod 'GoogleUtilities', modular_headers: true
+  pod 'FirebaseCore', modular_headers: true
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 

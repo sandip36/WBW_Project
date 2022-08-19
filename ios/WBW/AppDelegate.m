@@ -4,6 +4,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <Firebase.h>
+#import <UserNotifications/UserNotifications.h>
+#import <RNCPushNotificationIOS.h>
 //#import <AppCenterReactNative.h>
 //#import <AppCenterReactNativeAnalytics.h>
 // UniModules per https://docs.expo.io/bare/installing-unimodules/
@@ -30,7 +32,7 @@ static void InitializeFlipper(UIApplication *application) {
   [client start];
 }
 #endif
-@interface AppDelegate () <RCTBridgeDelegate>
+@interface AppDelegate () <RCTBridgeDelegate,UNUserNotificationCenterDelegate>
 
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
 
@@ -83,22 +85,7 @@ static void InitializeFlipper(UIApplication *application) {
 return [CodePush bundleURL];
 #endif
 }
-- (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
-{
-    NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
-    // If you'd like to export some custom RCTBridgeModules that are not Expo modules, add them here!
-    return extraModules;
-}
- 
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-#if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  return [CodePush bundleURL];
-#endif
-}
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {

@@ -10,27 +10,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		270B8CD9EFAC4B568FC15506 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C09D666BE91C44AFB4D99F33 /* FontAwesome.ttf */; };
-		2C8EA5DC54CA4831B61F8E9B /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8902D6460BF4CBD9766FCB1 /* Zocial.ttf */; };
-		39E0F72928043640007D2450 /* NunitoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */; };
-		39E0F72A28043640007D2450 /* NunitoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */; };
 		39E0F72C280443E3007D2450 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39E0F72B280443E3007D2450 /* AppCenter-Config.plist */; };
-		6F699EBFAE6E4CB8834BE076 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D4C6AC81E1974B4394385E33 /* Entypo.ttf */; };
-		7969DEB6E0C741A7B025EEB3 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 516BBED3F5E34F9687607B5A /* FontAwesome5_Solid.ttf */; };
-		7BC74005EE7B4073B250AFEC /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AAB5BF9DBD14D948FB3B48E /* FontAwesome5_Brands.ttf */; };
+		39FFCA7728AFCE1D001DB740 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39FFCA7628AFCE1C001DB740 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8EA663541ECE416196E1BBA9 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3B37DFBF3C5D4B438F07ECE9 /* EvilIcons.ttf */; };
-		90285A21B389485C83272557 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0CF6B9FE793344609B6BF5A2 /* FontAwesome5_Regular.ttf */; };
-		97D8C715C54A47A0A5A2FCC6 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A1FF3B6EB76740BC86F33982 /* MaterialCommunityIcons.ttf */; };
-		9C0E96DFDF1043A1B6B52059 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C037141E6AAF4F4ABBC4F3FE /* AntDesign.ttf */; };
 		A4B148D367B119F99EC2C2E5 /* libPods-WBW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EADEA568884090C1B008E181 /* libPods-WBW.a */; };
-		AB4F3D886EF54E69807A038F /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E0A11FA968E4BB6B2494F77 /* Foundation.ttf */; };
-		B6C319B3CA9E4503972BE3CF /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B977574F3F5F43FC9345FEF6 /* Octicons.ttf */; };
-		BC184DF98B24422BBC583C75 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 016CDED9761D47FA803BAAFF /* MaterialIcons.ttf */; };
-		BC2EBA43E853496DA3572CA4 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C20131B44B044AB18C849303 /* SimpleLineIcons.ttf */; };
-		BDAAFCA53C64451DB0FDE5E7 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2A7E301F6915431FA0875321 /* Fontisto.ttf */; };
-		E0B182DAEA924592AE71E067 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17C0B1EF4F3149D3B0AA6409 /* Ionicons.ttf */; };
-		F79532B099A9418E93735A4F /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 04F0ABD13A7C4EF3AF056F6A /* Feather.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +34,10 @@
 		32B04630CC446F19212E357A /* Pods-WBW-WBWTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW-WBWTests.release.xcconfig"; path = "Target Support Files/Pods-WBW-WBWTests/Pods-WBW-WBWTests.release.xcconfig"; sourceTree = "<group>"; };
 		399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Bold.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Bold.ttf"; sourceTree = "<group>"; };
 		399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Regular.ttf"; sourceTree = "<group>"; };
+		39AEC24628AFF71C006BE14E /* WBWStaging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WBWStaging.entitlements; path = WBW/WBWStaging.entitlements; sourceTree = "<group>"; };
+		39AEC24728AFFC69006BE14E /* WBW.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WBW.entitlements; path = WBW/WBW.entitlements; sourceTree = "<group>"; };
 		39E0F72B280443E3007D2450 /* AppCenter-Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AppCenter-Config.plist"; sourceTree = "<group>"; };
+		39FFCA7628AFCE1C001DB740 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B37DFBF3C5D4B438F07ECE9 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		3ECD546F3378FD459F4E82B0 /* Pods-WBW.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.debug.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.debug.xcconfig"; sourceTree = "<group>"; };
 		4D40708BE521DBE7DC6E68C8 /* Pods-WBW.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW.release.xcconfig"; path = "Target Support Files/Pods-WBW/Pods-WBW.release.xcconfig"; sourceTree = "<group>"; };
@@ -87,12 +73,15 @@
 		13B07FAE1A68108700A75B9A /* WBW */ = {
 			isa = PBXGroup;
 			children = (
+				39AEC24728AFFC69006BE14E /* WBW.entitlements */,
+				39AEC24628AFF71C006BE14E /* WBWStaging.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				39FFCA7628AFCE1C001DB740 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				39E0F72B280443E3007D2450 /* AppCenter-Config.plist */,
 			);
@@ -240,27 +229,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39E0F72928043640007D2450 /* NunitoSans-Bold.ttf in Resources */,
-				39E0F72A28043640007D2450 /* NunitoSans-Regular.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				39FFCA7728AFCE1D001DB740 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				9C0E96DFDF1043A1B6B52059 /* AntDesign.ttf in Resources */,
-				6F699EBFAE6E4CB8834BE076 /* Entypo.ttf in Resources */,
-				8EA663541ECE416196E1BBA9 /* EvilIcons.ttf in Resources */,
-				F79532B099A9418E93735A4F /* Feather.ttf in Resources */,
-				270B8CD9EFAC4B568FC15506 /* FontAwesome.ttf in Resources */,
-				7BC74005EE7B4073B250AFEC /* FontAwesome5_Brands.ttf in Resources */,
-				90285A21B389485C83272557 /* FontAwesome5_Regular.ttf in Resources */,
-				7969DEB6E0C741A7B025EEB3 /* FontAwesome5_Solid.ttf in Resources */,
-				BDAAFCA53C64451DB0FDE5E7 /* Fontisto.ttf in Resources */,
-				AB4F3D886EF54E69807A038F /* Foundation.ttf in Resources */,
-				E0B182DAEA924592AE71E067 /* Ionicons.ttf in Resources */,
-				97D8C715C54A47A0A5A2FCC6 /* MaterialCommunityIcons.ttf in Resources */,
-				BC184DF98B24422BBC583C75 /* MaterialIcons.ttf in Resources */,
 				39E0F72C280443E3007D2450 /* AppCenter-Config.plist in Resources */,
-				B6C319B3CA9E4503972BE3CF /* Octicons.ttf in Resources */,
-				BC2EBA43E853496DA3572CA4 /* SimpleLineIcons.ttf in Resources */,
-				2C8EA5DC54CA4831B61F8E9B /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +273,8 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/NunitoSans-Bold.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/NunitoSans-Regular.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
@@ -321,6 +295,8 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NunitoSans-Bold.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/NunitoSans-Regular.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
@@ -406,16 +382,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = WBW/WBW.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Sandip Jadhav (38WF99AA2S)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NDAYDR96SH;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -437,15 +414,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = WBW/WBW.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution: Wise Businessware LLC (NDAYDR96SH)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NDAYDR96SH;
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -524,14 +502,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = WBW/WBWStaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Wise Businessware LLC (NDAYDR96SH)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = NDAYDR96SH;
 				INFOPLIST_FILE = WBW/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -539,7 +518,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wisebusiness.ehssoftware;
 				PRODUCT_NAME = WBW;
-				PROVISIONING_PROFILE_SPECIFIER = Prod_EHSSoftware;
+				PROVISIONING_PROFILE_SPECIFIER = Adhoc_EHSSoftware;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
