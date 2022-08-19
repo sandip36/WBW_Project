@@ -71,7 +71,6 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await AuditStore.resetStore()
         await MediaStore._clear()
         await DashboardStore.fetch()
-        
     //     const version = await checkVersion();
     //     setInfoVersion( version )
     //   //  console.log( `App has a ${version} update pending.`,JSON.stringify( version ) );

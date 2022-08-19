@@ -11,6 +11,7 @@ import { GeneralResponse, ILoginPayload, ILoginResponse } from "services/api/api
  */
 
 const AuthStoreProps = {
+    registerToken:types.maybe( types.string ),
     token: types.maybe( types.string ),
     user: types.safeReference( UserModel ),
     baseUrl: types.maybeNull( types.string )
@@ -48,6 +49,9 @@ export const AuthStoreModel = types
             self.baseUrl = url
             self.environment.api.setBaseUrl( url )
         } )
+        const setregistredtoken = flow( function * ( token:string ) {
+            self.registerToken=token
+        } )
 
         const logout = flow( function * () {
             self.token = undefined
@@ -60,6 +64,7 @@ export const AuthStoreModel = types
             login,
             logout,
             setBaseUrl,
+            setregistredtoken,
             beforeCreate ( ) {
                 self.environment.api.setBaseUrl( self.baseUrl )
             },

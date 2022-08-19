@@ -8,6 +8,9 @@ import { useStores } from "models"
 import { ILoginPayload } from "services/api"
 import { Dropdown } from "components/core/dropdown"
 import { observer } from "mobx-react-lite"
+import DeviceInfo from 'react-native-device-info';
+import { loadString } from "utils/storage"
+
 
 
 export type LoginScreenProps = {
@@ -62,6 +65,7 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
     const theme = useTheme()
     const STYLES = useStyles()
     const { AuthStore } = useStores()
+   
 
     const {
         touched,
@@ -87,11 +91,18 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                 .min( 1 )
         } ),
         async onSubmit ( values ) {
+
+            const deviceId = DeviceInfo.getDeviceId();
+            const TOKEN = await loadString( "TOKEN" )
+
             const payload = {
                 UserName: values.username,
-                Password: values.password
+                Password: values.password,
+                DeviceToken: TOKEN,
+                DeviceType: deviceId
             }
             await AuthStore.setBaseUrl( AuthStore.baseUrl )
+            await AuthStore.setregistredtoken( TOKEN )
             await AuthStore.login( payload as ILoginPayload )
         },
     } )

@@ -13,7 +13,7 @@ import "./i18n"
 import "./utils/ignore-warnings"
 import React, { useState, useRef, useCallback } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
-import { SafeAreaView , ActivityIndicator, StyleSheet } from "react-native"
+import { SafeAreaView , ActivityIndicator, StyleSheet, Platform } from "react-native"
 import {
     useBackButtonHandler,
     RootNavigator,
@@ -24,6 +24,10 @@ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
 import { theme } from "theme"
 import codePush from "react-native-code-push"
 import { enableScreens } from "react-native-screens"
+import PushNotications from "react-native-push-notification"
+import * as storage from "./utils/storage"
+
+
 import { ThemeProvider } from "@shopify/restyle"
 import { Async } from "react-async"
 import { Box, Text } from "./components"
@@ -32,6 +36,66 @@ import Toast from "react-native-simple-toast"
 
 
 enableScreens()
+PushNotications.configure( {
+
+    // (optional) Called when Token is generated (iOS and Android)
+    onRegister: async ( token: { token: string } ) => {
+        if ( __DEV__ ) console.log( 'TOKEN:', token )
+        await storage.saveString( 'TOKEN', token.token )  
+    },
+
+    // (required) Called when a remote or local notification is opened or received
+    // onNotification: ( notification ) => {
+    //  dispatch( NotificationActions.addNotification( notification.message ) )
+    // },
+
+    // ANDROID ONLY: (optional) GCM Sender ID.
+    senderID: 'YOUR GCM SENDER ID',
+
+    // IOS ONLY (optional): default: all - Permissions to register.
+    permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+    },
+
+    // Should the initial notification be popped automatically
+    // default: true
+    // Leave this off unless you have good reason.
+    popInitialNotification: true,
+
+    /**
+      * IOS ONLY: (optional) default: true
+      * - Specified if permissions will requested or not,
+      * - if not, you must call PushNotificationsHandler.requestPermissions() later
+      * This example app shows how to best call requestPermissions() later.
+      */
+    requestPermissions: true
+} )
+
+// PushNotications.configure( {
+//     // ! TODO - onRegister method not being called
+
+//     onRegister: async function ( token ) {
+//         console.log( "token for  device ",token )
+//         // await storage.saveString( 'TOKEN', token.token )
+//     },
+//     popInitialNotification: true,
+//     requestPermissions: Platform.OS === 'ios'
+// } )
+
+PushNotications.createChannel(
+    {
+        channelId: "default",
+        channelName: "notification-wbw",
+        channelDescription: "A channel to categorise your notifications",
+        playSound: false,
+        soundName: "default",
+        importance: 4,
+        vibrate: true,
+    }
+)
+
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
