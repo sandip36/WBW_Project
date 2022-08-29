@@ -7,6 +7,7 @@ import { Alert, AsyncStorage, Linking, StyleProp, TextStyle, ViewStyle } from 'r
 import { ListItem } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 import { InAppBrowser } from 'react-native-inappbrowser-reborn'
+import { isEmpty } from 'lodash'
 
 export interface DashboardCardProps {
     dashboard: IDashboard,
@@ -95,9 +96,13 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-        if( dashboard?.LinkType === "WebsiteLink" ) {
-            openInAppBrowser( dashboard.Link )
-        }else if( dashboard?.Category === "POC" ) {
+        if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
+            // openInAppBrowser( dashboard.Link )
+            navigation.navigate( 'WebView' )
+        }else if( dashboard?.LinkType === "WebsiteLink" && isEmpty( dashboard?.Link ) ) {
+            Alert.alert( "Error", "Invalid dashboard link" )
+        }
+        else if( dashboard?.Category === "POC" ) {
             navigation.navigate( 'DynamicControls' )
         }else if( dashboard?.Type === "Audit-originator" ) {
             navigation.navigate( 'AuditAndInspectionScreen' )
