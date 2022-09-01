@@ -1,10 +1,12 @@
 import { useNavigation } from "@react-navigation/core"
 import React, { useEffect, useRef } from "react"
-import { BackHandler, StyleProp, ViewStyle } from "react-native"
+import { ActivityIndicator, BackHandler, StyleProp, ViewStyle } from "react-native"
 import { makeStyles } from "theme"
 import { WebView } from 'react-native-webview';
-import { SafeAreaView } from "react-native-safe-area-context"
-export interface WebViewProps {
+import { useRoute } from "@react-navigation/native";
+import { FormHeader } from "components/core/header/form-header";
+import { Box } from "components";
+export type WebViewScreenProps = {
     url: string
 }
 
@@ -16,8 +18,11 @@ const useStyles = makeStyles<WebViewStyleProps>( ( theme ) => ( {
     containerStyle: { width: '100%', height: '100%' },
 } ) )
 
-export const WebViewScreen: React.FunctionComponent<WebViewProps> = ( props ) => {
-    const { url } = props
+export const WebViewScreen: React.FunctionComponent<WebViewScreenProps> = ( props ) => {
+    const route = useRoute()
+    const {
+        url
+    } = route.params as any    
     const navigation = useNavigation()
     const STYLES = useStyles()
     const webviewRef = useRef( null )
@@ -45,12 +50,31 @@ export const WebViewScreen: React.FunctionComponent<WebViewProps> = ( props ) =>
         return true
     }
 
-
     return (
-        <SafeAreaView style={STYLES.containerStyle}>
-            <WebView ref={webviewRef} source={{ uri: url }} onNavigationStateChange={( event ) => {
-                canGoBack = event.canGoBack
-            }}/>
-        </SafeAreaView>
+        <Box flex={1}>
+            <FormHeader 
+                title="WebView"
+                navigation={navigation}
+                customBackHandler={_handleBackPress}
+            />
+            <WebView 
+                ref={webviewRef}
+                style={STYLES.containerStyle} 
+                source={{ uri: url }} 
+                onNavigationStateChange={( event ) => {
+                    canGoBack = event.canGoBack
+                }}
+                startInLoadingState={true}
+                renderLoading={()=> (
+                    <Box 
+                        style={STYLES.containerStyle} 
+                        justifyContent="center" 
+                        alignItems="center"
+                    >
+                        <ActivityIndicator size="large" color="red" />
+                    </Box>
+                )}
+            />
+        </Box>
     )
 }

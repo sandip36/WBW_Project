@@ -97,8 +97,10 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
         if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
-            // openInAppBrowser( dashboard.Link )
-            navigation.navigate( 'WebView' )
+            const formattedUrl = `${dashboard?.Link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
+            navigation.navigate( 'WebView', {
+                url: formattedUrl
+            } )
         }else if( dashboard?.LinkType === "WebsiteLink" && isEmpty( dashboard?.Link ) ) {
             Alert.alert( "Error", "Invalid dashboard link" )
         }

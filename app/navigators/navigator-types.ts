@@ -36,5 +36,7 @@ export type ApplicationNavigationRoutes = {
   }
   DynamicForm: undefined
   MediaList: undefined
-  WebView: undefined
+  WebView: {
+    url: string
+  }
 }
