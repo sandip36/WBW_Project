@@ -7,7 +7,7 @@ import { Avatar, ListItem } from "react-native-elements"
 import Video from "react-native-video"
 import Async from "react-async"
 import { IMedia, useStores } from "models"
-import InAppBrowser from "react-native-inappbrowser-reborn"
+// import InAppBrowser from "react-native-inappbrowser-reborn"
 import { theme, makeStyles } from "theme"
 import { isEmpty } from "lodash"
 import  { Observer } from "mobx-react-lite"
@@ -62,23 +62,23 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
         await MediaStore.fetchNextMedia( )
     }, [] )
   
-    const openInAppBrowser = async ( link ) => {
-        try {
-            // const token = await AsyncStorage.getItem( 'Token' )
-            if( link ) {
-                if ( await InAppBrowser.isAvailable() ) {
-                    await InAppBrowser.open( link )
-                }
-                else Linking.openURL( link )
-            }
-        } catch ( error ) {
-            await InAppBrowser.close()
-            if ( await InAppBrowser.isAvailable() ) {
-                await InAppBrowser.open( link )
-            }
-            else Linking.openURL( link )
-        }
-    }
+    // const openInAppBrowser = async ( link ) => {
+    //     try {
+    //         // const token = await AsyncStorage.getItem( 'Token' )
+    //         if( link ) {
+    //             if ( await InAppBrowser.isAvailable() ) {
+    //                 await InAppBrowser.open( link )
+    //             }
+    //             else Linking.openURL( link )
+    //         }
+    //     } catch ( error ) {
+    //         await InAppBrowser.close()
+    //         if ( await InAppBrowser.isAvailable() ) {
+    //             await InAppBrowser.open( link )
+    //         }
+    //         else Linking.openURL( link )
+    //     }
+    // }
 
 
 
@@ -151,14 +151,25 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                     <Box alignItems="flex-end" mx="regular" my="medium">
                                         {
                                             !isEmpty( item?.Link1 )?
-                                                <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link1 ) }>
+                                                <TouchableBox my="medium" onPress={ ( ) =>  navigation.navigate( 'WebView', {
+                                                    url: item.Link1,
+                                                    tital:item.Link1Name
+                                                } ) }>
                                                     <Text color="primary" fontSize={16} fontWeight="700">{item?.Link1Name}</Text>
                                                 </TouchableBox>  
+                                                
+                                            //      <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link1 ) }>
+                                            //      <Text color="primary" fontSize={16} fontWeight="700">{item?.Link1Name}</Text>
+                                            //  </TouchableBox>  
+                                                
                                                 :null
                                         }    
                                         {
                                             !isEmpty( item?.Link2 )?
-                                                <TouchableBox my="medium" onPress={ ( ) => openInAppBrowser( item?.Link2 ) }>
+                                                <TouchableBox my="medium"onPress={ ( ) =>  navigation.navigate( 'WebView', {
+                                                    url: item.Link2,
+                                                    tital:item.Link2Name
+                                                } ) }>
                                                     <Text color="primary" fontSize={16} fontWeight="700">{item?.Link2Name}</Text>
                                                 </TouchableBox>  
                                                 :null

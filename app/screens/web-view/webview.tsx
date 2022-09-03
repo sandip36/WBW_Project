@@ -8,6 +8,7 @@ import { FormHeader } from "components/core/header/form-header";
 import { Box } from "components";
 export type WebViewScreenProps = {
     url: string
+    tital:string
 }
 
 export type WebViewStyleProps = {
@@ -21,7 +22,8 @@ const useStyles = makeStyles<WebViewStyleProps>( ( theme ) => ( {
 export const WebViewScreen: React.FunctionComponent<WebViewScreenProps> = ( props ) => {
     const route = useRoute()
     const {
-        url
+        url,
+        tital
     } = route.params as any    
     const navigation = useNavigation()
     const STYLES = useStyles()
@@ -53,7 +55,7 @@ export const WebViewScreen: React.FunctionComponent<WebViewScreenProps> = ( prop
     return (
         <Box flex={1}>
             <FormHeader 
-                title="WebView"
+                title={tital}
                 navigation={navigation}
                 customBackHandler={_handleBackPress}
             />

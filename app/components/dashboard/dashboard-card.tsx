@@ -6,7 +6,7 @@ import React from 'react'
 import { Alert, AsyncStorage, Linking, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import { ListItem } from 'react-native-elements'
 import { makeStyles  } from 'theme'
-import { InAppBrowser } from 'react-native-inappbrowser-reborn'
+// import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import { isEmpty } from 'lodash'
 
 export interface DashboardCardProps {
@@ -76,30 +76,34 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const { DashboardStore, AuthStore } = useStores()
     const STYLES = useStyles()
 
-    const openInAppBrowser = async ( link ) => {
-        const url = `${link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
-        try {
-            // const token = await AsyncStorage.getItem( 'Token' )
+    // const openInAppBrowser = async ( link ) => {
+    //     const url = `${link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
+    //     try {
+    //         // const token = await AsyncStorage.getItem( 'Token' )
            
-            if ( await InAppBrowser.isAvailable() ) {
-                const result = await InAppBrowser.open( url )
-            }
-            else Linking.openURL( url )
-        } catch ( error ) {
-            await InAppBrowser.close()
-            if ( await InAppBrowser.isAvailable() ) {
-                const result = await InAppBrowser.open( url )
-            }
-            else Linking.openURL( url )
-        }
-    }
+    //         if ( await InAppBrowser.isAvailable() ) {
+    //             const result = await InAppBrowser.open( url )
+    //         }
+    //         else Linking.openURL( url )
+    //     } catch ( error ) {
+    //         await InAppBrowser.close()
+    //         if ( await InAppBrowser.isAvailable() ) {
+    //             const result = await InAppBrowser.open( url )
+    //         }
+    //         else Linking.openURL( url )
+    //     }
+    // }
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
+
+        // navigation.navigate( 'MediaList' )
         if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
             const formattedUrl = `${dashboard?.Link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
             navigation.navigate( 'WebView', {
-                url: formattedUrl
+                url: formattedUrl,
+                tital:dashboard.Title
+
             } )
         }else if( dashboard?.LinkType === "WebsiteLink" && isEmpty( dashboard?.Link ) ) {
             Alert.alert( "Error", "Invalid dashboard link" )
