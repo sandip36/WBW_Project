@@ -3,7 +3,7 @@ import { DashboardModel, IDashboard } from "models/models/dashboard-model/dashbo
 import { GeneralResponse, IDashboardFetchPayload } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import { AuthStoreType } from "../auth-store/auth-store"
-import { sortBy } from "lodash"
+import { isEmpty, sortBy } from "lodash"
 
 
 export const DashboardStore = createModelCollection( DashboardModel )
@@ -24,24 +24,29 @@ export const DashboardStore = createModelCollection( DashboardModel )
         }>( self )
         const fetch = flow( function * ( ) {
             self.bootstraping = true
-            try {
-                const payload = {
-                    UserID: rootStore.AuthStore?.user?.UserID,
-                    AccessToken: rootStore.AuthStore?.user?.AccessToken
-                } as IDashboardFetchPayload
-                const result: GeneralResponse<IDashboard[]> = yield self.environment.api.fetchDashboard( payload )
-                if ( result?.data ) {
-                    const dashboards = result.data.map( item => {
-                        return { ...item, id: item.HomePageOrder }
-                    } )
-                    self._insertOrUpdate( dashboards )
+            if ( !isEmpty( rootStore.AuthStore?.user?.UserID )|| !isEmpty( rootStore.AuthStore?.user?.UserID ) ) 
+            {
+            
+                try {
+                    const payload = {
+                        UserID: rootStore.AuthStore?.user?.UserID,
+                        AccessToken: rootStore.AuthStore?.user?.AccessToken
+                    } as IDashboardFetchPayload
+
+                    const result: GeneralResponse<IDashboard[]> = yield self.environment.api.fetchDashboard( payload )
+                    if ( result?.data ) {
+                        const dashboards = result.data.map( item => {
+                            return { ...item, id: item.HomePageOrder }
+                        } )
+                        self._insertOrUpdate( dashboards )
+                    }
+                    return result
+                } catch( error ) {
+                    rootStore.AuthStore.logout()
+                    return null
+                } finally {
+                    self.bootstraping = false
                 }
-                return result
-            } catch( error ) {
-                rootStore.AuthStore.logout()
-                return null
-            } finally {
-                self.bootstraping = false
             }
         } )
 

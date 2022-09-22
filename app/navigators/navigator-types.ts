@@ -18,24 +18,25 @@ export type ApplicationNavigationRoutes = {
   EditInspection: undefined
   Inspection: undefined
   CompleteOrAssignTask: {
-    callback: (value: any) => void
+    callback: ( value: any ) => void
     item: IAttributes
   }
   CompleteTask: undefined
   AssignTask: undefined
   UploadImage: {
     attributeData: IAttributes
-    callbackImage: (value: any) => void
+    callbackImage: ( value: any ) => void
   }
   CaptureImage: {
     attributeData: IAttributes
-    callback: (value: any) => void
+    callback: ( value: any ) => void
   }
   CaptureTaskImage: {
-    callback: (value: any) => void
+    callback: ( value: any ) => void
   }
   DynamicForm: undefined
   MediaList: undefined
+  UserProfile:undefined
   WebView: {
     url: string
   }

@@ -20,11 +20,11 @@ export type LoginScreenProps = {
 const BUILD_BASE_URL = [
     {
         label: "Unit test - Demo",
-        value: "http://198.71.63.116/Demo/MobileAPI/api"
+        value: "https://demo.test832.com/MobileAPI/api"
     },
     {
         label: "Unit test -Sandbox",
-        value: "http://198.71.63.116/MySite/MobileAPI/api"
+        value: "https://sandbox.test832.com/MobileAPI/api"
     },
     {
         label: "Demo",

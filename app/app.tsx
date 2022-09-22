@@ -13,7 +13,7 @@ import "./i18n"
 import "./utils/ignore-warnings"
 import React, { useState, useRef, useCallback } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
-import { SafeAreaView , ActivityIndicator, StyleSheet, Platform } from "react-native"
+import { SafeAreaView , ActivityIndicator, StyleSheet, Platform, Alert } from "react-native"
 import {
     useBackButtonHandler,
     RootNavigator,
@@ -41,7 +41,7 @@ PushNotications.configure( {
     // (optional) Called when Token is generated (iOS and Android)
     onRegister: async ( token: { token: string } ) => {
         if ( __DEV__ ) console.log( 'TOKEN:', token )
-        await storage.saveString( 'TOKEN', token.token )  
+        await storage.saveString( 'TOKEN', token.token )          
     },
 
     // (required) Called when a remote or local notification is opened or received
@@ -50,7 +50,7 @@ PushNotications.configure( {
     // },
 
     // ANDROID ONLY: (optional) GCM Sender ID.
-    senderID: 'YOUR GCM SENDER ID',
+    senderID: '399465061043',
 
     // IOS ONLY (optional): default: all - Permissions to register.
     permissions: {

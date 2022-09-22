@@ -67,6 +67,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
 
     const fetchDashboard = useCallback( async () => {
+        await DashboardStore._clear()
         await ObservationStore._clear()
         await AuditStore.resetStore()
         await MediaStore._clear()
@@ -109,6 +110,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     }
 
     const onRightIconPress = ( ) => {
+      //  navigation.navigate( 'UserProfile' )
         Alert.alert(
             "Logout?",
             "Are you sure you want to logout?",

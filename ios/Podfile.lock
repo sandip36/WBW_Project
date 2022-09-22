@@ -413,7 +413,7 @@ PODS:
     - React-Core
   - RNDateTimePicker (5.1.0):
     - React-Core
-  - RNDeviceInfo (9.0.2):
+  - RNDeviceInfo (10.0.2):
     - React-Core
   - RNFastImage (8.3.4):
     - React-Core
@@ -428,7 +428,7 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNInAppBrowser (3.6.3):
+  - RNInAppBrowser (3.7.0):
     - React-Core
   - RNKeychain (6.2.0):
     - React
@@ -716,7 +716,7 @@ SPEC CHECKSUMS:
   EXLocalization: 8b9463c81843da214476b541a27811dd885c9a76
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
-  FBReactNativeSpec: 595b10b182e6cab2f946248b7a2209a4e0aff8d3
+  FBReactNativeSpec: 12deaa9054e45f8627bb87a13ef17972803de5e0
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
   FirebaseCore: c088995ece701a021a48a1348ea0174877de2a6a
   FirebaseCoreDiagnostics: 060eb57cc56dfaf40b1b1b5874a5c17c41ce79f8
@@ -768,12 +768,12 @@ SPEC CHECKSUMS:
   RNCPicker: cb57c823d5ce8d2d0b5dfb45ad97b737260dc59e
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDateTimePicker: 1dd15d7ed1ab7d999056bc77879a42920d139c12
-  RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
+  RNDeviceInfo: 0a7c1d2532aa7691f9b9925a27e43af006db4dae
   RNFastImage: d4870d58f5936111c56218dbd7fcfc18e65b58ff
   RNFBApp: c9723c07e0a315538dfc9deea60ffb072b2f44d6
   RNFBMessaging: 084f466c02f3148884ef22fa86db5473f80e8433
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNInAppBrowser: 3ff3a3b8f458aaf25aaee879d057352862edf357
+  RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
