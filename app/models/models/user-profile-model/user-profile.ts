@@ -1,12 +1,12 @@
 import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { createModel } from '../../factories/model.factory'
+import { ImagesModel } from "../audit-model"
 
 
 /**
  * User model to store user details
  */
-export const UserProfileModel = createModel( {
-    
+export const UserProfileModel = createModel( {  
     UserCode: types.maybeNull( types.string ),
     LevelID: types.maybeNull( types.string ),
     FirstName: types.maybeNull( types.string ),
@@ -28,6 +28,7 @@ export const UserProfileModel = createModel( {
     Country: types.maybeNull( types.string ),
     eSignaturePath: types.maybeNull( types.string ),
     PhotoPath: types.maybeNull( types.string ),
+    images: types.optional( ImagesModel, {} ),
 } )
     .named( 'UserProfileModel' )
     .views( self => ( {

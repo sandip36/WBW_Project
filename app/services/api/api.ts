@@ -461,6 +461,24 @@ export class Api {
       } as GeneralResponse
   }
 
+  async uploadUserProfile ( payload: any, userId: string ) {
+      const finalUploadUrl = `/User/Upload?UserID=${userId}`
+      const response: ApiResponse<ILoginResponse> = await this.apisauce.post( finalUploadUrl, payload, {
+          "headers": {
+              'Content-Type': 'multipart-formdata'
+          }
+      } )
+      if ( !response.ok ) {
+          const problem = getGeneralApiProblem( response )
+          if ( problem ) throw problem
+      }
+
+      return {
+          kind: 'ok',
+          data: response.data
+      } as GeneralResponse
+  }
+
   async uploadMultipleImages ( images: any, url: string ) {
       const finalUrl = `${this.apisauce.getBaseURL()}/${url}`
       const response: any = await uploadAllImages( {
