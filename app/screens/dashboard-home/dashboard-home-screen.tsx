@@ -110,22 +110,22 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     }
 
     const onRightIconPress = ( ) => {
-      //  navigation.navigate( 'UserProfile' )
-        Alert.alert(
-            "Logout?",
-            "Are you sure you want to logout?",
-            [
-                {
-                    text: "No",
-                    onPress: () => null
-                },
-                {
-                    text: "Yes",
-                    onPress: ( ) => AuthStore.logout()
-                }
-            ],
-        );
-        return true
+        navigation.navigate( 'UserProfile' )
+        // Alert.alert(
+        //     "Logout?",
+        //     "Are you sure you want to logout?",
+        //     [
+        //         {
+        //             text: "No",
+        //             onPress: () => null
+        //         },
+        //         {
+        //             text: "Yes",
+        //             onPress: ( ) => AuthStore.logout()
+        //         }
+        //     ],
+        // );
+        // return true
     }
 
     const onLeftIconPress = ( ) => {

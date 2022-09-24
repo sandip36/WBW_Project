@@ -13,6 +13,7 @@ import { AssignTaskScreen } from "screens/complete-and-assign-task/assign-task"
 import { UploadImageScreen } from "screens/audit-and-inspection/upload-image-screen"
 import { CaptureImageScreen } from "screens/audit-and-inspection/capture-image-screen"
 import { WebViewScreen } from "screens/web-view/webview"
+import { UserProfile } from "screens/UserProfile"
    
 const { Navigator, Screen } = createStackNavigator<ApplicationNavigationRoutes>()
   
@@ -37,6 +38,7 @@ export const ApplicationNavigator = ( ) => {
                 <Screen name="DynamicForm" component={DynamicFormScreen} />
                 <Screen name="MediaList" component={MediaListScreen} />
                 <Screen name="WebView" component={WebViewScreen} />
+                <Screen name="UserProfile" component={UserProfile} />
             </Navigator>
         </Fragment>
     )

@@ -93,7 +93,8 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
         async onSubmit ( values ) {
 
             const deviceId = DeviceInfo.getDeviceId();
-            const TOKEN = await loadString( "TOKEN" )
+            const TOKEN ="ABCDSAndip"
+            // await loadString( "TOKEN" )
 
             const payload = {
                 UserName: values.username,

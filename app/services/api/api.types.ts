@@ -230,4 +230,8 @@ export interface IMediaDeliverdPayload{
     AccessToken: string,
     BulletinID: string
 }
-
+// payload for userprofile
+export interface IuserProfilePayload{
+    UserID: string,
+    AccessToken: string,
+}

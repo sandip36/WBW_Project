@@ -1,6 +1,6 @@
 import { Instance, SnapshotOut, types, applySnapshot, flow } from "mobx-state-tree"
 import { withEnvironment } from "models/environment/with-environment"
-import { UserStore } from "models/stores"
+import { UserStore , UserProfileStore } from "models/stores"
 import { AuditStore } from "models/stores/audit-store"
 import { AuthStoreModel } from "models/stores/auth-store"
 import { DashboardStore } from "models/stores/dashboard-store"
@@ -22,7 +22,9 @@ export const RootStoreModel = types.model( "RootStore" )
         AuditStore: types.optional( AuditStore, {} ),
         TaskStore: types.optional( TaskStore, {} ),
         DynamicFormStore: types.optional( DynamicFormStore, {} ),
-        MediaStore: types.optional( MediaStore, {} )
+        MediaStore: types.optional( MediaStore, {} ),
+        UserProfileStore:types.optional( UserProfileStore,{} )
+
     } )
     .extend( withEnvironment )
     .actions( self => {
