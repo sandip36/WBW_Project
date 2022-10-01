@@ -1,6 +1,6 @@
 import { Instance, SnapshotOut, types, applySnapshot, flow } from "mobx-state-tree"
 import { withEnvironment } from "models/environment/with-environment"
-import { UserStore , UserProfileStore } from "models/stores"
+import { UserStore , UserProfileStore, UserListByCompanyStore } from "models/stores"
 import { AuditStore } from "models/stores/audit-store"
 import { AuthStoreModel } from "models/stores/auth-store"
 import { DashboardStore } from "models/stores/dashboard-store"
@@ -8,7 +8,6 @@ import { DynamicFormStore } from "models/stores/dynamic-form-store/dynamic-form-
 import { ObservationStore } from "models/stores/observation-store/observation-store"
 import { TaskStore } from "models/stores/task-store"
 import { MediaStore } from "models/stores/media-store"
-
 /**
  * A RootStore model.
  */
@@ -23,7 +22,8 @@ export const RootStoreModel = types.model( "RootStore" )
         TaskStore: types.optional( TaskStore, {} ),
         DynamicFormStore: types.optional( DynamicFormStore, {} ),
         MediaStore: types.optional( MediaStore, {} ),
-        UserProfileStore:types.optional( UserProfileStore,{} )
+        UserProfileStore:types.optional( UserProfileStore,{} ),
+        UserListByCompanyStore :types.optional( UserListByCompanyStore,{} )
 
     } )
     .extend( withEnvironment )
@@ -38,6 +38,7 @@ export const RootStoreModel = types.model( "RootStore" )
         return {
             afterCreate,
             resetStore,
+            
         }
     } )
 

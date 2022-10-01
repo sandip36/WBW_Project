@@ -2,19 +2,20 @@
 
 import { useFocusEffect, useNavigation } from "@react-navigation/core"
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { ActivityIndicator, BackHandler, Button, Image, ImageStyle, Platform, ScrollView, StyleProp, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, BackHandler, Button, Image, ImageStyle, Platform, ScrollView, StyleProp, View, ViewStyle } from "react-native"
 import { makeStyles, theme } from "theme"
 import { useRoute } from "@react-navigation/native";
 import { FormHeader } from "components/core/header/form-header";
 import { Box, Input, SearchableList, SecureInput, Text, TextAreaInput, TouchableBox } from "components";
 import { Dropdown } from "components/core/dropdown";
-import { IImages, ILocationsModel, useStores } from "models";
-import { IuserProfilePayload } from "services/api";
+import { IImages, ICompanyUserListmodel, useStores } from "models";
+import { IuserProfilePayload, IuserProfileSavaPayload } from "services/api";
 import { useKeyboard } from "@react-native-community/hooks"
 import { LabelWithAsterisk } from "screens/observation";
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row";
 import { Avatar, Icon, ListItem } from "react-native-elements";
 import { isEmpty } from "lodash";
+
 
 
 
@@ -25,24 +26,20 @@ export type UserProfileScreenProps = {
 }
 
 export type UserProfileStyleProps = {
+    imageStyle: StyleProp<ImageStyle>,
   containerStyle: StyleProp<ViewStyle>
+  avatarContainerStyle: StyleProp<ViewStyle>
+
 }
 
-// const useStyles = makeStyles<UserProfileStyleProps>( ( theme ) => ( {
-//     containerStyle: { width: '100%', height: '100%' },
-// } ) )
-
 const useStyles = makeStyles<{
+    textWithShadow: StyleProp<ViewStyle>;
+    avatarContainerStyle: StyleProp<ViewStyle>;
+   // profileImgContainer: StyleProp<ViewStyle>;
+  //  profileImg: StyleProp<ViewStyle>;
     keyboardStyle: StyleProp<ViewStyle>;imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>, addImageIcon: StyleProp<ViewStyle>,listItemContainerStyle: StyleProp<ViewStyle>, iconContainerStyle: StyleProp<ViewStyle>
 }>( ( theme ) => ( {
-    imageStyle: {
-        width: '95%',
-        // Without height undefined it won't work
-        height:"50%"
-        // backgroundColor:"red",
-        // figure out your image aspect ratio
-        // aspectRatio: 135 / 40,
-    },  
+   
     inputContainerStyle: {
         borderBottomWidth: 1,
         borderColor: theme.colors.primary
@@ -69,27 +66,75 @@ const useStyles = makeStyles<{
     },
     iconContainerStyle: {
         backgroundColor: theme.colors.primary
+    }, profileImgContainer: {
+        marginLeft: 8,
+        height: 82,
+        width: 82,
+        borderRadius: 40,
+        borderWidth: 1
     },
+    profileImg: {
+        height: 80,
+        width: 80,
+        borderRadius: 40,
+    }, avatarContainerStyle: {
+        backgroundColor: theme.colors.primary
+    }, imageStyle: {
+        width: 150,
+        height: 150,
+        borderRadius: theme.borderRadii.medium,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    textWithShadow:{
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 10
+    }
 } ) )
 
 export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( props ) => {
     const route = useRoute()
-    const { UserProfileStore,AuthStore, ObservationStore } = useStores()  
+    const { UserProfileStore,AuthStore, ObservationStore ,UserListByCompanyStore } = useStores()  
     const navigation = useNavigation()
     const STYLES = useStyles()
     const keyboard = useKeyboard()
     const [ imgUrl, setImgUrl ] = useState( '' )
-    const [ loading, setLoading ] = useState( true )
+    const [ loading, setLoading ] = useState( false )
+    const [ editabelflag, setEditableFlag ] = useState( true )
+    const [ loadingForSave, setLoadingForSave ] = useState( false  )
+
+
+    let formattedbaseUrl = AuthStore.environment.api.apisauce.getBaseURL()
+    formattedbaseUrl = formattedbaseUrl.replace( "/MobileAPI/api", "" )
+
 
 
     useFocusEffect(
         React.useCallback( () => {
             fetchUserProfile()
+           
         }, [] )
     );
 
+    useEffect( ( ) => {      
+        fetchData()
+        // make sure to catch any error
+            .catch( console.error );
+    }, [ ] )
+
+    const fetchData = async () => {
+        await UserListByCompanyStore.clearStore()
+        await UserListByCompanyStore.hideSearchableModal()
+
+        await UserListByCompanyStore.fetch()
+    }
+   
+
     const fetchUserProfile = useCallback( async () => {
-        await UserProfileStore._clear()
+        setEditableFlag( true )
+        // await UserProfileStore._clear()
         const payload = {
             UserID: AuthStore?.user.UserID,
             AccessToken: AuthStore?.token,
@@ -100,7 +145,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
 
     const fetchUserProfileImg =()=>{
         if( isEmpty( UserProfileStore.userData.PhotoPath ) ){
-            setImgUrl( 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg' )
+            setImgUrl( '' )
             setLoading( false )
         }else{
             let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${UserProfileStore.userData.PhotoPath}`
@@ -110,14 +155,6 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
         }
         
     }
-
-    // const _handleBackPress = ( ) => {
-    //     // Works on both iOS and Android
-    //     // eslint-disable-next-line no-empty
-       
-    //     navigation.goBack()
-    //     return true
-    // }
 
     const onImageSelected = async ( image: IImages ) => {
         await UserProfileStore.setImages( image )
@@ -130,12 +167,13 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
         } )
     }
 
-    const onUserSelect = async ( item: ILocationsModel ) => {
-        await ObservationStore.setSelectedUser( item )
-        await ObservationStore.hideSearchableModal()
+    const onUserSelect = async ( item: ICompanyUserListmodel ) => {
+
+        await UserListByCompanyStore.setSelectedUser( item )
+        await UserListByCompanyStore.hideSearchableModal()
     }
 
-    const renderItem = ( { item }: {item: ILocationsModel } ) => {
+    const renderItem = ( { item }: {item: ICompanyUserListmodel } ) => {
         return (
             <TouchableBox onPress={()=>onUserSelect( item )}>
                 <ListItem containerStyle={STYLES.listItemContainerStyle}>
@@ -143,92 +181,175 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                         rounded size={32} 
                         icon={{ name: 'user', type: 'font-awesome' }} 
                         containerStyle={STYLES.iconContainerStyle} 
+                        source={{ uri:formattedbaseUrl }}
+                        // avatarStyle={STYLES.imageStyle}
                     />
                     <ListItem.Content>
-                        <ListItem.Title>{item.Value}</ListItem.Title>
+                        <ListItem.Title>{item.FullName}</ListItem.Title>
                     </ListItem.Content>
                     <ListItem.Chevron />
                 </ListItem>
             </TouchableBox>
         )
     }
+    
+
+
+    const loadAvtar= ()=>{
+        UserProfileStore.clearPath()
+        if( UserProfileStore.userData.PhotoPath ){
+            return(
+                <Avatar 
+                    size={'xlarge'}
+                    rounded
+                    //
+                    // source={{ uri:"https://demo.test832.com/WorkflowUpload/UserPhoto/bd8f8d80-e07e-4f40-823d-0bee91fb9b8c.jpg?fromMobileAPI=29482384" }}
+                    source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
+                    activeOpacity={0.7}  
+                >
+                    <TouchableBox
+                        style={STYLES.addImageIcon}
+                        onPress={addOrEditImage}
+                    >
+                        {
+                            isEmpty( UserProfileStore.userData.PhotoPath )
+                                ? <Icon name="add" size={25} color="#FFF" />
+                                : <Icon name="edit" size={25} color="#FFF" />
+                        }
+                    </TouchableBox>
+                </Avatar>
+            )
+
+        }else{
+            <Avatar 
+                size={'xlarge'}
+                rounded
+                titleStyle={STYLES.textWithShadow}
+                // // containerStyle={
+                // //     {
+                 
+                        
+                // //     }
+                // // }
+                // titleStyle={{  textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                //     textShadowOffset: { width: -1, height: 1 },
+                //     textShadowRadius: 10 }}
+                title="Sandip"
+                
+                // activeOpacity={0.7}  
+            >
+                <TouchableBox
+                    style={STYLES.addImageIcon}
+                    onPress={addOrEditImage}
+                >
+                    {
+                        isEmpty( UserProfileStore.userData.PhotoPath )
+                            ? <Icon name="add" size={25} color="#FFF" />
+                            : <Icon name="edit" size={25} color="#FFF" />
+                    }
+                </TouchableBox>
+            </Avatar>
+    
+
+        }
+    
+    }
+
+    const onSave = async ( ) => {
+        const fetchAllFilterData = useCallback( async () => {
+         
+            const payload = {
+                UserID: AuthStore?.user.UserID,
+                AccessToken: AuthStore?.token,
+                LastName:UserProfileStore.userData.LastName,
+                FirstName:UserProfileStore.userData.FirstName,
+                EmailAddress:UserProfileStore.userData.EmailAddress,
+                SupervisorID:UserProfileStore.userData.SupervisorID,
+                Phone:UserProfileStore.userData.Phone,
+                Address:UserProfileStore.userData.Address,
+                City:UserProfileStore.userData.City,
+                State:UserProfileStore.userData.State,
+                Zip:UserProfileStore.userData.Zip,
+                Country:UserProfileStore.userData.Country,
+            } as IuserProfileSavaPayload
+            await UserProfileStore.SaveUserProfile( payload )
+    
+        }, [] )
+    
+    }
+    const Oncancel = async ( ) => {
+        Alert.alert(
+            "Cancel Editable data",
+            "Are you sure?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null
+                },
+                {
+                    text: "Yes",
+                    onPress: async ( ) => {
+                        fetchData()
+                    }
+                }
+            ],
+        );
+        return true
+    }
+
 
     return (
-        <Box flex={1}>
+        <Box flex={.88}>
             <FormHeader 
                 title={"Profile"}
                 navigation={navigation}
             />
             <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
-                <Box height='15%' justifyContent={'center'} alignItems={'center'} my={'regular'}>
-                    {
-                        loading
-                            ? 
-                            <ActivityIndicator 
-                                color="red" 
-                                size="large" 
-                            />
-                            : 
-                            <Avatar 
-                                size={'xlarge'}
-                                rounded
-                                source={{ uri:imgUrl }}
-                                activeOpacity={0.7}                
-                            >
-                                <TouchableBox
-                                    style={STYLES.addImageIcon}
-                                    onPress={addOrEditImage}
-                                >
-                                    {
-                                        isEmpty( UserProfileStore.userData.PhotoPath )
-                                            ? <Icon name="add" size={25} color="#FFF" />
-                                            : <Icon name="edit" size={25} color="#FFF" />
-                                    }
-                                </TouchableBox>
-                            </Avatar>
-
-                    }
+                <Box height='15%' justifyContent={'center'} alignItems={'center'} my={'regular'}>{
+                    loadAvtar()
+                }
+                
                 </Box>
                 <Box mx="small">
-                    {/* <TextAreaInput 
-                        label={<LabelWithAsterisk label="User ID:" />}
-                        labelStyle={{ color: theme.colors.primary, fontSize: theme.textVariants.heading5?.fontSize  }}
-                        placeholder="Type Here"
-                        onChangeText={handleChange( "observation" )}
-                        onBlur={handleBlur( "observation" )}
-                        error={touched.observation && errors.observation}
-                    />  */}
-                    {/* <Image 
-                        source={{ uri: UserProfileStore.userData.PhotoPath }}
-                        style={STYLES.imageStyle}
-                        resizeMode="contain"
-                    />  */}
+                  
                     <AuditDetailsRow 
-                        title= "User ID: " 
+                        title= "User ID:" 
                         value={UserProfileStore.userData.LoginName} 
                     />
-                    <AuditDetailsRow
-                        title= "User Code: " 
-                        value={UserProfileStore.userData.UserCode} 
-                    />
+                  
+                    <Box my={'small'} mb={'small'}>
+                        <AuditDetailsRow 
+                            title= "Default Level:" 
+                            value={UserProfileStore.userData.LevelName} 
+                        />
+
+                    </Box>
+                    <Box my={'small'} mb={'small'}>
+                        <AuditDetailsRow 
+                            title= "Department :" 
+                            value={UserProfileStore.userData.DepartmentName} 
+                        />
+
+                    </Box>
                     <Box my={'regular'}>
                         {
-                            ObservationStore.showModal 
+                            UserListByCompanyStore.showModal 
                                 ? <SearchableList
-                                    data={ObservationStore.startobservation?.Locations}
+                                    data={UserListByCompanyStore.items}
                                     customRender={renderItem}
-                                    isModalVisible={ObservationStore.showModal}
-                                    closeModal={ObservationStore.hideSearchableModal}
+                                    isModalVisible={UserListByCompanyStore.showModal}
+                                    closeModal={UserListByCompanyStore.hideSearchableModal}
                                     onUserSelect={onUserSelect}
-                                    searchKey={"Value"}
-                                    key={"ID"}
+                                    searchKey={"FullName"}
+                                    key={"UserID"}
                                 /> 
                                 : <Box mx="medium">
                                     <Input 
-                                        label={<LabelWithAsterisk label="Where did the Observation occur" />}
+                                        label={<LabelWithAsterisk label="Area Manager:" />}
                                         placeholder="Click Here"
-                                        value={ObservationStore.selectedUser?.Value ?? ""}
-                                        onTouchStart={ObservationStore.displaySearchableModal}
+                                        value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.AreaManager}
+                                        onTouchStart={UserListByCompanyStore.displaySearchableModal}
+                                        editable={editabelflag}
                                     />
                                 </Box>
                         }
@@ -236,152 +357,102 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                             label="First name"
                             placeholder="First Name"
                             value={UserProfileStore.userData.FirstName}
-                        
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            // editable={editabelflag}
+                            onChangeText={ ( text )=>UserProfileStore.setFirstName( text ) }
+
+
                         />
 
                         <Input
                             label="Last name"
                             placeholder="Last Name"
                             value={UserProfileStore.userData.LastName}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text )=>UserProfileStore.setLastName( text ) }
+
                         />
                         <Input
                             label="Email Address:"
                             placeholder="Email Address"
                             value={UserProfileStore.userData.EmailAddress}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text )=>UserProfileStore.setEmailAddress( text ) }
+
                         />
                         <Input
                             label="Phone:"
                             placeholder="Phone"
                             value={UserProfileStore.userData.Phone}
-                            // value={values.username}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setPhone( text ) }
+
                         />
                     
-                        <Input
-                            label="Default Level:"
-                            placeholder="Default Level"
-                            value={UserProfileStore.userData.LevelName}
-                        // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
-                        />
-                        <Input
-                            label="Department:"
-                            placeholder="Department"
-                            value={UserProfileStore.userData.DepartmentName}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
-                        />
-                        {/* <Dropdown
-                        title="Inspection on behalf of"
-                        items={AuditStore.secondaryList}
-                        isRequired={true}
-                        value={AuditStore.currentSecondaryListID}
-                        onValueChange={( value )=>AuditStore.setCurrentSecondaryListID( value )}
-                    /> */}<Input 
+                        <Input 
                             label="Address"
                             placeholder="Address"
                             value={UserProfileStore.userData.Address}
-                
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setAddress( text ) }
+
                         />
                         <Input
                             label="City:"
                             placeholder="City"
                             value={UserProfileStore.userData.City}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setCity( text ) }
+
                         />
 
                         <Input
                             label="State:"
                             placeholder="State"
                             value={UserProfileStore.userData.State}
-                            // value={values.username}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setState( text ) }
+
                         />
+                        <Input
+                            label="Zip Code:"
+                            placeholder="Zip Code"
+                            defaultValue={UserProfileStore.userData.Zip}
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setZip( text ) }
+
+                        />
+
 
                         <Input
                             label="Country:"
                             placeholder="Country"
                             value={UserProfileStore.userData.Country}
-                            // value={values.username}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
-                        />
+                            editable={editabelflag}
+                            onChangeText={ ( text ) =>UserProfileStore.setZCountry( text ) }
 
-                        <Input
-                            label="Zip Code:"
-                            placeholder="Zip Code"
-                            value={UserProfileStore.userData.Zip}
-                            // value={values.username}
-                            // onChangeText={handleChange( "username" )}
-                            // onBlur={handleBlur( "username" )}
-                            // error={touched.username && errors.username}
+                        
                         />
+                    </Box>
+                  
+                </Box>
+                <Box flex={0.12}>
+                    <Box flexDirection="row">
+                        <Box width={"50%"}>
+                            <Button
+                                title="Save"
+                                onPress={onSave}
+                            />
+                        </Box>
+                        <Box width="50%">
+                            <Button 
+                                title="Close"
+                                onPress={Oncancel}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
 
                
-                   
-
-
-                        {/* <Box mx="negative8">
-                        <Dropdown
-                            title="Base URL"
-                            items={BUILD_BASE_URL}
-                            value={AuthStore.baseUrl}
-                            onValueChange={( value )=>AuthStore.setBaseUrl( value )}
-                        />
-                        <Box
-                 */}
-                
-                        {/* <SecureInput
-                    label="Password"
-                    placeholder="Password"
-                    // value={values.password}
-                    // onChangeText={handleChange( "password" )}
-                    // onBlur={handleBlur( "password" )}
-                    // error={touched.password && errors.password}
-                /> */
-                        }
-                        {/* <Box mx="negative8">
-                    <Dropdown
-                        title="Base URL"
-                        items={BUILD_BASE_URL}
-                        value={AuthStore.baseUrl}
-                        onValueChange={( value ) => AuthStore.setBaseUrl( value )}
-                    />
-                </Box> */}
-                    </Box>
-                    {/* <Box mt="medium">
-                <Button
-                    title="Submit"
-                    onPress={}
-                    // disabled={!isValid || isValidating || isSubmitting}
-                    // loading={isValidating || isSubmitting}
-                />
-            </Box> */}
-                </Box>
-                <Box flex={1} justifyContent="center" >
-                    <Text variant="body" pl="medium" color="primary">Logout</Text>
-                </Box>
             </ScrollView>
             {
                 keyboard.keyboardShown
@@ -389,7 +460,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                     />
                     : null
             }
-
+           
         </Box>
     )
 }

@@ -36,7 +36,6 @@ const imageUpload = async ( props ) => {
         .then( ( res ) => {
             console.tron.log( 'res is ',res )
             const parsedJson = JSON.parse( res )
-            console.tron.log( 'parsed JSON is ',parsedJson )
             Toast.showWithGravity( parsedJson?.Message, Toast.LONG, Toast.CENTER );
             return res;
         } )

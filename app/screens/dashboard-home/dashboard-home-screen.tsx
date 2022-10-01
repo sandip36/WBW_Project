@@ -60,17 +60,21 @@ const styles = StyleSheet.create( {
 } )
 
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
-    const { DashboardStore, AuthStore, ObservationStore, AuditStore,MediaStore } = useStores()
+    const { DashboardStore, AuthStore, ObservationStore, AuditStore,MediaStore ,UserListByCompanyStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
     const navigation = useNavigation()
     const [ infoVersion,setInfoVersion ]= useState<any>( {} )
 
 
     const fetchDashboard = useCallback( async () => {
-        await DashboardStore._clear()
-        await ObservationStore._clear()
+        // await UserListByCompanyStore.resetSelectedUser()
+        await  UserListByCompanyStore.clearStore()
+        await DashboardStore.clearStore()
+        await ObservationStore.clearStore()
+        await MediaStore.clearStore()
+        // await ObservationStore._clear()
         await AuditStore.resetStore()
-        await MediaStore._clear()
+        // await MediaStore._clear()
         await DashboardStore.fetch()
     //     const version = await checkVersion();
     //     setInfoVersion( version )
@@ -110,22 +114,22 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     }
 
     const onRightIconPress = ( ) => {
-        navigation.navigate( 'UserProfile' )
-        // Alert.alert(
-        //     "Logout?",
-        //     "Are you sure you want to logout?",
-        //     [
-        //         {
-        //             text: "No",
-        //             onPress: () => null
-        //         },
-        //         {
-        //             text: "Yes",
-        //             onPress: ( ) => AuthStore.logout()
-        //         }
-        //     ],
-        // );
-        // return true
+       
+        Alert.alert(
+            "Logout?",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "No",
+                    onPress: () => null
+                },
+                {
+                    text: "Yes",
+                    onPress: ( ) => AuthStore.logout()
+                }
+            ],
+        );
+        return true
     }
 
     const onLeftIconPress = ( ) => {

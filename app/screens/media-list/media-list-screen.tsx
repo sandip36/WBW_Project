@@ -44,8 +44,11 @@ const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, listT
 
 export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( ) => {
     const navigation = useNavigation()
-    const { MediaStore } = useStores()
+    const { MediaStore,AuthStore } = useStores()
     const STYLES = useStyles()
+
+    let formattedbaseUrl = AuthStore.environment.api.apisauce.getBaseURL()
+    formattedbaseUrl = formattedbaseUrl.replace( "/MobileAPI/api", "" )
 
     useFocusEffect(
         React.useCallback( () => {
@@ -120,7 +123,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                             {
                                                 isEmpty( item.ImagePath ) && !isEmpty( item.VideoPath ) ?
                                                     <Video 
-                                                        source={{ uri: item.VideoPath }}
+                                                        source={{ uri:`${formattedbaseUrl}${item.VideoPath}` }}
                                                         style={STYLES.videoStyle}
                                                         controls ={true}
                                                         paused ={
@@ -132,7 +135,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                                     /> 
                                                     : !isEmpty( item.ImagePath ) && isEmpty( item.VideoPath ) ?
                                                         <Image 
-                                                            source={{ uri: item.ImagePath }}
+                                                            source={{ uri:`${formattedbaseUrl}${item.ImagePath}` }}
                                                             style={STYLES.imageStyle}
                                                             resizeMode="contain"
                                                         /> 
@@ -179,7 +182,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
 
                                 {
                                     item.IsDisplayCompleted === "True" ?
-                                        <Box flex={1} mb="regular" alignItems="center" flexDirection="row">
+                                        <Box flex={1} mb="regular" alignItems="center" flexDirection="row" my={'regular'}>
                                             <Box flex={0.6}>
                                                 <Text variant="heading4" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
                                             </Box>
@@ -247,7 +250,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
             <Async.Resolved>
                 <Box flex={1}>
                     <FormHeader 
-                        title="Media"
+                        title="Bulletine"
                         navigation={navigation}
                     />
                     <Box flex={1}>

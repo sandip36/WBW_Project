@@ -354,6 +354,12 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const sethazardsId = flow( function * ( id: string ) {
             self.hazards = id
         } )
+
+
+        const clearStore = flow( function * ( ) {
+            self.items  = [] as any
+        } )
+
         
         
 
@@ -388,7 +394,8 @@ export const ObservationStore = createModelCollection( ObservationModel )
             setSectionId,
             setTopicId,
             setActOrConditionId,
-            sethazardsId
+            sethazardsId,
+            clearStore
 
         }
     } )

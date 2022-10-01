@@ -235,3 +235,21 @@ export interface IuserProfilePayload{
     UserID: string,
     AccessToken: string,
 }
+
+
+// save the profile data
+export interface IuserProfileSavaPayload{
+    UserID: string,
+    AccessToken: string,
+    LastName:string,
+    FirstName:string,
+    EmailAddress:string,
+    SupervisorID:string,
+    Phone:string,
+    Address:string,
+    City:string,
+    State:string,
+    Zip:string,
+    Country:string,
+
+}

@@ -54,8 +54,13 @@ export const DashboardStore = createModelCollection( DashboardModel )
             self.currentDashboardId = id
         } )
 
+        const clearStore = flow( function * ( ) {
+            self.items  = [] as any
+        } )
+
         return {
             fetch,
+            clearStore,
             beforeCreate ( ) {
                 self.environment.api.setBaseUrl( rootStore.AuthStore.baseUrl )
             },

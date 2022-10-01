@@ -73,7 +73,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         titleStyle
     } = props
     const navigation = useNavigation()
-    const { DashboardStore, AuthStore } = useStores()
+    const { DashboardStore, AuthStore,UserProfileStore } = useStores()
     const STYLES = useStyles()
 
     const openInAppBrowser = async ( link ) => {
@@ -96,16 +96,23 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
 
     const onDashboardPress = async ( ) => {
         await DashboardStore.setCurrentDashboardId( dashboard?.HomePageOrder )
-
-        // navigation.navigate( 'MediaList' )
         if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
             openInAppBrowser( dashboard.Link )
-            // const formattedUrl = `${dashboard?.Link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
-            // navigation.navigate( 'WebView', {
-            //     url: formattedUrl,
-            //     tital:dashboard.Title
+        }else if( dashboard?.Category === "Profile" ) {
+            await UserProfileStore.clearStore()
 
-            // } )
+            navigation.navigate( 'UserProfile' )
+        }else if( dashboard?.Category === "Webview" ) {
+            const formattedUrl = `${dashboard?.Link}&U=${AuthStore.user.UserID}&T=${AuthStore.token}`
+            navigation.navigate( 'WebView', {
+                url: formattedUrl,
+                tital:dashboard.Title
+
+            } )
+        }else
+
+        if( dashboard?.Category === "Bulletins" ) {
+            navigation.navigate( 'MediaList' )
         }else if( dashboard?.LinkType === "WebsiteLink" && isEmpty( dashboard?.Link ) ) {
             Alert.alert( "Error", "Invalid dashboard link" )
         }

@@ -81,6 +81,13 @@ export const MediaStore = createModelCollection( MediaModel )
                 return null
             }
         } )
+
+        const clearStore = flow( function * ( ) {
+            self.items  = [] as any
+            self.pageNumber= "1"
+        } )
+
+        
         // const readMessageFlag = flow( function * ( ) {
         //     try {
                
@@ -89,7 +96,8 @@ export const MediaStore = createModelCollection( MediaModel )
         return {
             fetch,
             fetchNextMedia,
-            readMessageFlag
+            readMessageFlag,
+            clearStore
         }
     } )
 
