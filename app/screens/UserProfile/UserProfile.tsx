@@ -15,6 +15,7 @@ import { LabelWithAsterisk } from "screens/observation";
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row";
 import { Avatar, Icon, ListItem } from "react-native-elements";
 import { isEmpty } from "lodash";
+import { observer } from "mobx-react-lite";
 
 
 
@@ -94,7 +95,7 @@ const useStyles = makeStyles<{
     }
 } ) )
 
-export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( props ) => {
+export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = observer( ( props ) => {
     const route = useRoute()
     const { UserProfileStore,AuthStore, ObservationStore ,UserListByCompanyStore } = useStores()  
     const navigation = useNavigation()
@@ -122,13 +123,12 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
         fetchData()
         // make sure to catch any error
             .catch( console.error );
-    }, [ ] )
+    }, [] )
 
     const fetchData = async () => {
-        await UserListByCompanyStore.clearStore()
-        await UserListByCompanyStore.hideSearchableModal()
-
+        await UserListByCompanyStore.clearStore()  
         await UserListByCompanyStore.fetch()
+        await UserListByCompanyStore.hideSearchableModal()
     }
    
 
@@ -196,7 +196,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
 
 
     const loadAvtar= ()=>{
-        UserProfileStore.clearPath()
+        console.tron.log( "avatar ",`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` )
         if( UserProfileStore.userData.PhotoPath ){
             return(
                 <Avatar 
@@ -204,7 +204,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                     rounded
                     //
                     // source={{ uri:"https://demo.test832.com/WorkflowUpload/UserPhoto/bd8f8d80-e07e-4f40-823d-0bee91fb9b8c.jpg?fromMobileAPI=29482384" }}
-                    source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
+                    source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.latestPhotoPath}` }}
                     activeOpacity={0.7}  
                 >
                     <TouchableBox
@@ -221,35 +221,30 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
             )
 
         }else{
-            <Avatar 
-                size={'xlarge'}
-                rounded
-                titleStyle={STYLES.textWithShadow}
-                // // containerStyle={
-                // //     {
-                 
-                        
-                // //     }
-                // // }
-                // titleStyle={{  textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                //     textShadowOffset: { width: -1, height: 1 },
-                //     textShadowRadius: 10 }}
-                title="Sandip"
+            console.tron.log( "Inside else" )
+            return(
+                <Avatar 
+                    size={'xlarge'}
+                    rounded
+                    titleStyle={STYLES.textWithShadow}
+                    title="Sandip"
                 
                 // activeOpacity={0.7}  
-            >
-                <TouchableBox
-                    style={STYLES.addImageIcon}
-                    onPress={addOrEditImage}
                 >
-                    {
-                        isEmpty( UserProfileStore.userData.PhotoPath )
-                            ? <Icon name="add" size={25} color="#FFF" />
-                            : <Icon name="edit" size={25} color="#FFF" />
-                    }
-                </TouchableBox>
-            </Avatar>
+                    <TouchableBox
+                        style={STYLES.addImageIcon}
+                        onPress={addOrEditImage}
+                    >
+                        {
+                            isEmpty( UserProfileStore.userData.PhotoPath )
+                                ? <Icon name="add" size={25} color="#FFF" />
+                                : <Icon name="edit" size={25} color="#FFF" />
+                        }
+                    </TouchableBox>
+                </Avatar>
     
+            )
+            
 
         }
     
@@ -347,7 +342,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                                     <Input 
                                         label={<LabelWithAsterisk label="Area Manager:" />}
                                         placeholder="Click Here"
-                                        value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.AreaManager}
+                                        value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.Supervisor}
                                         onTouchStart={UserListByCompanyStore.displaySearchableModal}
                                         editable={editabelflag}
                                     />
@@ -463,4 +458,4 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
            
         </Box>
     )
-}
+} )

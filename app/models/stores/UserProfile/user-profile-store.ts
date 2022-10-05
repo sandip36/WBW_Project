@@ -148,12 +148,14 @@ export const UserProfileStore = types
                     url: url
                 } )
                     .then( ( successResponse ) => {
-                        console.tron.log( 'response is ',JSON.stringify( successResponse ) )
                         if( isEmpty( successResponse ) ) {
                             return null
-                        } 
+                        }
+                        console.tron.log("success",successResponse) 
                         const parsedJson = JSON.parse( successResponse )
-                        self.userData.PhotoPath = parsedJson.PhotoPath
+                        console.tron.log("parsed",parsedJson)
+                        self.userData?.setphotoPath( parsedJson?.PhotoPath )
+                        console.tron.log("photo",self.userData.PhotoPath)
                     } )
                     .catch( error => {
                         console.tron.log( 'error in user profile store ',error )

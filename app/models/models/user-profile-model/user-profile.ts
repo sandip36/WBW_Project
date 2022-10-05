@@ -33,7 +33,9 @@ export const UserProfileModel = createModel( {
 } )
     .named( 'UserProfileModel' )
     .views( self => ( {
-        
+        get latestPhotoPath () {
+            return self.PhotoPath
+        }
     } ) )
     .actions( self => {
         const updateFirstName = flow( function * ( firstName:string ) {
@@ -42,11 +44,14 @@ export const UserProfileModel = createModel( {
         const updateLastName = flow( function * ( lastName:string ) {
             self.LastName = lastName
         } )
+        const setphotoPath = flow( function * ( path:string ) {
+            self.PhotoPath = path
+        } )
 
         return {
             updateFirstName,
-            updateLastName
-            
+            updateLastName,
+            setphotoPath
         }
     } )
 
