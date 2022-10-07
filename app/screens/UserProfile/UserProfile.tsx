@@ -3,7 +3,7 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/core"
 import React, { useCallback, useEffect, useState } from "react"
 import { Alert, BackHandler, Image, ImageStyle, Platform, ScrollView, StyleProp, ViewStyle } from "react-native"
-import { makeStyles} from "theme"
+import { makeStyles } from "theme"
 import { StackActions, useRoute } from "@react-navigation/native";
 import { FormHeader } from "components/core/header/form-header";
 import { Box, Button, Input, SearchableList,TouchableBox } from "components";
@@ -247,7 +247,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                         {
                             isEmpty( UserProfileStore.userData.PhotoPath )
                                 ? <Icon name="add" size={25} color="#FFF" />
-                                : <Icon name="camera" size={25} color="#FFF" />
+                                : <Icon name= 'camera' type= 'font-awesome' size={25} color="#FFF" />
                         }
                     </TouchableBox>
                 </Avatar>
@@ -288,7 +288,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                         {
                             isEmpty( UserProfileStore.userData.PhotoPath )
                                 ? <Icon name="add" size={25} color="#FFF" />
-                                : <Icon name="camera" size={25} color="#FFF" />
+                                : <Icon name= 'camera' type= 'font-awesome' size={25} color="#FFF" />
                         }
                     </TouchableBox>
                 </Avatar>
