@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash"
 import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { createModel } from '../../factories/model.factory'
 import { ImagesModel } from "../audit-model"
@@ -33,6 +34,11 @@ export const UserProfileModel = createModel( {
 } )
     .named( 'UserProfileModel' )
     .views( self => ( {
+        get initials ( ) {
+            const firstInitial = !isEmpty( self?.FirstName ) ? self.FirstName.charAt( 0 ).toUpperCase() :  ""
+            const secondInitial = !isEmpty( self?.LastName ) ? self.LastName.charAt( 0 ).toUpperCase() : ""
+            return `${firstInitial}${secondInitial}`
+        },
         
     } ) )
     .actions( self => {
@@ -42,15 +48,31 @@ export const UserProfileModel = createModel( {
         const updateLastName = flow( function * ( lastName:string ) {
             self.LastName = lastName
         } )
+        const setEmailAddress = flow( function * ( value: string  ) {
+            self.EmailAddress = value
+        } )
+        const setPhotoPath = flow( function * ( value: string  ) {
+            self.PhotoPath = value
+        } )
 
         return {
             updateFirstName,
-            updateLastName
+            updateLastName,
+            setEmailAddress,
+            setPhotoPath
             
         }
     } )
 
-type UserProfileType = Instance<typeof UserProfileModel>
-export interface IUserProfile extends UserProfileType {}
-type UserProfileSnapshotType = SnapshotOut<typeof UserProfileModel>
-export interface IUserProfileSnapshot extends UserProfileSnapshotType {}
+// type UserProfileType = Instance<typeof UserProfileModel>
+// export interface IUserProfile extends UserProfileType {}
+// type UserProfileSnapshotType = SnapshotOut<typeof UserProfileModel>
+// export interface IUserProfileSnapshot extends UserProfileSnapshotType {}
+
+// export type UserProfileModelType = Instance<typeof UserProfileModel>
+// export interface IUserProfileModel extends UserProfileModelType {}
+// type UserProfileModelSnapshotType = SnapshotOut<typeof UserProfileModel>
+// export interface IUserProfileModelSnapshotType extends UserProfileModelSnapshotType {}
+
+
+export type UserProfileType = Instance<typeof UserProfileModel>

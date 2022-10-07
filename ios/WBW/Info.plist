@@ -27,11 +27,11 @@
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
-	<string></string>
+	<string/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array/>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -50,7 +50,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) Can use camera to take photo.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME)Can use microphone to recored audio.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

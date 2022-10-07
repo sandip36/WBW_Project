@@ -48,6 +48,7 @@ export const UserListByCompanyStore = createModelCollection( UserListByCompanymo
 
         const clearStore = flow( function * ( ) {
             self.items  = [] as any
+            self.selectedUser= {} as any
         } )
 
         const hideSearchableModal = flow( function * ( ) {

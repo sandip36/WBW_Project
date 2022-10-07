@@ -187,7 +187,7 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                                                 <Text variant="heading4" textAlign="auto" lineHeight={20}  fontWeight="700" color="primary">{item?.Message1}</Text>
                                             </Box>
                                             <Box flex={0.05}/> 
-                                            <Box flex={0.3}>
+                                            <Box flex={0.4}>
                                                 {
                                                     item.Message1IsRead === "True"
                                                         ? 

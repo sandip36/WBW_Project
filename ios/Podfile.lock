@@ -434,7 +434,7 @@ PODS:
     - React
   - RNScreens (2.18.1):
     - React-Core
-  - RNVectorIcons (8.1.0):
+  - RNVectorIcons (9.2.0):
     - React-Core
   - SDWebImage (5.13.2):
     - SDWebImage/Core (= 5.13.2)
@@ -776,7 +776,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
-  RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
+  RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SDWebImage: 72f86271a6f3139cc7e4a89220946489d4b9a866
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
@@ -796,6 +796,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4c60b43eaf3cb05a164bc9113258a171c18b7bf7
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: ea136852d2d117ef02d0c372afedfc65bbe3d355
+PODFILE CHECKSUM: 5a8631ab91cbba8daad5c97271cd1a88208853b7
 
 COCOAPODS: 1.11.3

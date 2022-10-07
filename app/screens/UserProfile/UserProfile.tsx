@@ -1,21 +1,20 @@
 
 
 import { useFocusEffect, useNavigation } from "@react-navigation/core"
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import { ActivityIndicator, Alert, BackHandler, Button, Image, ImageStyle, Platform, ScrollView, StyleProp, View, ViewStyle } from "react-native"
-import { makeStyles, theme } from "theme"
-import { useRoute } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react"
+import { Alert, BackHandler, Image, ImageStyle, Platform, ScrollView, StyleProp, ViewStyle } from "react-native"
+import { makeStyles} from "theme"
+import { StackActions, useRoute } from "@react-navigation/native";
 import { FormHeader } from "components/core/header/form-header";
-import { Box, Input, SearchableList, SecureInput, Text, TextAreaInput, TouchableBox } from "components";
-import { Dropdown } from "components/core/dropdown";
-import { IImages, ICompanyUserListmodel, useStores } from "models";
+import { Box, Button, Input, SearchableList,TouchableBox } from "components";
+import { IImages, useStores } from "models";
 import { IuserProfilePayload, IuserProfileSavaPayload } from "services/api";
 import { useKeyboard } from "@react-native-community/hooks"
-import { LabelWithAsterisk } from "screens/observation";
 import { AuditDetailsRow } from "components/audit-detail-row/audit-details-row";
 import { Avatar, Icon, ListItem } from "react-native-elements";
 import { isEmpty } from "lodash";
-
+import { observer } from "mobx-react-lite";
+import { ICompanyUserListmodel } from "models/models/user-list-by-company-model/user-list-by-comany-model";
 
 
 
@@ -28,15 +27,10 @@ export type UserProfileScreenProps = {
 export type UserProfileStyleProps = {
     imageStyle: StyleProp<ImageStyle>,
   containerStyle: StyleProp<ViewStyle>
-  avatarContainerStyle: StyleProp<ViewStyle>
 
 }
 
 const useStyles = makeStyles<{
-    textWithShadow: StyleProp<ViewStyle>;
-    avatarContainerStyle: StyleProp<ViewStyle>;
-   // profileImgContainer: StyleProp<ViewStyle>;
-  //  profileImg: StyleProp<ViewStyle>;
     keyboardStyle: StyleProp<ViewStyle>;imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>, addImageIcon: StyleProp<ViewStyle>,listItemContainerStyle: StyleProp<ViewStyle>, iconContainerStyle: StyleProp<ViewStyle>
 }>( ( theme ) => ( {
    
@@ -80,29 +74,20 @@ const useStyles = makeStyles<{
     }, avatarContainerStyle: {
         backgroundColor: theme.colors.primary
     }, imageStyle: {
-        width: 150,
-        height: 150,
-        borderRadius: theme.borderRadii.medium,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    textWithShadow:{
-        textShadowColor: 'rgba(0, 0, 0, 0.75)',
-        textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10
+        width: 160,
+        height: 160,
+        borderRadius:80
     }
+   
 } ) )
 
-export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( props ) => {
+export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = observer( ( props ) => {
     const route = useRoute()
-    const { UserProfileStore,AuthStore, ObservationStore ,UserListByCompanyStore } = useStores()  
+    const { UserProfileStore,AuthStore ,UserListByCompanyStore } = useStores()  
     const navigation = useNavigation()
     const STYLES = useStyles()
     const keyboard = useKeyboard()
-    const [ imgUrl, setImgUrl ] = useState( '' )
     const [ loading, setLoading ] = useState( false )
-    const [ editabelflag, setEditableFlag ] = useState( true )
     const [ loadingForSave, setLoadingForSave ] = useState( false  )
 
 
@@ -111,20 +96,31 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
 
 
 
-    useFocusEffect(
-        React.useCallback( () => {
-            fetchUserProfile()
+    // useFocusEffect(
+    //     React.useCallback( () => {
            
-        }, [] )
-    );
+    //     }, [] )
+    // );
 
-    useEffect( ( ) => {      
-        fetchData()
+    useEffect( () => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            _handleBackPress
+        );
+        return () => backHandler.remove();
+    }, [] )
+
+    useEffect( ( ) => {  
+        
+        fetchUserProfile()
+
+        fetchUserlistByCompany()
         // make sure to catch any error
             .catch( console.error );
     }, [ ] )
 
-    const fetchData = async () => {
+    const fetchUserlistByCompany = async () => {
+        //  await UserProfileStore.toggleEdit( true )
         await UserListByCompanyStore.clearStore()
         await UserListByCompanyStore.hideSearchableModal()
 
@@ -133,28 +129,66 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
    
 
     const fetchUserProfile = useCallback( async () => {
-        setEditableFlag( true )
-        // await UserProfileStore._clear()
+        await UserProfileStore.clearStore ()
         const payload = {
             UserID: AuthStore?.user.UserID,
             AccessToken: AuthStore?.token,
         } as IuserProfilePayload
         await UserProfileStore.fetch( payload )
-        await fetchUserProfileImg()
+        await UserProfileStore.warnmessage( false )
     }, [] )
 
-    const fetchUserProfileImg =()=>{
-        if( isEmpty( UserProfileStore.userData.PhotoPath ) ){
-            setImgUrl( '' )
-            setLoading( false )
-        }else{
-            let formattedUrl = `${AuthStore.environment.api.apisauce.getBaseURL()}${UserProfileStore.userData.PhotoPath}`
-            formattedUrl = formattedUrl.replace( "/MobileAPI/api", "" )
-            setImgUrl( formattedUrl )
-            setLoading( false )
+    const _handleBackPress = ( ) => {
+       
+        if( UserProfileStore.isShowWarningEdit ){
+            Alert.alert(
+                "Discard changes?",
+                "Are you sure you want to discard the changes?",
+                [
+                    {
+                        text: "No",
+                        onPress: () => null
+                    },
+                    {
+                        text: "Yes",
+                        onPress: ()=>{
+                            UserProfileStore.warnmessage( false )
+                            navigation.dispatch( StackActions.pop( ) )
+
+                        }
+                    }
+                ],
+            );
+            return true
+
         }
-        
+       
+        navigation.dispatch( StackActions.pop( ) );
     }
+
+    const oncancel = async ( ) => {
+        Alert.alert(
+            "Discard changes?",
+            "Are you sure you want to discard the changes?",
+            [
+                {
+                    text: "No",
+                    onPress: async () =>null
+                },
+                {
+                    text: "Yes",
+                    onPress: async ( ) => {
+                        await UserListByCompanyStore.clearStore()
+                        fetchUserProfile()
+                      
+
+                    }
+                }
+            ],
+        );
+        return true
+    }
+
 
     const onImageSelected = async ( image: IImages ) => {
         await UserProfileStore.setImages( image )
@@ -170,6 +204,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
     const onUserSelect = async ( item: ICompanyUserListmodel ) => {
 
         await UserListByCompanyStore.setSelectedUser( item )
+        await UserProfileStore.setSupervisorID( item?.UserID )
         await UserListByCompanyStore.hideSearchableModal()
     }
 
@@ -196,16 +231,13 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
 
 
     const loadAvtar= ()=>{
-        UserProfileStore.clearPath()
         if( UserProfileStore.userData.PhotoPath ){
+            // console.log( "${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}",`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` )
             return(
                 <Avatar 
                     size={'xlarge'}
                     rounded
-                    //
-                    // source={{ uri:"https://demo.test832.com/WorkflowUpload/UserPhoto/bd8f8d80-e07e-4f40-823d-0bee91fb9b8c.jpg?fromMobileAPI=29482384" }}
                     source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
-                    activeOpacity={0.7}  
                 >
                     <TouchableBox
                         style={STYLES.addImageIcon}
@@ -214,50 +246,64 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                         {
                             isEmpty( UserProfileStore.userData.PhotoPath )
                                 ? <Icon name="add" size={25} color="#FFF" />
-                                : <Icon name="edit" size={25} color="#FFF" />
+                                : <Icon name="camera" size={25} color="#FFF" />
+                        }
+                    </TouchableBox>
+                </Avatar>
+            )
+    
+            // <Box width={160} height={160} style={{ borderRadius:80 }}>
+            //     <Image
+
+            //         source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
+            //         resizeMode="contain"
+
+            //         style={ STYLES.imageStyle
+            //         }
+            //     />
+            //     <TouchableBox
+            //         style={STYLES.imageStyle}
+            //         onPress={addOrEditImage}
+            //     >
+            //         {
+            //             isEmpty( UserProfileStore.userData.PhotoPath )
+            //                 ? <Icon name="add" size={50} color="#FFF" />
+            //                 : <Icon name="camera" size={50} color="#FFF" />
+            //         }
+            //     </TouchableBox>
+
+            // </Box>
+        }else{
+            return(
+                <Avatar 
+                    size={'xlarge'}
+                    rounded
+                    title= {UserProfileStore.userData.initials}
+                >
+                    <TouchableBox
+                        style={STYLES.addImageIcon}
+                        onPress={addOrEditImage}
+                    >
+                        {
+                            isEmpty( UserProfileStore.userData.PhotoPath )
+                                ? <Icon name="add" size={25} color="#FFF" />
+                                : <Icon name="camera" size={25} color="#FFF" />
                         }
                     </TouchableBox>
                 </Avatar>
             )
 
-        }else{
-            <Avatar 
-                size={'xlarge'}
-                rounded
-                titleStyle={STYLES.textWithShadow}
-                // // containerStyle={
-                // //     {
-                 
-                        
-                // //     }
-                // // }
-                // titleStyle={{  textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                //     textShadowOffset: { width: -1, height: 1 },
-                //     textShadowRadius: 10 }}
-                title="Sandip"
-                
-                // activeOpacity={0.7}  
-            >
-                <TouchableBox
-                    style={STYLES.addImageIcon}
-                    onPress={addOrEditImage}
-                >
-                    {
-                        isEmpty( UserProfileStore.userData.PhotoPath )
-                            ? <Icon name="add" size={25} color="#FFF" />
-                            : <Icon name="edit" size={25} color="#FFF" />
-                    }
-                </TouchableBox>
-            </Avatar>
-    
-
         }
     
     }
+    
+    const expression = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
     const onSave = async ( ) => {
-        const fetchAllFilterData = useCallback( async () => {
-         
+        setLoadingForSave( true )
+
+        if( expression.test( UserProfileStore.userData.EmailAddress ) )
+        {
             const payload = {
                 UserID: AuthStore?.user.UserID,
                 AccessToken: AuthStore?.token,
@@ -271,196 +317,202 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = ( pr
                 State:UserProfileStore.userData.State,
                 Zip:UserProfileStore.userData.Zip,
                 Country:UserProfileStore.userData.Country,
+                AreaManagerID :UserProfileStore.userData.AreaManagerID
+
             } as IuserProfileSavaPayload
+
             await UserProfileStore.SaveUserProfile( payload )
-    
-        }, [] )
-    
-    }
-    const Oncancel = async ( ) => {
-        Alert.alert(
-            "Cancel Editable data",
-            "Are you sure?",
-            [
-                {
-                    text: "No",
-                    onPress: () => null
-                },
-                {
-                    text: "Yes",
-                    onPress: async ( ) => {
-                        fetchData()
-                    }
-                }
-            ],
-        );
-        return true
-    }
+            setLoadingForSave( false )
+        }else{
+            Alert.alert( "Email","Please enter correct email" )
+            setLoadingForSave( false )
 
 
+        }
+    
+    }
+  
     return (
-        <Box flex={.88}>
+        <Box flex={1}>
             <FormHeader 
                 title={"Profile"}
                 navigation={navigation}
+                customBackHandler={_handleBackPress}
+
             />
-            <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
-                <Box height='15%' justifyContent={'center'} alignItems={'center'} my={'regular'}>{
-                    loadAvtar()
-                }
-                
-                </Box>
-                <Box mx="small">
-                  
-                    <AuditDetailsRow 
-                        title= "User ID:" 
-                        value={UserProfileStore.userData.LoginName} 
-                    />
-                  
-                    <Box my={'small'} mb={'small'}>
-                        <AuditDetailsRow 
-                            title= "Default Level:" 
-                            value={UserProfileStore.userData.LevelName} 
-                        />
+            <Box flex={ UserProfileStore.isEditable?  0.93 :1}>
 
-                    </Box>
-                    <Box my={'small'} mb={'small'}>
-                        <AuditDetailsRow 
-                            title= "Department :" 
-                            value={UserProfileStore.userData.DepartmentName} 
-                        />
-
-                    </Box>
-                    <Box my={'regular'}>
-                        {
-                            UserListByCompanyStore.showModal 
-                                ? <SearchableList
-                                    data={UserListByCompanyStore.items}
-                                    customRender={renderItem}
-                                    isModalVisible={UserListByCompanyStore.showModal}
-                                    closeModal={UserListByCompanyStore.hideSearchableModal}
-                                    onUserSelect={onUserSelect}
-                                    searchKey={"FullName"}
-                                    key={"UserID"}
-                                /> 
-                                : <Box mx="medium">
-                                    <Input 
-                                        label={<LabelWithAsterisk label="Area Manager:" />}
-                                        placeholder="Click Here"
-                                        value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.AreaManager}
-                                        onTouchStart={UserListByCompanyStore.displaySearchableModal}
-                                        editable={editabelflag}
-                                    />
-                                </Box>
+           
+                <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
+                  
+                    <Box height='15%' justifyContent={'center'} alignItems={'center'} my={'regular'} flexDirection={"row"} >
+                       
+                        <Box  my={'negative16'} >{
+                            loadAvtar() 
                         }
-                        <Input 
-                            label="First name"
-                            placeholder="First Name"
-                            value={UserProfileStore.userData.FirstName}
-                            // editable={editabelflag}
-                            onChangeText={ ( text )=>UserProfileStore.setFirstName( text ) }
+                        </Box>
+                      
+                    </Box>
 
-
+                    <Box mx="small">
+                  
+                        <AuditDetailsRow 
+                            title= "User ID:" 
+                            value={UserProfileStore.userData.LoginName} 
                         />
+                  
+                        <Box my={'small'} mb={'small'}>
+                            <AuditDetailsRow 
+                                title= "Default Level:" 
+                                value={UserProfileStore.userData.LevelName} 
+                            />
 
-                        <Input
-                            label="Last name"
-                            placeholder="Last Name"
-                            value={UserProfileStore.userData.LastName}
-                            editable={editabelflag}
-                            onChangeText={ ( text )=>UserProfileStore.setLastName( text ) }
+                        </Box>
+                        <Box my={'small'} mb={'small'}>
+                            <AuditDetailsRow 
+                                title= "Department :" 
+                                value={UserProfileStore.userData.DepartmentName} 
+                            />
 
-                        />
-                        <Input
-                            label="Email Address:"
-                            placeholder="Email Address"
-                            value={UserProfileStore.userData.EmailAddress}
-                            editable={editabelflag}
-                            onChangeText={ ( text )=>UserProfileStore.setEmailAddress( text ) }
-
-                        />
-                        <Input
-                            label="Phone:"
-                            placeholder="Phone"
-                            value={UserProfileStore.userData.Phone}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setPhone( text ) }
-
-                        />
-                    
-                        <Input 
-                            label="Address"
-                            placeholder="Address"
-                            value={UserProfileStore.userData.Address}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setAddress( text ) }
-
-                        />
-                        <Input
-                            label="City:"
-                            placeholder="City"
-                            value={UserProfileStore.userData.City}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setCity( text ) }
-
-                        />
-
-                        <Input
-                            label="State:"
-                            placeholder="State"
-                            value={UserProfileStore.userData.State}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setState( text ) }
-
-                        />
-                        <Input
-                            label="Zip Code:"
-                            placeholder="Zip Code"
-                            defaultValue={UserProfileStore.userData.Zip}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setZip( text ) }
-
-                        />
+                        </Box>
+                        <Box my={'regular'}>
+                       
+                            <Input 
+                                label="First name"
+                                placeholder="First Name"
+                                value={UserProfileStore.userData.FirstName}
+                                editable={UserProfileStore.isEditable}
+                                onChangeText={ ( text )=>UserProfileStore.setFirstName( text ) }
 
 
-                        <Input
-                            label="Country:"
-                            placeholder="Country"
-                            value={UserProfileStore.userData.Country}
-                            editable={editabelflag}
-                            onChangeText={ ( text ) =>UserProfileStore.setZCountry( text ) }
+                            />
+
+                            <Input
+                                label="Last name"
+                                placeholder="Last Name"
+                                value={UserProfileStore.userData.LastName}
+                                editable={UserProfileStore.isEditable}
+                                onChangeText={ ( text )=>UserProfileStore.setLastName( text ) }
+
+                            />
+                            <Input
+                                label="Email Address:"
+                                placeholder="Email Address"
+                                value={UserProfileStore.userData.EmailAddress}
+                                editable={UserProfileStore.isEditable}   
+                                onChangeText={ ( text )=>UserProfileStore.setEmailAddress( text ) }
+
+                            />
+                            {
+                                UserListByCompanyStore.showModal 
+                                    ? <SearchableList
+                                        data={UserListByCompanyStore.items}
+                                        customRender={renderItem}
+                                        isModalVisible={UserListByCompanyStore.showModal}
+                                        closeModal={UserListByCompanyStore.hideSearchableModal}
+                                        onUserSelect={onUserSelect}
+                                        searchKey={"FullName"}
+                                        key={"UserID"}
+                                    /> 
+                                    : <Box mx="small">
+                                        <Input 
+                                            label="Supervisor:"
+                                            placeholder="Click Here"
+                                            value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.Supervisor}
+                                            onTouchStart={ UserProfileStore.isEditable? UserListByCompanyStore.displaySearchableModal : null}
+                                            editable={false}                                  
+                                        />
+                                    </Box>
+                            }
+                          
+                            <Input 
+                                label="Address"
+                                placeholder="Address"
+                                value={UserProfileStore.userData.Address}
+                                editable={UserProfileStore.isEditable}
+                                onChangeText={ ( text ) =>UserProfileStore.setAddress( text ) }
+
+                            />
+                            <Input
+                                label="City:"
+                                placeholder="City"
+                                value={UserProfileStore.userData.City}
+                                editable={UserProfileStore.isEditable} 
+                                onChangeText={ ( text ) =>UserProfileStore.setCity( text ) }
+
+                            />
+
+                            <Input
+                                label="State:"
+                                placeholder="State"
+                                value={UserProfileStore.userData.State}
+                                editable={UserProfileStore.isEditable} 
+                                onChangeText={ ( text ) =>UserProfileStore.setState( text ) }
+
+                            />
+                            <Input
+                                label="Zip Code:"
+                                placeholder="Zip Code"
+                                defaultValue={UserProfileStore.userData.Zip}
+                                editable={UserProfileStore.isEditable} 
+                                onChangeText={ ( text ) =>UserProfileStore.setZip( text ) }
+
+                            />
+
+
+                            <Input
+                                label="Country:"
+                                placeholder="Country"
+                                value={UserProfileStore.userData.Country}
+                                editable={UserProfileStore.isEditable} 
+                                onChangeText={ ( text ) =>UserProfileStore.setZCountry( text ) }
 
                         
-                        />
-                    </Box>
+                            />
+                            <Input
+                                label="Phone:"
+                                placeholder="Phone"
+                                value={UserProfileStore.userData.Phone}
+                                editable={UserProfileStore.isEditable}        
+                                onChangeText={ ( text ) =>UserProfileStore.setPhone( text ) }
+                            />
+                    
+                        </Box>
                   
-                </Box>
-                <Box flex={0.12}>
-                    <Box flexDirection="row">
+                    </Box>
+               
+                
+                </ScrollView>
+                {
+                    keyboard.keyboardShown
+                        ? <Box style={STYLES.keyboardStyle}
+                        />
+                        : null
+                }
+            </Box>
+            { UserProfileStore.isEditable?
+                <Box flex={0.1}>
+                    <Box justifyContent={"space-evenly"} flexDirection={"row"} alignItems={"center"} m={"negative8"} >
                         <Box width={"50%"}>
-                            <Button
+                            <Button 
                                 title="Save"
                                 onPress={onSave}
+                                loading={loadingForSave}
                             />
                         </Box>
-                        <Box width="50%">
-                            <Button 
-                                title="Close"
-                                onPress={Oncancel}
+                        <Box width={"50%"}>
+                            <Button
+                                title="Cancel"
+                                onPress={oncancel}
+                                
                             />
-                        </Box>
+                        </Box>       
                     </Box>
-                </Box>
-
-               
-            </ScrollView>
-            {
-                keyboard.keyboardShown
-                    ? <Box style={STYLES.keyboardStyle}
-                    />
-                    : null
+                </Box>:
+                null 
             }
+           
            
         </Box>
     )
-}
+} )
