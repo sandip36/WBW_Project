@@ -117,7 +117,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
         fetchUserlistByCompany()
         // make sure to catch any error
             .catch( console.error );
-    }, [ ] )
+    }, [] )
 
     const fetchUserlistByCompany = async () => {
         //  await UserProfileStore.toggleEdit( true )
@@ -125,6 +125,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
         await UserListByCompanyStore.hideSearchableModal()
 
         await UserListByCompanyStore.fetch()
+        await UserListByCompanyStore.hideSearchableModal()
     }
    
 
