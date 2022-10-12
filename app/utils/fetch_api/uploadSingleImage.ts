@@ -30,11 +30,9 @@ const imageUpload = async ( props ) => {
     };
     const result = await fetch( url, requestOptions )
         .then( ( response ) => {
-            console.tron.log( 'initial response',response )
             return response.text()
         } )
         .then( ( res ) => {
-            console.tron.log( 'res is ',res )
             const parsedJson = JSON.parse( res )
             Toast.showWithGravity( parsedJson?.Message, Toast.LONG, Toast.CENTER );
             return res;

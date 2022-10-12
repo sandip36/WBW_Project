@@ -176,7 +176,6 @@ export const UserProfileStore = types
                     url: url
                 } )
                     .then( ( successResponse ) => {
-                        console.tron.log( 'response is ',JSON.stringify( successResponse ) )
                         if( isEmpty( successResponse ) ) {
                             return null
                         } 
@@ -184,7 +183,7 @@ export const UserProfileStore = types
                         self.userData.setPhotoPath( `${parsedJson.PhotoPath}` )
                     } )
                     .catch( error => {
-                        console.tron.log( 'error in user profile store ',error )
+                        console.log( 'error in user profile image ',error )
                     } )
             } catch( error ) {
                 Toast.showWithGravity( error.message || 'Something went wrong while uploading images', Toast.LONG, Toast.CENTER )

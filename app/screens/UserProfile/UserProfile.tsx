@@ -87,6 +87,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
     const navigation = useNavigation()
     const STYLES = useStyles()
     const keyboard = useKeyboard()
+    const [ tempurl, setTempUrl ] = useState( `${UserProfileStore.userData.PhotoPath}` )
     const [ loading, setLoading ] = useState( false )
     const [ loadingForSave, setLoadingForSave ] = useState( false  )
 
@@ -111,13 +112,19 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
     }, [] )
 
     useEffect( ( ) => {  
-        
         fetchUserProfile()
 
         fetchUserlistByCompany()
         // make sure to catch any error
             .catch( console.error );
     }, [] )
+
+
+    useEffect( ( ) => {  
+        const dateadded = new Date().getTime()
+        setTempUrl( `${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}${"&"+ dateadded}` )
+
+    }, [ UserProfileStore.userData.PhotoPath ] )
 
     const fetchUserlistByCompany = async () => {
         //  await UserProfileStore.toggleEdit( true )
@@ -180,7 +187,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                     text: "Yes",
                     onPress: async ( ) => {
                         await UserListByCompanyStore.clearStore()
-                        fetchUserProfile()
+                        navigation.dispatch( StackActions.pop( ) )
                       
 
                     }
@@ -231,72 +238,6 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
     
 
 
-    const loadAvtar= ()=>{
-        if( UserProfileStore.userData.PhotoPath ){
-            // console.log( "${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}",`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` )
-            return(
-                <Avatar 
-                    size={'xlarge'}
-                    rounded
-                    source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
-                >
-                    <TouchableBox
-                        style={STYLES.addImageIcon}
-                        onPress={addOrEditImage}
-                    >
-                        {
-                            isEmpty( UserProfileStore.userData.PhotoPath )
-                                ? <Icon name="add" size={25} color="#FFF" />
-                                : <Icon name= 'camera' type= 'font-awesome' size={25} color="#FFF" />
-                        }
-                    </TouchableBox>
-                </Avatar>
-            )
-    
-            // <Box width={160} height={160} style={{ borderRadius:80 }}>
-            //     <Image
-
-            //         source={{ uri:`${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}` }}
-            //         resizeMode="contain"
-
-            //         style={ STYLES.imageStyle
-            //         }
-            //     />
-            //     <TouchableBox
-            //         style={STYLES.imageStyle}
-            //         onPress={addOrEditImage}
-            //     >
-            //         {
-            //             isEmpty( UserProfileStore.userData.PhotoPath )
-            //                 ? <Icon name="add" size={50} color="#FFF" />
-            //                 : <Icon name="camera" size={50} color="#FFF" />
-            //         }
-            //     </TouchableBox>
-
-            // </Box>
-        }else{
-            return(
-                <Avatar 
-                    size={'xlarge'}
-                    rounded
-                    title= {UserProfileStore.userData.initials}
-                >
-                    <TouchableBox
-                        style={STYLES.addImageIcon}
-                        onPress={addOrEditImage}
-                    >
-                        {
-                            isEmpty( UserProfileStore.userData.PhotoPath )
-                                ? <Icon name="add" size={25} color="#FFF" />
-                                : <Icon name= 'camera' type= 'font-awesome' size={25} color="#FFF" />
-                        }
-                    </TouchableBox>
-                </Avatar>
-            )
-
-        }
-    
-    }
     
     const expression = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -324,6 +265,8 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
 
             await UserProfileStore.SaveUserProfile( payload )
             setLoadingForSave( false )
+            navigation.dispatch( StackActions.pop( ) )
+
         }else{
             Alert.alert( "Email","Please enter correct email" )
             setLoadingForSave( false )
@@ -332,7 +275,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
         }
     
     }
-  
+
     return (
         <Box flex={1}>
             <FormHeader 
@@ -347,12 +290,27 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                 <ScrollView contentContainerStyle={STYLES.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
                   
                     <Box height='15%' justifyContent={'center'} alignItems={'center'} my={'regular'} flexDirection={"row"} >
-                       
-                        <Box  my={'negative16'} >{
-                            loadAvtar() 
-                        }
-                        </Box>
-                      
+
+                        <Avatar 
+                            size={'xlarge'}
+                            rounded
+                            source={{ uri: tempurl }}
+                            key={tempurl}
+                            title= {UserProfileStore.userData.initials}
+                   
+                
+                        >
+                            <TouchableBox
+                                style={STYLES.addImageIcon}
+                                onPress={addOrEditImage}
+                            >
+                                {
+                                    isEmpty( UserProfileStore.userData.PhotoPath )
+                                        ? <Icon name="add" size={25} color="#FFF" />
+                                        : <Icon name= 'camera' type= 'font-awesome' size={25} color="#FFF" />
+                                }
+                            </TouchableBox>
+                        </Avatar>
                     </Box>
 
                     <Box mx="small">
@@ -419,8 +377,9 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                                         <Input 
                                             label="Supervisor:"
                                             placeholder="Click Here"
+                                            onFocus={UserListByCompanyStore.displaySearchableModal}
                                             value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.Supervisor}
-                                            onTouchStart={ UserProfileStore.isEditable? UserListByCompanyStore.displaySearchableModal : null}
+                                            onTouchStart={ UserListByCompanyStore.displaySearchableModal}
                                             editable={false}                                  
                                         />
                                     </Box>
