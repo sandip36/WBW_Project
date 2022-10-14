@@ -125,8 +125,8 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
                     platform='default'
                     containerStyle={STYLES.searchBarContainerStyle}
                     value={searchedValue}
-                    onChangeText={searchFilterFunction}
-                />
+                    onChangeText={( text ) => searchFilterFunction( text )}
+                />             
             </Box>
             <Box flex={1} mt="medium">
                 <FlatList 

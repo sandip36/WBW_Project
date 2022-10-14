@@ -3,9 +3,9 @@ import {  AuditAndInspectionCard, Box, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { Avatar } from "react-native-elements"
-import { ActivityIndicator, FlatList, ViewStyle, StyleProp, RefreshControl } from "react-native"
-import { makeStyles, theme } from "theme"
+import { Avatar, SearchBar } from "react-native-elements"
+import { ActivityIndicator, FlatList, ViewStyle, StyleProp, RefreshControl, Platform } from "react-native"
+import { makeStyles } from "theme"
 import { useStores } from "models"
 import { isEmpty } from "lodash"
 import { IAuditHistoryFetchPayload } from "services/api"
@@ -18,42 +18,62 @@ export type AuditAndInspectionScreenProps = {
 export type AuditAndInspectionHistoryStyleProps = {
     contentContainerStyle: StyleProp<ViewStyle>,
     avatarContainerStyle: StyleProp<ViewStyle>
+    searchBarContainerStyle :StyleProp<ViewStyle>
 }
 
 const useStyles = makeStyles<AuditAndInspectionHistoryStyleProps>( ( theme ) => ( {
     contentContainerStyle: {
-        paddingBottom: theme.spacing.massive * 2
+        paddingBottom: theme.spacing.massive *4
     },
     avatarContainerStyle: {
         backgroundColor: theme.colors.primary
-    }
+    }, searchBarContainerStyle: {
+        backgroundColor: theme.colors.primary,
+        margin: 0,
+        padding: 10,
+        borderBottomColor: theme.colors.transparent,
+        borderTopColor: theme.colors.transparent
+    },
 } ) )
 
 export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectionScreenProps> = observer( ( props ) => {
     const navigation = useNavigation()
     const STYLES = useStyles()
     const { DashboardStore, AuditStore, AuthStore } = useStores()
+    const [ showLoading,setShowLoading ] = useState( true )
+    const [ callbaseSevice, setCallbaseSevice ] = useState( true )
+    const [ searchedValue, setSearchedValue ] = useState<string>( '' )
+
+
+
     const dashboard = DashboardStore._get( DashboardStore?.currentDashboardId )
     if( isEmpty( dashboard ) ) {
         return null
     }
+    useEffect( ( ) => {
+        AuditStore.setSearchTextTemp( "" )
 
+    }, [] )
     useFocusEffect(
         React.useCallback( () => {
             fetchAuditAndInspectionHistory()
-        }, [] )
+        }, [ callbaseSevice ] )
     );
     
     const fetchAuditAndInspectionHistory = useCallback( async () => {
+        setShowLoading( true )
         await AuditStore.reset()
         const payload = {
             UserID: AuthStore?.user.UserID,
             AccessToken: AuthStore?.token,
             CustomFormID: dashboard?.CustomFormID,
             AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
-            PageNumber: "1"
+            PageNumber: "1",
+            SearchText:AuditStore.searchTextTemp
+            
         } as IAuditHistoryFetchPayload
         await AuditStore.fetch( payload )
+        setShowLoading( false )
     }, [] )
 
     const fetchNextAuditAndInspectionHistory = useCallback( async () => {
@@ -62,16 +82,17 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
             AccessToken: AuthStore?.token,
             CustomFormID: dashboard?.CustomFormID,
             AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
-            PageNumber: String( AuditStore.page + 1 )
+            PageNumber: String( AuditStore.page + 1 ),
+            SearchText:AuditStore.searchTextTemp
         } as IAuditHistoryFetchPayload
         await AuditStore.fetch( payload )
     }, [] )
 
-    const onRefresh = async ( ) => {
-        await AuditStore.setRefreshing()
-        fetchAuditAndInspectionHistory()
-        await AuditStore.setRefreshing()
-    }
+    // const onRefresh = async ( ) => {
+    //     await AuditStore.setRefreshing()
+    //     fetchAuditAndInspectionHistory()
+    //     await AuditStore.setRefreshing()
+    // }
 
     const navigateToStartInspection = ( ) => {
         navigation.navigate( 'StartInspection' )
@@ -83,13 +104,55 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
         )
     }
 
+
+    const searchFilterFunction = async ( text ) => {   
+        AuditStore.setSearchTextTemp( text )
+  
+
+        if (  text.length >2 ) {
+            setShowLoading( true )            
+            await AuditStore.clearAudiAndInspectionListing()
+
+            const payload = {
+                UserID: AuthStore?.user.UserID,
+                AccessToken: AuthStore?.token,
+                CustomFormID: dashboard?.CustomFormID,
+                AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+                PageNumber: "1",
+                SearchText:AuditStore.searchTextTemp
+                
+            } as IAuditHistoryFetchPayload
+            await AuditStore.fetch( payload )
+            setShowLoading( false )
+          
+        } else {
+            
+           
+            AuditStore.setSearchTextTemp( text )
+            
+            if( text.length <1 ){
+                await AuditStore.setSearchTextTemp( "" )
+                setCallbaseSevice( !callbaseSevice )
+            }
+        }
+        setSearchedValue( text )
+    };
+    const onClearclick= async ()=>{
+        await AuditStore.setSearchTextTemp( "" )
+        setCallbaseSevice( !callbaseSevice )
+    
+    }
+
+
+
+
     return (
         <Box flex={1}>
             <Async promiseFn={fetchAuditAndInspectionHistory} watch={AuditStore.rerender}>
                 <Async.Pending>
                     { ( ) => (
                         <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
-                            <ActivityIndicator size={32} color="red" />
+                            <ActivityIndicator  animating={showLoading} size={32} color="red" />
                         </Box>
                     ) }
                 </Async.Pending>
@@ -102,26 +165,59 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
                 </Async.Rejected>
                 <Async.Resolved>
                     <Box flex={1}>
+
+                        <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                            <ActivityIndicator  animating={showLoading} size={32} color="red" />
+                        </Box>
+                        {/* <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                            <Text
+                                color={"lightRed"}
+                            
+                            >No record found</Text>
+
+                        </Box> */}
                         <FormHeader 
                             title={dashboard?.Title}
                             navigation={navigation}
                         />
-                        <Box mt="regular">
-                            <FlatList 
-                                data={AuditStore.auditAndInspectionDetails}
-                                renderItem={renderItem}
-                                onEndReached={fetchNextAuditAndInspectionHistory}
-                                onEndReachedThreshold={0.01}
-                                refreshControl={
-                                    <RefreshControl 
-                                        refreshing={AuditStore.refreshing} 
-                                        onRefresh={onRefresh}
+                      
+                    
+                        <Box >
+                           
+                            <Box>
+                                <Box >
+                                    <SearchBar
+                                        placeholder="Type Here..."
+                                        platform="default"
+                                        containerStyle={STYLES.searchBarContainerStyle}
+                                        value={searchedValue}
+                                        cancelIcon={true}
+                                        showCancel={true}
+                                        onClear={onClearclick}
+                                        onChangeText={( text ) => searchFilterFunction( text )}
                                     />
-                                }
-                                contentContainerStyle={STYLES.contentContainerStyle}
-                                keyExtractor={( item, index ) => String( item.AuditAndInspectionID ) }
-                            />
+                                </Box>
+                            </Box>
+
+                            <Box>
+                                <FlatList 
+                                    data={AuditStore.auditAndInspectionDetails}
+                                    renderItem={renderItem}
+                                    onEndReached={fetchNextAuditAndInspectionHistory}
+                                    onEndReachedThreshold={0.01}
+                                    // refreshControl={
+                                    // //     <RefreshControl 
+                                    // //         refreshing={AuditStore.refreshing} 
+                                    // //         onRefresh={onRefresh}
+                                    // //     />
+                                    // }
+                                    contentContainerStyle={STYLES.contentContainerStyle}
+                                    keyExtractor={( item, index ) => String( item.AuditAndInspectionID ) }
+                                />
+
+                            </Box>
                         </Box>
+
                         <Box position="absolute" bottom={20} right={10}>
                             <Avatar size="medium" onPress={navigateToStartInspection} rounded icon={{ name: 'add' }} containerStyle={STYLES.avatarContainerStyle}/>
                         </Box>

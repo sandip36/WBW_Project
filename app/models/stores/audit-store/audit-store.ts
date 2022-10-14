@@ -23,6 +23,7 @@ export const AuditStoreProps = {
     AnyAuditInProcess: types.maybeNull( types.string ), 
     Message: types.maybeNull( types.string ), 
     isWarnMessageShow: types.optional( types.boolean, false ),
+    searchTextTemp:types.optional( types.string,"" )
 
 
 }
@@ -544,6 +545,11 @@ export const AuditStore = types
             self.inspection.AuditAndInspectionDetails.Notes = value
         } )
 
+        const setSearchTextTemp = flow( function * ( value: string ) {
+          
+            self.searchTextTemp = value
+        } )
+
         const setPrimaryUserId = flow( function * ( id: string ) {
             self.isWarnMessageShow=true
             self.inspection.AuditAndInspectionDetails.PrimaryUserID = id
@@ -555,6 +561,9 @@ export const AuditStore = types
 
         const resetPassingValueSelected = flow( function * ( ) {
             self.isPassingValuesSelected = false
+        } )
+        const clearAudiAndInspectionListing = flow( function * ( ) {
+            self.audit.AudiAndInspectionListing  = [] as any
         } )
 
         const setSkippedReason = flow( function * ( value: string ) {
@@ -623,10 +632,12 @@ export const AuditStore = types
             deleteImageFromServer,
             toggleRefreshInspectionImage,
             resetStore,
+            clearAudiAndInspectionListing,
             checkAnyuditInProcess,
             setAnyAuditInProcess,
             setMessage,
-            setIsWarnMessage
+            setIsWarnMessage,
+            setSearchTextTemp
 
         }
     } )

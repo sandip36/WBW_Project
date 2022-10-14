@@ -25,7 +25,9 @@ export const ObservationStore = createModelCollection( ObservationModel )
         UploadDocument: types.optional( types.array( DocumentModel ), [] ),
         isComplete: types.optional( types.boolean, false ),
         isImageSelected: types.optional( types.boolean, false ),
-        editObservationData:types.optional( EditObservationModel,{} )
+        editObservationData:types.optional( EditObservationModel,{} ),
+        searchTextTemp:types.optional( types.string,"" )
+
 
     } )
     .views( self => ( {
@@ -359,6 +361,10 @@ export const ObservationStore = createModelCollection( ObservationModel )
         const clearStore = flow( function * ( ) {
             self.items  = [] as any
         } )
+        const setSearchTextTemp = flow( function * ( value: string ) {
+          
+            self.searchTextTemp = value
+        } )
 
         
         
@@ -395,7 +401,8 @@ export const ObservationStore = createModelCollection( ObservationModel )
             setTopicId,
             setActOrConditionId,
             sethazardsId,
-            clearStore
+            clearStore,
+            setSearchTextTemp
 
         }
     } )

@@ -10,6 +10,7 @@ import { Dropdown } from "components/core/dropdown"
 import { observer } from "mobx-react-lite"
 import DeviceInfo from 'react-native-device-info';
 import { loadString } from "utils/storage"
+import { isEmpty } from "lodash"
 
 
 
@@ -93,8 +94,11 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
         async onSubmit ( values ) {
 
             const deviceId = DeviceInfo.getDeviceId();
-            const TOKEN = await loadString( "TOKEN" )
+            let TOKEN = await loadString( "TOKEN" )
 
+            if( isEmpty( TOKEN ) ) {
+                TOKEN = "Sample"
+            }
             const payload = {
                 UserName: values.username,
                 Password: values.password,

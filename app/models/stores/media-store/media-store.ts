@@ -1,5 +1,5 @@
 import { Instance, flow, types, getRoot } from "mobx-state-tree"
-import { GeneralResponse, IMediaDeliverdPayload, IMediaPayload, IObservationFetchPayload } from "services/api"
+import { GeneralResponse, IMediaDeliverdPayload, IMediaPayload } from "services/api"
 import { createModelCollection } from '../../factories/model-collection.factory'
 import Toast from "react-native-simple-toast"
 import { MediaModel } from "models/models/media-model"

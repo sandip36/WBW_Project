@@ -52,7 +52,8 @@ export interface IObservationFetchPayload {
     UserID: string,
     AccessToken: string,
     LevelID: string,
-    PageNumber: string
+    PageNumber: string,
+    SearchText:string
 }
 export interface IAuditHistoryFetchPayload {
     UserID: string,
@@ -60,6 +61,8 @@ export interface IAuditHistoryFetchPayload {
     CustomFormID: string,
     AuditAndInspectionTemplateID: string,
     PageNumber: string
+    SearchText:string
+    
 }
 export interface IFetchDataForStartInspectionPayload {
     UserID: string,
