@@ -380,7 +380,6 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                                             onFocus={UserListByCompanyStore.displaySearchableModal}
                                             value={UserListByCompanyStore.selectedUser?.FullName ?? UserProfileStore.userData.Supervisor}
                                             onTouchStart={ UserListByCompanyStore.displaySearchableModal}
-                                            editable={false}                                  
                                         />
                                     </Box>
                             }
