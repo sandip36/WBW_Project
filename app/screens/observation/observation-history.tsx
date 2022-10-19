@@ -7,7 +7,7 @@ import { isEmpty } from "lodash"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
 import { FormHeader } from "components/core/header/form-header"
-import { makeStyles, useTheme } from "theme"
+import { makeStyles, theme, useTheme } from "theme"
 import { Avatar, SearchBar } from "react-native-elements"
 
 
@@ -119,22 +119,43 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
 
 
 
+    useEffect( () => {
+      
+        const delayDebounceFn = setTimeout( async () => {
+            if( searchedValue.length >2 ){
+                await ObservationStore.clearStore()
+                const payload = {
+                    UserID: AuthStore.user?.UserID,
+                    AccessToken: AuthStore.token || AuthStore.user?.AccessToken,
+                    LevelID: dashboard?.LevelID,
+                    PageNumber: "1",
+                    SearchText :searchedValue
+                }
+                await ObservationStore.fetch( payload )
+                setShowLoading( false )
+            }
+        }, 600 )
+    
+        return () => clearTimeout( delayDebounceFn )
+    }, [ searchedValue ] )
+    
+
+
     const searchFilterFunction = async ( text ) => {
         // Check if searched text is not blank
-           
+        setSearchedValue( text )
+        setShowLoading( true )           
         if ( ( text ).length >2 ) {
-            setShowLoading( true )
             await ObservationStore.setSearchTextTemp( text )
-            await ObservationStore.clearStore()
-            const payload = {
-                UserID: AuthStore.user?.UserID,
-                AccessToken: AuthStore.token || AuthStore.user?.AccessToken,
-                LevelID: dashboard?.LevelID,
-                PageNumber: "1",
-                SearchText :text
-            }
-            await ObservationStore.fetch( payload )
-            setShowLoading( false )
+            // const payload = {
+            //     UserID: AuthStore.user?.UserID,
+            //     AccessToken: AuthStore.token || AuthStore.user?.AccessToken,
+            //     LevelID: dashboard?.LevelID,
+            //     PageNumber: "1",
+            //     SearchText :text
+            // }
+            // await ObservationStore.fetch( payload )
+            // setShowLoading( false )
           
         } else {
             if( text.length <1 ){
@@ -142,8 +163,8 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
                 setCallbaseSevice( !callbaseSevice )
             }
         }
-        setSearchedValue( text )
-        setShowLoading( false )
+       
+        // setShowLoading( false )
     };
     const onClearclick= async ()=>{
         await ObservationStore.setSearchTextTemp( "" )
@@ -185,7 +206,9 @@ export const ObservationHistoryScreen: React.FunctionComponent<ObservationHistor
                             <SearchBar
                                 placeholder="Type Here..."
                                 platform="default"
+                                inputStyle={{ color:theme.colors.primary }}
                                 containerStyle={STYLES.searchBarContainerStyle}
+                                inputContainerStyle={{ backgroundColor: 'white' }}
                                 value={searchedValue}
                                 cancelIcon={true}
                                 showCancel={true}

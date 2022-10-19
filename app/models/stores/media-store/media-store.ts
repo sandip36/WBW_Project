@@ -8,6 +8,9 @@ import { AuthStoreType } from "../auth-store"
 export const MediaStore = createModelCollection( MediaModel )
     .props( {
         pageNumber: types.optional( types.string, "1" ),
+        searchTextTemp:types.optional( types.string,"" )
+
+
     } )
     .views( self => ( {
         
@@ -21,7 +24,8 @@ export const MediaStore = createModelCollection( MediaModel )
                 const payload = {
                     UserID: rootStore.AuthStore?.user?.UserID,
                     AccessToken: rootStore.AuthStore?.user?.AccessToken,
-                    PageNumber: self.pageNumber
+                    PageNumber: self.pageNumber,
+                    SearchText: self.searchTextTemp
                 } as IMediaPayload
                 const result: GeneralResponse<any> = yield self.environment.api.fetchMedia( payload )
                 if ( result?.data ) {
@@ -43,7 +47,9 @@ export const MediaStore = createModelCollection( MediaModel )
                 const payload = {
                     UserID: rootStore.AuthStore?.user?.UserID,
                     AccessToken: rootStore.AuthStore?.user?.AccessToken,
-                    PageNumber: String( ( Number( self.pageNumber ) + 1 ) )
+                    PageNumber: String( ( Number( self.pageNumber ) + 1 ) ),
+                    SearchText: self.searchTextTemp
+
                 } as IMediaPayload
                 const result: GeneralResponse<any> = yield self.environment.api.fetchMedia( payload )
                 if ( result?.data ) {
@@ -87,17 +93,18 @@ export const MediaStore = createModelCollection( MediaModel )
             self.pageNumber= "1"
         } )
 
-        
-        // const readMessageFlag = flow( function * ( ) {
-        //     try {
-               
-        // } )
-        
+        const setSearchTextTemp = flow( function * ( value: string ) {
+          
+            self.searchTextTemp = value
+        } )
+
+     
         return {
             fetch,
             fetchNextMedia,
             readMessageFlag,
-            clearStore
+            clearStore,
+            setSearchTextTemp
         }
     } )
 

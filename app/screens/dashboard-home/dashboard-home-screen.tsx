@@ -72,6 +72,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await DashboardStore.clearStore()
         await ObservationStore.clearStore()
         await MediaStore.clearStore()
+        await MediaStore.setSearchTextTemp( "" )
         // await ObservationStore._clear()
         await AuditStore.resetStore()
         // await MediaStore._clear()

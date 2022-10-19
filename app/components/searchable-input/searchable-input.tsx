@@ -3,7 +3,7 @@ import { IUserList } from 'models/models/task-model/user-list-model'
 import React, { useState } from 'react'
 import { FlatList, ListRenderItem, Modal, Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { Avatar, ListItem, SearchBar } from 'react-native-elements'
-import { makeStyles  } from 'theme'
+import { makeStyles, theme  } from 'theme'
 
 export interface SearchableListProps {
     data: any[],
@@ -123,7 +123,9 @@ export const SearchableList: React.FunctionComponent<SearchableListProps> = ( pr
                 <SearchBar
                     placeholder="Type Here..."
                     platform='default'
+                    inputStyle={{ color:theme.colors.primary }}
                     containerStyle={STYLES.searchBarContainerStyle}
+                    inputContainerStyle={{ backgroundColor: 'white' }}
                     value={searchedValue}
                     onChangeText={( text ) => searchFilterFunction( text )}
                 />             

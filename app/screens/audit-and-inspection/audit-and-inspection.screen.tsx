@@ -3,9 +3,9 @@ import {  AuditAndInspectionCard, Box, Text } from "components"
 import { FormHeader } from "components/core/header/form-header"
 import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { Avatar, SearchBar } from "react-native-elements"
-import { ActivityIndicator, FlatList, ViewStyle, StyleProp, RefreshControl, Platform } from "react-native"
-import { makeStyles } from "theme"
+import { Avatar, Icon, SearchBar } from "react-native-elements"
+import { ActivityIndicator, FlatList, ViewStyle, StyleProp } from "react-native"
+import { makeStyles, theme } from "theme"
 import { useStores } from "models"
 import { isEmpty } from "lodash"
 import { IAuditHistoryFetchPayload } from "services/api"
@@ -105,37 +105,46 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
     }
 
 
+
+    useEffect( () => {
+      
+        const delayDebounceFn = setTimeout( async () => {
+            if( searchedValue.length >2 ){
+                await AuditStore.reset()
+
+                const payload = {
+                    UserID: AuthStore?.user.UserID,
+                    AccessToken: AuthStore?.token,
+                    CustomFormID: dashboard?.CustomFormID,
+                    AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
+                    PageNumber: "1",
+                    SearchText:AuditStore.searchTextTemp
+                    
+                } as IAuditHistoryFetchPayload
+                await AuditStore.fetch( payload )
+                setShowLoading( false )
+            }
+        }, 600 )
+    
+        return () => clearTimeout( delayDebounceFn )
+    }, [ searchedValue ] )
+    
+
+
     const searchFilterFunction = async ( text ) => {   
         AuditStore.setSearchTextTemp( text )
-  
+        setSearchedValue( text )
 
         if (  text.length >2 ) {
-            setShowLoading( true )            
-            await AuditStore.clearAudiAndInspectionListing()
-
-            const payload = {
-                UserID: AuthStore?.user.UserID,
-                AccessToken: AuthStore?.token,
-                CustomFormID: dashboard?.CustomFormID,
-                AuditAndInspectionTemplateID: dashboard?.AuditandInspectionTemplateID,
-                PageNumber: "1",
-                SearchText:AuditStore.searchTextTemp
-                
-            } as IAuditHistoryFetchPayload
-            await AuditStore.fetch( payload )
-            setShowLoading( false )
+            setShowLoading( true )             
           
         } else {
-            
-           
             AuditStore.setSearchTextTemp( text )
-            
             if( text.length <1 ){
                 await AuditStore.setSearchTextTemp( "" )
                 setCallbaseSevice( !callbaseSevice )
             }
         }
-        setSearchedValue( text )
     };
     const onClearclick= async ()=>{
         await AuditStore.setSearchTextTemp( "" )
@@ -183,13 +192,16 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
                       
                     
                         <Box >
-                           
+
+}                           
                             <Box>
                                 <Box >
                                     <SearchBar
                                         placeholder="Type Here..."
                                         platform="default"
+                                        inputStyle={{ color:theme.colors.primary }}
                                         containerStyle={STYLES.searchBarContainerStyle}
+                                        inputContainerStyle={{ backgroundColor: 'white' }}
                                         value={searchedValue}
                                         cancelIcon={true}
                                         showCancel={true}

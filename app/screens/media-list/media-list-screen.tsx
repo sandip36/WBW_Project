@@ -1,64 +1,87 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { Box, Text, TouchableBox, Button } from "components"
 import { FormHeader } from "components/core/header/form-header"
-import React, { useCallback } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { FlatList, Image, ActivityIndicator, Linking, ViewStyle, StyleProp, ImageStyle, TextStyle } from "react-native"
-import { Avatar, ListItem } from "react-native-elements"
+import { Avatar, ListItem, SearchBar } from "react-native-elements"
 import Video from "react-native-video"
 import Async from "react-async"
 import { IMedia, useStores } from "models"
 import InAppBrowser from "react-native-inappbrowser-reborn"
 import { theme, makeStyles } from "theme"
 import { isEmpty } from "lodash"
-import  { Observer } from "mobx-react-lite"
+import  { observer, Observer } from "mobx-react-lite"
 
 export type MediaListScreenProps = {
 
 }
 
-const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>, listTitleStyle: StyleProp<TextStyle>, videoStyle: StyleProp<ViewStyle>, imageStyle: StyleProp<ImageStyle>, buttonContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
-    contentContainerStyle: { 
-        padding:0, 
-        margin:0 , 
-        backgroundColor:"transparent" 
-    },
-    listTitleStyle: { 
-        fontSize:18 ,
-        color:theme.colors.primary , 
-        fontWeight:"700" 
-    },
-    videoStyle: { 
-        width:"100%" ,
-        height:"100%" 
-    },
-    imageStyle: { 
-        width:"100%" ,
-        height:"100%" 
-    },
-    buttonContainerStyle: { 
-        marginHorizontal: 0, 
-        marginVertical: 0 
-    },
+const useStyles = makeStyles<{contentContainerStyle: StyleProp<ViewStyle>,
+     listTitleStyle: StyleProp<TextStyle>, videoStyle: StyleProp<ViewStyle>, 
+     imageStyle: StyleProp<ImageStyle>,searchBarContainerStyle:StyleProp<ViewStyle>, 
+     searchBarInputStyle:StyleProp<ViewStyle>
+     buttonContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
+         contentContainerStyle: { 
+             padding:0, 
+             margin:0 , 
+             backgroundColor:"transparent" 
+         },
+         listTitleStyle: { 
+             fontSize:18 ,
+             color:theme.colors.primary , 
+             fontWeight:"700" 
+         },
+         videoStyle: { 
+             width:"100%" ,
+             height:"100%" 
+         },
+         imageStyle: { 
+             width:"100%" ,
+             height:"100%" 
+         },
+         buttonContainerStyle: { 
+             marginHorizontal: 0, 
+             marginVertical: 0 
+         },
+         searchBarContainerStyle: {
+             backgroundColor: theme.colors.primary,
+             margin: 0,
+             padding: 10,
+             borderBottomColor: theme.colors.transparent,
+             borderTopColor: theme.colors.transparent
+         },searchBarInputStyle:{
+             backgroundColor: theme.colors.white,
 
-} ) )
 
-export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( ) => {
+         }
+
+     } ) )
+
+export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = observer( ( ) => {
     const navigation = useNavigation()
     const { MediaStore,AuthStore } = useStores()
     const STYLES = useStyles()
+    const [ showLoading,setShowLoading ] = useState( true )
+
+    const [ callbaseSevice, setCallbaseSevice ] = useState( true )
+    const [ searchedValue, setSearchedValue ] = useState<string>( '' )
+
 
     let formattedbaseUrl = AuthStore.environment.api.apisauce.getBaseURL()
     formattedbaseUrl = formattedbaseUrl.replace( "/MobileAPI/api", "" )
 
     useFocusEffect(
         React.useCallback( () => {
+            setShowLoading( true )  
             fetchMedia()
-        }, [] )
+        }, [ callbaseSevice ] )
     );
     
     const fetchMedia = useCallback( async () => {
+        setShowLoading( true )  
         await MediaStore._clear()
         await MediaStore.fetch()
+        setShowLoading( false )  
     }, [] )
 
     const fetchNextMedia = useCallback( async () => {
@@ -83,6 +106,38 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
         }
     }
 
+    
+    useEffect( () => {
+      
+        const delayDebounceFn = setTimeout( async () => {
+            if( searchedValue.length >2 ){
+                fetchMedia()
+            }
+        }, 600 )
+    
+        return () => clearTimeout( delayDebounceFn )
+    }, [ searchedValue ] )
+    
+
+
+    const searchFilterFunction = async ( text ) => {
+        // Check if searched text is not blank
+        setSearchedValue( text )
+       
+        await MediaStore.setSearchTextTemp( text )    
+     
+        if( text.length <1 ){
+            await MediaStore.setSearchTextTemp( "" )
+            setCallbaseSevice( !callbaseSevice )
+        }
+        
+       
+    };
+    const onClearclick= async ()=>{
+        await MediaStore.setSearchTextTemp( "" )
+        setCallbaseSevice( !callbaseSevice )
+    
+    }
 
 
     const renderItem = ( { item }: {item:IMedia } ) => {
@@ -249,11 +304,29 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
             </Async.Rejected>
             <Async.Resolved>
                 <Box flex={1}>
+                    <Box position="absolute" top={0} left={0} right={0} bottom={0} alignItems="center" justifyContent="center">
+                        <ActivityIndicator  animating={showLoading} size={32} color="red" />
+                    </Box>
                     <FormHeader 
                         title="Bulletine"
                         navigation={navigation}
                     />
                     <Box flex={1}>
+                        <Box >
+                            <SearchBar
+                                placeholder="Type Here..."
+                                platform="default"
+                                inputContainerStyle={{ backgroundColor: 'white' }}
+                                inputStyle={{ color:theme.colors.primary }}
+                                containerStyle={STYLES.searchBarContainerStyle}
+                                value={searchedValue}
+                                cancelIcon={true}
+                                showCancel={true}
+                                onClear={onClearclick}
+                                onChangeText={( text ) => searchFilterFunction( text )}
+                            />
+                        </Box>
+                        
                         <FlatList 
                             data={MediaStore.items }
                             renderItem={renderItem}
@@ -261,9 +334,10 @@ export const MediaListScreen: React.FunctionComponent<MediaListScreenProps> = ( 
                             onEndReachedThreshold={0.01}
                             keyExtractor={( item )=> String( item.id )}                
                         />
+                    
                     </Box>
                 </Box>
             </Async.Resolved>
         </Async>
     )
-}
+} )

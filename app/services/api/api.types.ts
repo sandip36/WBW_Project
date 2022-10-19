@@ -226,7 +226,8 @@ export interface IEditObervationPayload{
 export interface IMediaPayload {
     UserID: string,
     AccessToken: string,
-    PageNumber: string
+    PageNumber: string,
+    SearchText: string
 }
 export interface IMediaDeliverdPayload{
     UserID: string,
