@@ -112,7 +112,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
     }, [] )
 
     useEffect( ( ) => {  
-        fetchUserProfile()
+        // fetchUserProfile()
 
         fetchUserlistByCompany()
         // make sure to catch any error
@@ -136,15 +136,15 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
     }
    
 
-    const fetchUserProfile = useCallback( async () => {
-        await UserProfileStore.clearStore ()
-        const payload = {
-            UserID: AuthStore?.user.UserID,
-            AccessToken: AuthStore?.token,
-        } as IuserProfilePayload
-        await UserProfileStore.fetch( payload )
-        await UserProfileStore.warnmessage( false )
-    }, [] )
+    // const fetchUserProfile = useCallback( async () => {
+    //     await UserProfileStore.clearStore ()
+    //     const payload = {
+    //         UserID: AuthStore?.user.UserID,
+    //         AccessToken: AuthStore?.token,
+    //     } as IuserProfilePayload
+    //     await UserProfileStore.fetch( payload )
+    //     await UserProfileStore.warnmessage( false )
+    // }, [] )
 
     const _handleBackPress = ( ) => {
        

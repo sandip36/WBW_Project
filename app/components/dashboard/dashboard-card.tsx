@@ -99,7 +99,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
             openInAppBrowser( dashboard.Link )
         }else if( dashboard?.Category === "Profile" ) {
-            await UserProfileStore.clearStore()
+          //  await UserProfileStore.clearStore()
 
             navigation.navigate( 'UserProfile' )
         }else if( dashboard?.Category === "Webview" ) {

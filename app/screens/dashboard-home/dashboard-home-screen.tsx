@@ -1,11 +1,12 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import { Box, Header, Text, TouchableBox } from "components"
 import { DashboardCard } from "components/dashboard"
-import { MediaStore, useStores } from "models"
-import React, { useCallback, useEffect, useState } from "react"
+import {  useStores } from "models"
+import React, { useCallback, useState } from "react"
 import { Async } from "react-async"
 import { ActivityIndicator, Alert, FlatList, Linking, Modal, StyleSheet, TouchableOpacity } from "react-native"
 import { checkVersion } from "react-native-check-version"
+import { IuserProfilePayload } from "services/api"
 import { theme } from "theme"
 
 export type DashboardHomeScreenProps = {
@@ -60,7 +61,7 @@ const styles = StyleSheet.create( {
 } )
 
 export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
-    const { DashboardStore, AuthStore, ObservationStore, AuditStore,MediaStore ,UserListByCompanyStore } = useStores()
+    const { DashboardStore, AuthStore, ObservationStore, AuditStore,MediaStore ,UserListByCompanyStore ,UserProfileStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
     const navigation = useNavigation()
     const [ infoVersion,setInfoVersion ]= useState<any>( {} )
@@ -74,9 +75,11 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await MediaStore.clearStore()
         await MediaStore.setSearchTextTemp( "" )
         // await ObservationStore._clear()
+        
         await AuditStore.resetStore()
         // await MediaStore._clear()
         await DashboardStore.fetch()
+        fetchUserProfile()
     //     const version = await checkVersion();
     //     setInfoVersion( version )
     //   //  console.log( `App has a ${version} update pending.`,JSON.stringify( version ) );
@@ -105,6 +108,18 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
             } )();
         }, [] )
     );
+
+
+    const fetchUserProfile = useCallback( async () => {
+        console.log( "user `" )
+        await UserProfileStore.clearStore ()
+        const payload = {
+            UserID: AuthStore?.user.UserID,
+            AccessToken: AuthStore?.token,
+        } as IuserProfilePayload
+        await UserProfileStore.fetch( payload )
+        await UserProfileStore.warnmessage( false )
+    }, [] )
 
 
 
@@ -199,6 +214,9 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                     title={AuthStore.user?.CompanyName}
                                     rightComponent={{ icon: 'logout', color: '#fff', type: 'material', onPress: onRightIconPress, style: { marginHorizontal: theme.spacing.small } }}
                                 />
+                                <Box
+                                >        
+                                </Box>
                                 <Box mt="small">
                                     <FlatList 
                                         data={DashboardStore.sortDashboardByPageOrder}

@@ -192,8 +192,7 @@ export const AuditAndInspectionScreen: React.FunctionComponent<AuditAndInspectio
                       
                     
                         <Box >
-
-}                           
+                           
                             <Box>
                                 <Box >
                                     <SearchBar
