@@ -227,9 +227,11 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                         source={{ uri:formattedbaseUrl }}
                         // avatarStyle={STYLES.imageStyle}
                     />
-                    <ListItem.Content>
-                        <ListItem.Title>{item.FullName}</ListItem.Title>
-                    </ListItem.Content>
+                    <Box >
+                        <ListItem.Content>
+                            <ListItem.Title>{item.FullName}</ListItem.Title>
+                        </ListItem.Content>
+                    </Box>
                     <ListItem.Chevron />
                 </ListItem>
             </TouchableBox>
