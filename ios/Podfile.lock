@@ -415,10 +415,10 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.0.2):
     - React-Core
-  - RNFastImage (8.3.4):
+  - RNFastImage (8.6.1):
     - React-Core
-    - SDWebImage (~> 5.8)
-    - SDWebImageWebPCoder (~> 0.6.1)
+    - SDWebImage (~> 5.11.1)
+    - SDWebImageWebPCoder (~> 0.8.4)
   - RNFBApp (15.2.0):
     - Firebase/CoreOnly (= 9.3.0)
     - React-Core
@@ -436,12 +436,12 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - SDWebImage (5.13.2):
-    - SDWebImage/Core (= 5.13.2)
-  - SDWebImage/Core (5.13.2)
-  - SDWebImageWebPCoder (0.6.1):
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.7)
+    - SDWebImage/Core (~> 5.10)
   - SSZipArchive (2.2.3)
   - Toast (4.0.0)
   - UMAppLoader (1.4.0)
@@ -716,7 +716,7 @@ SPEC CHECKSUMS:
   EXLocalization: 8b9463c81843da214476b541a27811dd885c9a76
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
-  FBReactNativeSpec: 12deaa9054e45f8627bb87a13ef17972803de5e0
+  FBReactNativeSpec: 2f0b5e397fdb070c21e2451bcc25180744ef6532
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
   FirebaseCore: c088995ece701a021a48a1348ea0174877de2a6a
   FirebaseCoreDiagnostics: 060eb57cc56dfaf40b1b1b5874a5c17c41ce79f8
@@ -769,7 +769,7 @@ SPEC CHECKSUMS:
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDateTimePicker: 1dd15d7ed1ab7d999056bc77879a42920d139c12
   RNDeviceInfo: 0a7c1d2532aa7691f9b9925a27e43af006db4dae
-  RNFastImage: d4870d58f5936111c56218dbd7fcfc18e65b58ff
+  RNFastImage: 3207b9eb17c2425d574ca40db35185db6e324f4e
   RNFBApp: c9723c07e0a315538dfc9deea60ffb072b2f44d6
   RNFBMessaging: 084f466c02f3148884ef22fa86db5473f80e8433
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
@@ -777,8 +777,8 @@ SPEC CHECKSUMS:
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  SDWebImage: 72f86271a6f3139cc7e4a89220946489d4b9a866
-  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
@@ -796,6 +796,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4c60b43eaf3cb05a164bc9113258a171c18b7bf7
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: 5a8631ab91cbba8daad5c97271cd1a88208853b7
+PODFILE CHECKSUM: ea136852d2d117ef02d0c372afedfc65bbe3d355
 
 COCOAPODS: 1.11.3
