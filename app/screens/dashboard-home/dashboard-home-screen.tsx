@@ -1,11 +1,15 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
+import { backgroundColor } from "@shopify/restyle"
 import { Box, Header, Text, TouchableBox } from "components"
 import { DashboardCard } from "components/dashboard"
+import { isEmpty } from "lodash"
+import { observer } from "mobx-react-lite"
 import {  useStores } from "models"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Async } from "react-async"
-import { ActivityIndicator, Alert, FlatList, Linking, Modal, StyleSheet, TouchableOpacity } from "react-native"
+import { ActivityIndicator, Alert, FlatList, Linking, Modal, ScrollView, StyleSheet, TouchableOpacity } from "react-native"
 import { checkVersion } from "react-native-check-version"
+import { Avatar, Icon, ListItem } from "react-native-elements"
 import { IuserProfilePayload } from "services/api"
 import { theme } from "theme"
 
@@ -14,6 +18,17 @@ export type DashboardHomeScreenProps = {
 }
 
 const styles = StyleSheet.create( {
+    addImageIcon: {
+        height: 30,
+        width: 30,
+        borderRadius: 15,
+        // backgroundColor: "#99AAAB",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "absolute", // Here is the trick
+        bottom: 0,
+        alignSelf: "flex-end" 
+    },
     button: {
         borderRadius: 20,
         elevation: 2,
@@ -30,6 +45,13 @@ const styles = StyleSheet.create( {
         alignItems: "center",
         flex: 1,
         justifyContent: "center",
+    },
+    contentContainerStyle: {
+        flexGrow: 1,
+        paddingBottom: 30
+    },
+    iconContainerStyle: {
+        backgroundColor: theme.colors.primary,
     },
     modalText: {
         fontSize: 18,
@@ -50,21 +72,56 @@ const styles = StyleSheet.create( {
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        width: "80%"
+        width: "90%"
+    } , subtitle:{
+        color: theme.colors.lightGrey,
+        fontSize: 12,
+        fontWeight: '500',
     },
     textStyle: {
         color: theme.colors.background,
         fontSize: 18,
         fontWeight: "bold",
         textAlign: "center",
-    }
+    },
+    title:{
+        color: theme.colors.primary,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    titleStyle: {
+        color: theme.colors.white,
+    },
+   
 } )
 
-export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = ( ) => {
+export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenProps> = observer( ( ) => {
     const { DashboardStore, AuthStore, ObservationStore, AuditStore,MediaStore ,UserListByCompanyStore ,UserProfileStore } = useStores()
     const [ shouldUpdateApplication, setShouldUpdateApplication ] = useState<boolean>( false )
     const navigation = useNavigation()
     const [ infoVersion,setInfoVersion ]= useState<any>( {} )
+    const [ tempurl, setTempUrl ] = useState( `${UserProfileStore.userData.PhotoPath}` )
+    const [ dashbordData , setdashbordData ] = useState<any>( [] )
+    const [ expanded , setExpanded ] = useState<boolean>( false )
+
+
+
+    let formattedbaseUrl = AuthStore.environment.api.apisauce.getBaseURL()
+    formattedbaseUrl = formattedbaseUrl.replace( "/MobileAPI/api", "" )
+
+
+
+    useEffect( ( ) => {  
+        const dateadded = new Date().getTime()
+        setTempUrl( `${formattedbaseUrl}${UserProfileStore.userData.PhotoPath}${"&"+ dateadded}` )
+
+    }, [ UserProfileStore.userData.PhotoPath ] )
+
+
+    useEffect( ( ) => {  
+        console.log( "ggggg" )
+
+    }, [ dashbordData ] )
 
 
     const fetchDashboard = useCallback( async () => {
@@ -78,7 +135,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         
         await AuditStore.resetStore()
         // await MediaStore._clear()
-        await DashboardStore.fetch()
+        setdashbordData ( await DashboardStore.fetch() )
         fetchUserProfile()
     //     const version = await checkVersion();
     //     setInfoVersion( version )
@@ -97,8 +154,6 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     //         await DashboardStore.fetch()
     //     }
     }, [] )
-
-
 
 
     useFocusEffect(
@@ -121,12 +176,109 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await UserProfileStore.warnmessage( false )
     }, [] )
 
+    const setIcon=( title: string )=> {
+        let iconName = { name:'list-alt', type: 'material-icons' }
+        console.tron.log( "ttttttt",title )
+        switch ( title ) {
+        case 'Profile':
+            iconName = { name:'user', type: 'font-awesome' }//
+            break
+        case 'Bulletins':
+            iconName = { name:'announcement', type: 'material-icons' }//
+            break
+        case 'Inspection':
+            iconName = { name:'tasks', type: 'font-awesome-5' }//
+            break
+        case 'Audits':
+            iconName = { name:'announcement', type: 'material-icons' }
+            break
+        case 'Observation':
+            iconName = { name:'magnify-scan', type: 'material-community' }
+            break
+        case 'Incident Management':
+            iconName = { name:'alert-triangle', type: 'feather' }//
+            break
+        case 'MyTask':
+            iconName = { name:'tasks', type: 'font-awesome-5' }//
+            break
+        }
+        // return  data = { name:'sandip', type: 'font-awesome' }
+        return iconName
+    } 
+
+    const nameSetByTrim=( title: string )=> {
+        let iconName = title
+        switch ( title ) {
+        case 'Profile':
+            iconName = 'Profile'
+            break
+        case 'Bulletins':
+            iconName = 'Bulletins'
+            break
+        case 'Inspection':
+            iconName = 'Inspections'
+            break
+        case 'Audits':
+            iconName = 'Audit'
+            break
+        case 'Observation':
+            iconName = 'Observation'
+            break
+        case 'Incident Management':
+            iconName = 'Incident'
+            break
+        case 'MyTask':
+            iconName = 'MyTask'
+            break
+        }
+        return iconName
+    } 
+
 
 
     const renderItem = ( { item } ) => {
-        return (
-            <DashboardCard dashboard={item} />
-        )
+        console.tron.log( item )
+        if( item.length>1 ){
+            return(
+                <ListItem.Accordion
+                    containerStyle={{ backgroundColor:theme.colors.primary , marginHorizontal:theme.spacing.medium , borderRadius:10 ,height:45 , padding:0 , marginTop:theme.spacing.medium }} content={
+                        <>
+                            <Box style={{ marginHorizontal:25 }} flexDirection={'row'}>
+                                <Icon color="white" name={setIcon( item[0].Category ).name}  type= {setIcon( item[0].Category ).type}size={20} />
+                                
+                                <ListItem.Content style={{ marginHorizontal:25 }}>
+                                    <ListItem.Title style={styles.titleStyle}>{nameSetByTrim( item[0].Category )}</ListItem.Title>
+                                </ListItem.Content>
+                                <ListItem.Chevron></ListItem.Chevron>
+                            </Box>
+                          
+                            
+                            
+                        </>
+                    }
+                    isExpanded={expanded}
+                    onPress={() => {
+                        setExpanded( !expanded );
+                    }}
+                >
+                    {item.map( ( l, i ) => (
+                        <Box key={l.id}>
+                            <DashboardCard dashboard={l} />
+                        </Box>
+                
+                    ) )}
+                </ListItem.Accordion>
+            )  
+        }
+        return item.map( data=>{
+            return ( 
+                <Box key={data.id}>
+                    <DashboardCard dashboard={data} />
+                </Box>
+               
+            )
+        } )
+      
     }
 
     const onRightIconPress = ( ) => {
@@ -156,6 +308,9 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await AuthStore.user.updateSkipCount()
         await AuthStore.user.setSkippedDate()
         setShouldUpdateApplication( false )
+    }
+    const onUserSelect = async ( ) => {
+        navigation.navigate( 'UserProfile' )
     }
 
     const updateDialogbox = ( ) => {
@@ -187,6 +342,8 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         )
     }
 
+   
+
     return (
         <Box flex={1}>
             <Async promiseFn={fetchDashboard}>
@@ -214,21 +371,51 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                     title={AuthStore.user?.CompanyName}
                                     rightComponent={{ icon: 'logout', color: '#fff', type: 'material', onPress: onRightIconPress, style: { marginHorizontal: theme.spacing.small } }}
                                 />
-                                <Box
-                                >        
-                                </Box>
-                                <Box mt="small">
-                                    <FlatList 
-                                        data={DashboardStore.sortDashboardByPageOrder}
-                                        renderItem={renderItem}
-                                        keyExtractor={( item, index ) => item.id }
-                                        contentContainerStyle={{ paddingBottom: 100 }}
-                                    />
-                                </Box>     
+                                <TouchableBox onPress={()=>onUserSelect( )}>
+                                    <Box alignContent={'center'} justifyContent={'center'} alignItems={'center'} margin={'regular'} >
+                                        <Avatar 
+                                            size={'large'}
+                                            rounded
+                                            source={{ uri: tempurl }}
+                                            key={tempurl}
+                                            title= {UserProfileStore.userData.initials}
+                                        >
+                                            <TouchableBox
+                                                style={styles.addImageIcon}
+                                                onPress={onUserSelect}
+                                            >
+                                                {
+                                                    <Icon name= 'edit' type= 'MaterialIcons' size={10} color="#FFF" />
+                                                }
+                                            </TouchableBox>
+                                        </Avatar>
+                                       
+                                        <Box paddingTop={'small'} alignItems={'center'}>
+                                            <ListItem.Title style={styles.title}>{UserProfileStore.userData.FirstName +" "+ UserProfileStore.userData.LastName}</ListItem.Title>
+                                            <ListItem.Title style={styles.subtitle}>{UserProfileStore.userData.CompanyName}</ListItem.Title>
+                                        </Box>
+                                      
+                                    </Box>
+                                </TouchableBox>
+
+                             
+                              
+                                <ScrollView contentContainerStyle={styles.contentContainerStyle} keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
+
+                                    <Box mt="small">
+                                        <FlatList 
+                                            data={DashboardStore.sortDashboardByPageOrderArray( dashbordData )}
+                                            renderItem={renderItem}
+                                            keyExtractor={( item, index ) => item.id }
+                                            // contentContainerStyle={{ paddingBottom: 100 }}
+
+                                        />
+                                    </Box>  
+                                </ScrollView>   
                             </Box>
                     }
                 </Async.Resolved>
             </Async>
         </Box>
     )
-}
+} )

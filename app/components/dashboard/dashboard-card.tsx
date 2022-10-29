@@ -3,8 +3,8 @@ import { Box } from 'components'
 import { useStores } from 'models'
 import { IDashboard } from 'models/models/dashboard-model'
 import React from 'react'
-import { Alert, AsyncStorage, Linking, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { ListItem } from 'react-native-elements'
+import { Alert, AsyncStorage, Linking, StyleProp, Text, TextStyle, ViewStyle } from 'react-native'
+import { Avatar, ListItem } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import { isEmpty } from 'lodash'
@@ -13,11 +13,13 @@ export interface DashboardCardProps {
     dashboard: IDashboard,
     containerStyle?: StyleProp<ViewStyle>,
     titleStyle?: StyleProp<TextStyle>
+    iconContainerStyle?:StyleProp<TextStyle>
 }
 
 export type DashboardCardStyleProps = {
     containerStyle: StyleProp<ViewStyle>,
     titleStyle: StyleProp<TextStyle>,
+    iconContainerStyle:StyleProp<ViewStyle>,
     inAppBrowserStyle: any
 }
 
@@ -27,10 +29,15 @@ const useStyles = makeStyles<DashboardCardStyleProps>( ( theme ) => ( {
         backgroundColor: theme.colors.primary,
         borderRadius: theme.spacing.medium,
         borderWidth: 1,
-        paddingVertical: theme.spacing.large
+        paddingVertical: theme.spacing.small,
+     
     },
     titleStyle: {
-        color: theme.colors.white
+        color: theme.colors.white,
+    },
+    iconContainerStyle: {
+        backgroundColor: theme.colors.primary
+        
     },
     inAppBrowserStyle: {
         // iOS Properties
@@ -99,7 +106,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         if( dashboard?.LinkType === "WebsiteLink" && !isEmpty( dashboard?.Link ) ) {
             openInAppBrowser( dashboard.Link )
         }else if( dashboard?.Category === "Profile" ) {
-          //  await UserProfileStore.clearStore()
+            //  await UserProfileStore.clearStore()
 
             navigation.navigate( 'UserProfile' )
         }else if( dashboard?.Category === "Webview" ) {
@@ -126,14 +133,92 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
         
     }
 
+    const setIcon=( title: string )=> {
+        let iconName = { name:'list-alt', type: 'material-icons' }
+        switch ( title ) {
+        case 'Inspection':
+            iconName = { name:'magnify-scan', type: 'material-community' }
+            break
+        case 'Profile':
+            iconName = { name:'user', type: 'font-awesome' }//
+            break
+        case 'Bulletins':
+            iconName = { name:'announcement', type: 'material-icons' }//
+            break
+        case 'Audits':
+            iconName = { name:'announcement', type: 'material-icons' }
+            break
+        case 'Observation':
+            iconName = { name:'magnify-scan', type: 'material-community' }
+            break
+        case 'Incident Management':
+            iconName = { name:'alert-triangle', type: 'feather' }//
+            break
+        case 'MyTask':
+            iconName = { name:'tasks', type: 'font-awesome-5' }//
+            break
+        }
+        // return  data = { name:'sandip', type: 'font-awesome' }
+        console.tron.log( "retun data",iconName,title )
+        return iconName
+    } 
+    const nameSetByTrim=( title: IDashboard )=> {
+        let iconName = title.Title
+
+        if( title.Category ==='Profile' ){
+            iconName = 'Profile'
+            return iconName
+        }
+        if( title.Category ==='Bulletins' ){
+            iconName = 'Bulletins'
+            return iconName
+        }
+        if( title.Category ==='Incident Management' ){
+            iconName = 'Incidents'
+            return iconName
+        }
+        if( title.Category ==='Inspection' ){
+            iconName = 'Inspections'
+            return iconName
+        }
+        if( title.Category ==='Observation' ){
+            iconName = 'Observations'
+            return iconName
+        }
+        if( title.Category ==='MyTask' ){
+            iconName = 'My Tasks'
+            return iconName
+        }
+        return iconName
+
+      
+    } 
+
+
+  
+
     return (
-        <Box flex={1} mt="medium" mx="medium" py="small">
+        <Box flex={1} mt="medium" mx="medium" py="small"  justifyContent={'center'}>
             <ListItem bottomDivider containerStyle={[ STYLES.containerStyle, containerStyle ] } onPress={onDashboardPress}>
+                <Avatar 
+                    size={40}
+                    rounded
+                    icon={setIcon( dashboard.Category )}
+                    containerStyle={STYLES.iconContainerStyle} 
+                    //  source={{ uri:formattedbaseUrl }}
+                    //  avatarStyle={STYLES.imageStyle}
+                />
+               
+              
                 <ListItem.Content>
-                    <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{dashboard.Title}</ListItem.Title>
+                    <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{nameSetByTrim( dashboard )}</ListItem.Title>
                 </ListItem.Content>
-                <ListItem.Chevron />
+               
+               
+              
+               
             </ListItem>
+           
         </Box>
     )
 }

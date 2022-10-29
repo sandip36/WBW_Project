@@ -16,12 +16,18 @@ export const DashboardStore = createModelCollection( DashboardModel )
     .views( self => ( {
         get sortDashboardByPageOrder ( ) {
             return sortBy( self.items, [ function ( o ) { return Number( o.HomePageOrder ); } ] );
+        },
+
+        sortDashboardByPageOrderArray ( list=[] ) {
+            return sortBy( list, [ function ( o ) { return Number( o.HomePageOrder ); } ] );
         }
     } ) )
     .actions( self => {
         const rootStore = getRoot<{
             AuthStore: AuthStoreType
         }>( self )
+
+
         const fetch = flow( function * ( ) {
             self.bootstraping = true
             if ( !isEmpty( rootStore.AuthStore?.user?.UserID )|| !isEmpty( rootStore.AuthStore?.user?.UserID ) ) 
@@ -38,8 +44,12 @@ export const DashboardStore = createModelCollection( DashboardModel )
                         const dashboards = result.data.map( item => {
                             return { ...item, id: item.HomePageOrder }
                         } )
+                        const dashboardByCatogory = groupByCategory( dashboards )
+                        console.tron.log( 'datttatatat',dashboardByCatogory )
                         self._insertOrUpdate( dashboards )
+                        return dashboardByCatogory
                     }
+
                     return result
                 } catch( error ) {
                     rootStore.AuthStore.logout()
@@ -68,4 +78,11 @@ export const DashboardStore = createModelCollection( DashboardModel )
         }
     } )
 
+const groupByCategory =( list=[] )=>{
+    const groups = list.reduce( ( groups, item ) => ( {
+        ...groups,
+        [item.Category]: [ ...( groups[item.Category] || [] ), item ]
+    } ), {} );
+    return groups
+}
 export type DashboardStoreType = Instance<typeof DashboardStore>
