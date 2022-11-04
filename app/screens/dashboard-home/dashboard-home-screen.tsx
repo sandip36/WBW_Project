@@ -1,8 +1,6 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
-import { backgroundColor } from "@shopify/restyle"
 import { Box, Header, Text, TouchableBox } from "components"
 import { DashboardCard } from "components/dashboard"
-import { isEmpty } from "lodash"
 import { observer } from "mobx-react-lite"
 import {  useStores } from "models"
 import React, { useCallback, useEffect, useState } from "react"
@@ -18,16 +16,32 @@ export type DashboardHomeScreenProps = {
 }
 
 const styles = StyleSheet.create( {
+    // eslint-disable-next-line react-native/no-color-literals
+    acordianContainer:{ 
+        backgroundColor:theme.colors.primary ,
+        borderRadius:10 ,
+        height:45 ,
+        marginHorizontal:theme.spacing.medium , 
+        marginTop:theme.spacing.medium , 
+        padding:0 
+    } ,
+    // eslint-disable-next-line react-native/no-color-literals
     addImageIcon: {
+        borderRadius: 25,
         height: 30,
         width: 30,
-        borderRadius: 15,
-        // backgroundColor: "#99AAAB",
+        backgroundColor: "#99AAAB",
         alignItems: "center",
         justifyContent: "center",
         position: "absolute", // Here is the trick
         bottom: 0,
-        alignSelf: "flex-end" 
+        alignSelf: "flex-end"
+    },
+    bgPrimary: {
+        backgroundColor:theme.colors.transparent ,
+        borderRadius:10 ,
+        height:45 ,
+        padding:0 
     },
     button: {
         borderRadius: 20,
@@ -48,10 +62,7 @@ const styles = StyleSheet.create( {
     },
     contentContainerStyle: {
         flexGrow: 1,
-        paddingBottom: 30
-    },
-    iconContainerStyle: {
-        backgroundColor: theme.colors.primary,
+        paddingBottom: 30,
     },
     modalText: {
         fontSize: 18,
@@ -103,6 +114,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
     const [ tempurl, setTempUrl ] = useState( `${UserProfileStore.userData.PhotoPath}` )
     const [ dashbordData , setdashbordData ] = useState<any>( [] )
     const [ expanded , setExpanded ] = useState<boolean>( false )
+    const [ selectedIndex , setSelectedIndex ] = useState<string>( '' )
 
 
 
@@ -119,7 +131,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
 
     useEffect( ( ) => {  
-        console.log( "ggggg" )
+        console.log( " " )
 
     }, [ dashbordData ] )
 
@@ -131,7 +143,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         await ObservationStore.clearStore()
         await MediaStore.clearStore()
         await MediaStore.setSearchTextTemp( "" )
-        // await ObservationStore._clear()
+        await ObservationStore._clear()
         
         await AuditStore.resetStore()
         // await MediaStore._clear()
@@ -166,7 +178,6 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
 
     const fetchUserProfile = useCallback( async () => {
-        console.log( "user `" )
         await UserProfileStore.clearStore ()
         const payload = {
             UserID: AuthStore?.user.UserID,
@@ -178,7 +189,6 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
     const setIcon=( title: string )=> {
         let iconName = { name:'list-alt', type: 'material-icons' }
-        console.tron.log( "ttttttt",title )
         switch ( title ) {
         case 'Profile':
             iconName = { name:'user', type: 'font-awesome' }//
@@ -218,14 +228,14 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         case 'Inspection':
             iconName = 'Inspections'
             break
-        case 'Audits':
-            iconName = 'Audit'
+        case 'Audit':
+            iconName = 'Audits'
             break
         case 'Observation':
             iconName = 'Observation'
             break
         case 'Incident Management':
-            iconName = 'Incident'
+            iconName = 'Incidents'
             break
         case 'MyTask':
             iconName = 'MyTask'
@@ -237,33 +247,33 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
 
 
     const renderItem = ( { item } ) => {
-        console.tron.log( item )
         if( item.length>1 ){
             return(
                 <ListItem.Accordion
-                    containerStyle={{ backgroundColor:theme.colors.primary , marginHorizontal:theme.spacing.medium , borderRadius:10 ,height:45 , padding:0 , marginTop:theme.spacing.medium }} content={
+                    containerStyle={styles.bgPrimary}  style={styles.acordianContainer} content={
                         <>
-                            <Box style={{ marginHorizontal:25 }} flexDirection={'row'}>
+                            <Box style={{ marginHorizontal:25 }} flexDirection={'row'} >
                                 <Icon color="white" name={setIcon( item[0].Category ).name}  type= {setIcon( item[0].Category ).type}size={20} />
-                                
                                 <ListItem.Content style={{ marginHorizontal:25 }}>
                                     <ListItem.Title style={styles.titleStyle}>{nameSetByTrim( item[0].Category )}</ListItem.Title>
                                 </ListItem.Content>
-                                <ListItem.Chevron></ListItem.Chevron>
-                            </Box>
-                          
-                            
-                            
+                                {item[0]?.Title === selectedIndex && expanded === true ?
+                                    <Icon color="white" name='chevron-down'  type= "feather" size={20} />
+                                    :
+                                    <Icon color="white" name='chevron-right'  type= "feather" size={20} />
+                                }
+                            </Box>  
                         </>
                     }
-                    isExpanded={expanded}
+                    isExpanded={item[0]?.Title === selectedIndex && expanded === true}
                     onPress={() => {
+                        setSelectedIndex( item[0]?.Title )
                         setExpanded( !expanded );
                     }}
                 >
                     {item.map( ( l, i ) => (
                         <Box key={l.id}>
-                            <DashboardCard dashboard={l} />
+                            <DashboardCard dashboard={l} showTrimName={false}  isChildren={item[0]?.Title === selectedIndex && expanded === true} />
                         </Box>
                 
                     ) )}
@@ -374,7 +384,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                 <TouchableBox onPress={()=>onUserSelect( )}>
                                     <Box alignContent={'center'} justifyContent={'center'} alignItems={'center'} margin={'regular'} >
                                         <Avatar 
-                                            size={'large'}
+                                            size={100}
                                             rounded
                                             source={{ uri: tempurl }}
                                             key={tempurl}
@@ -385,7 +395,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                                 onPress={onUserSelect}
                                             >
                                                 {
-                                                    <Icon name= 'edit' type= 'MaterialIcons' size={10} color="#FFF" />
+                                                    <Icon name= 'edit' type= 'MaterialIcons' size={25} color="#FFF" backgroundColor='' />
                                                 }
                                             </TouchableBox>
                                         </Avatar>

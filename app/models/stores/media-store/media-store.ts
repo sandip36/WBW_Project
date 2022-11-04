@@ -89,7 +89,7 @@ export const MediaStore = createModelCollection( MediaModel )
         } )
 
         const clearStore = flow( function * ( ) {
-            self.items  = [] as any
+            self.items.clear()
             self.pageNumber= "1"
         } )
 

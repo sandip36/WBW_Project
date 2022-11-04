@@ -11,6 +11,8 @@ import { isEmpty } from 'lodash'
 
 export interface DashboardCardProps {
     dashboard: IDashboard,
+    isChildren?:boolean,
+    showTrimName?:boolean
     containerStyle?: StyleProp<ViewStyle>,
     titleStyle?: StyleProp<TextStyle>
     iconContainerStyle?:StyleProp<TextStyle>
@@ -77,7 +79,9 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const {
         dashboard,
         containerStyle,
-        titleStyle
+        titleStyle,
+        showTrimName,
+        isChildren
     } = props
     const navigation = useNavigation()
     const { DashboardStore, AuthStore,UserProfileStore } = useStores()
@@ -159,7 +163,6 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
             break
         }
         // return  data = { name:'sandip', type: 'font-awesome' }
-        console.tron.log( "retun data",iconName,title )
         return iconName
     } 
     const nameSetByTrim=( title: IDashboard )=> {
@@ -185,40 +188,61 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
             iconName = 'Observations'
             return iconName
         }
+        if( title.Category ==='Audit' ){
+            iconName = 'Audits'
+            return iconName
+        }
+        
         if( title.Category ==='MyTask' ){
             iconName = 'My Tasks'
             return iconName
         }
-        return iconName
-
-      
+        return iconName 
     } 
 
-
-  
-
-    return (
-        <Box flex={1} mt="medium" mx="medium" py="small"  justifyContent={'center'}>
-            <ListItem bottomDivider containerStyle={[ STYLES.containerStyle, containerStyle ] } onPress={onDashboardPress}>
-                <Avatar 
-                    size={40}
-                    rounded
-                    icon={setIcon( dashboard.Category )}
-                    containerStyle={STYLES.iconContainerStyle} 
-                    //  source={{ uri:formattedbaseUrl }}
-                    //  avatarStyle={STYLES.imageStyle}
-                />
-               
-              
-                <ListItem.Content>
-                    <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{nameSetByTrim( dashboard )}</ListItem.Title>
-                </ListItem.Content>
-               
-               
-              
-               
-            </ListItem>
-           
-        </Box>
-    )
+    if( isChildren ){
+        return (
+            <Box flex={1} mt="medium" mx="large" py="small"  justifyContent={'center'}>
+                <ListItem  containerStyle={[ STYLES.containerStyle, containerStyle ] } onPress={onDashboardPress}>
+                    <Box height={30}>
+                        { showTrimName?
+                            <ListItem.Content>
+                                <ListItem.Title style={[ STYLES.titleStyle, titleStyle ] }>{nameSetByTrim( dashboard )}</ListItem.Title>
+                            </ListItem.Content>
+                            :
+                            <ListItem.Content>
+                                <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{dashboard.Title}</ListItem.Title>
+                            </ListItem.Content>
+                      
+                        }
+                    </Box>
+                   
+                </ListItem>
+            </Box>
+        )
+    }else{
+ 
+        return (
+            <Box flex={1} mt="medium" mx='medium' py="small"  justifyContent={'center'}>
+                <ListItem bottomDivider containerStyle={[ STYLES.containerStyle, containerStyle ] } onPress={onDashboardPress}>
+                    <Avatar 
+                        size={40}
+                        rounded
+                        icon={setIcon( dashboard.Category )}
+                        containerStyle={STYLES.iconContainerStyle} 
+                    />
+                    { showTrimName?
+                        <ListItem.Content>
+                            <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{nameSetByTrim( dashboard )}</ListItem.Title>
+                        </ListItem.Content>
+                        :
+                        <ListItem.Content>
+                            <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{dashboard.Title}</ListItem.Title>
+                        </ListItem.Content>
+                      
+                    }
+                </ListItem>
+            </Box>
+        )
+    }
 }

@@ -359,7 +359,7 @@ export const ObservationStore = createModelCollection( ObservationModel )
 
 
         const clearStore = flow( function * ( ) {
-            self.items  = [] as any
+            self.items.clear()
         } )
         const setSearchTextTemp = flow( function * ( value: string ) {
           

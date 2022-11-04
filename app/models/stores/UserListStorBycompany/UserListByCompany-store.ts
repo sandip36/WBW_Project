@@ -47,7 +47,7 @@ export const UserListByCompanyStore = createModelCollection( UserListByCompanymo
        
 
         const clearStore = flow( function * ( ) {
-            self.items  = [] as any
+            self.items.clear()
             self.selectedUser = {} as any
             self.showModal = false 
         } )

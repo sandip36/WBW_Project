@@ -45,7 +45,6 @@ export const DashboardStore = createModelCollection( DashboardModel )
                             return { ...item, id: item.HomePageOrder }
                         } )
                         const dashboardByCatogory = groupByCategory( dashboards )
-                        console.tron.log( 'datttatatat',dashboardByCatogory )
                         self._insertOrUpdate( dashboards )
                         return dashboardByCatogory
                     }
@@ -65,7 +64,7 @@ export const DashboardStore = createModelCollection( DashboardModel )
         } )
 
         const clearStore = flow( function * ( ) {
-            self.items  = [] as any
+            self.items.clear()
         } )
 
         return {
