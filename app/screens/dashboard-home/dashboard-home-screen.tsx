@@ -102,7 +102,8 @@ const styles = StyleSheet.create( {
     },
     titleStyle: {
         color: theme.colors.white,
-    },
+        fontSize: 20,
+    }
    
 } )
 
@@ -252,16 +253,22 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                 <ListItem.Accordion
                     containerStyle={styles.bgPrimary}  style={styles.acordianContainer} content={
                         <>
-                            <Box style={{ marginHorizontal:25 }} flexDirection={'row'} >
-                                <Icon color="white" name={setIcon( item[0].Category ).name}  type= {setIcon( item[0].Category ).type}size={20} />
-                                <ListItem.Content style={{ marginHorizontal:25 }}>
+                            <Box style={{ marginHorizontal:28 }} flexDirection={'row'} >
+                                <Box marginTop={'mini'}>
+                                    <Icon color="white" name={setIcon( item[0].Category ).name}  type= {setIcon( item[0].Category ).type}size={25} />
+
+                                </Box>
+                                <ListItem.Content style={{ marginHorizontal:28 }}>
                                     <ListItem.Title style={styles.titleStyle}>{nameSetByTrim( item[0].Category )}</ListItem.Title>
                                 </ListItem.Content>
-                                {item[0]?.Title === selectedIndex && expanded === true ?
-                                    <Icon color="white" name='chevron-down'  type= "feather" size={20} />
-                                    :
-                                    <Icon color="white" name='chevron-right'  type= "feather" size={20} />
-                                }
+                                <Box mx={'negative6'}>
+                                    {item[0]?.Title === selectedIndex && expanded === true ?
+                                        <Icon color="white" name='chevron-down'  type= "feather" size={25} />
+                                        :
+                                        <Icon color="white" name='chevron-right'  type= "feather" size={25} />
+                                    }
+                                </Box>
+                               
                             </Box>  
                         </>
                     }

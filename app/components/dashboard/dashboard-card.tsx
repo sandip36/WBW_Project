@@ -4,7 +4,7 @@ import { useStores } from 'models'
 import { IDashboard } from 'models/models/dashboard-model'
 import React from 'react'
 import { Alert, AsyncStorage, Linking, StyleProp, Text, TextStyle, ViewStyle } from 'react-native'
-import { Avatar, ListItem } from 'react-native-elements'
+import { Avatar, Icon, ListItem } from 'react-native-elements'
 import { makeStyles  } from 'theme'
 import { InAppBrowser } from 'react-native-inappbrowser-reborn'
 import { isEmpty } from 'lodash'
@@ -31,11 +31,12 @@ const useStyles = makeStyles<DashboardCardStyleProps>( ( theme ) => ( {
         backgroundColor: theme.colors.primary,
         borderRadius: theme.spacing.medium,
         borderWidth: 1,
-        paddingVertical: theme.spacing.small,
+        paddingVertical: theme.spacing.negative16,
      
     },
     titleStyle: {
         color: theme.colors.white,
+        fontSize: 20,
     },
     iconContainerStyle: {
         backgroundColor: theme.colors.primary
@@ -207,11 +208,11 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
                     <Box height={30}>
                         { showTrimName?
                             <ListItem.Content>
-                                <ListItem.Title style={[ STYLES.titleStyle, titleStyle ] }>{nameSetByTrim( dashboard )}</ListItem.Title>
+                                <ListItem.Title style={{ fontSize:16 } }>{nameSetByTrim( dashboard )}</ListItem.Title>
                             </ListItem.Content>
                             :
                             <ListItem.Content>
-                                <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{dashboard.Title}</ListItem.Title>
+                                <ListItem.Title style={{ fontSize:16 , color: 'white' } }>{dashboard.Title}</ListItem.Title>
                             </ListItem.Content>
                       
                         }
@@ -226,7 +227,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
             <Box flex={1} mt="medium" mx='medium' py="small"  justifyContent={'center'}>
                 <ListItem bottomDivider containerStyle={[ STYLES.containerStyle, containerStyle ] } onPress={onDashboardPress}>
                     <Avatar 
-                        size={40}
+                        size={50}
                         rounded
                         icon={setIcon( dashboard.Category )}
                         containerStyle={STYLES.iconContainerStyle} 
@@ -241,6 +242,9 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
                         </ListItem.Content>
                       
                     }
+                    <Icon color="white" name='chevron-right'  type= "feather" size={25} />
+
+
                 </ListItem>
             </Box>
         )

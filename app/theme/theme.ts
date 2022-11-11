@@ -84,6 +84,8 @@ export const theme = createTheme( {
         massive: NORMALIZED_FONT_SIZE * 4,
         STATUS_BAR_HEIGHT,
         negative8: -8,
+        negative4: -4,
+        negative6: -6,
         negative16: -16
     },
     boxWithShadow: {

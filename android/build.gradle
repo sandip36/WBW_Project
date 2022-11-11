@@ -24,6 +24,20 @@ buildscript {
 }
 
 allprojects {
+configurations.all {
+        resolutionStrategy {
+            /**
+             * the following exoplayer config is for react-native-video
+             * cf:
+             *  https://github.com/react-native-video/react-native-video/issues/2611
+             *  https://github.com/react-native-video/react-native-video/issues/2821
+             * 
+             */
+            force 'com.google.android.exoplayer:exoplayer:2.13.3'
+            force 'com.google.android.exoplayer:extension-okhttp:2.13.3'
+        }
+    }
+
     repositories {
         mavenLocal()
         maven {
