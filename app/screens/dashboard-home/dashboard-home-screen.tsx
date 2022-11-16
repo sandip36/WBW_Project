@@ -261,7 +261,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                                 <ListItem.Content style={{ marginHorizontal:28 }}>
                                     <ListItem.Title style={styles.titleStyle}>{nameSetByTrim( item[0].Category )}</ListItem.Title>
                                 </ListItem.Content>
-                                <Box mx={'negative6'}>
+                                <Box mx={'negative9'}>
                                     {item[0]?.Title === selectedIndex && expanded === true ?
                                         <Icon color="white" name='chevron-down'  type= "feather" size={25} />
                                         :
