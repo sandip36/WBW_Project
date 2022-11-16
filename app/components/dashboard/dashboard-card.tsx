@@ -193,7 +193,6 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
             iconName = 'Audits'
             return iconName
         }
-        
         if( title.Category ==='MyTask' ){
             iconName = 'My Tasks'
             return iconName
@@ -238,7 +237,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
                         </ListItem.Content>
                         :
                         <ListItem.Content>
-                            <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{dashboard.Title}</ListItem.Title>
+                            <ListItem.Title style={[ STYLES.titleStyle, titleStyle ]}>{nameSetByTrim( dashboard )}</ListItem.Title>
                         </ListItem.Content>
                       
                     }

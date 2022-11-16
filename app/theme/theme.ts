@@ -86,7 +86,8 @@ export const theme = createTheme( {
         negative8: -8,
         negative4: -4,
         negative6: -6,
-        negative16: -16
+        negative16: -16,
+        negative9: -9,
     },
     boxWithShadow: {
         shadowColor: colors.lightGrey2,
