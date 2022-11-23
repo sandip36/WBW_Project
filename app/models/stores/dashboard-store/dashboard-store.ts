@@ -78,7 +78,50 @@ export const DashboardStore = createModelCollection( DashboardModel )
     } )
 
 const groupByCategory =( list=[] )=>{
-    const groups = list.reduce( ( groups, item ) => ( {
+
+    // const cars = [ { make: 'audi', model: 'r8', year: '2012' }, { make: 'audi', model: 'rs5', year: '2013' }, { make: 'ford', model: 'mustang', year: '2012' }, { make: 'ford', model: 'fusion', year: '2015' }, { make: 'kia', model: 'optima', year: '2012' } ];
+
+    let bulletineArray = list.filter( ( data ) => data?.Category ==='Bulletins' )
+    bulletineArray= bulletineArray.map( ( data )=>{
+        return{
+            ...data,order:1
+        }
+    } )
+    let observationArray = list.filter( ( data ) => data?.Category ==='Observation' )
+    observationArray= observationArray.map( ( data )=>{
+        return{
+            ...data,order:2
+        }
+    } )
+
+    let inspectionArray = list.filter( ( data ) => data?.Category ==='Inspection ' )
+    inspectionArray= inspectionArray.map( ( data )=>{
+        return{
+            ...data,order:3
+        }
+    } )
+    let incidentArray = list.filter( ( data ) => data?.Category ==='Incident Management' )
+    incidentArray= incidentArray.map( ( data )=>{
+        return{
+            ...data,order:5
+        }
+    } )
+    let auditArray = list.filter( ( data ) => data?.Category ==='Audit' )
+    auditArray= auditArray.map( ( data )=>{
+        return{
+            ...data,order:4
+        }
+    } )
+    let myTaskArray = list.filter( ( data ) => data?.Category ==='MyTask' )
+    myTaskArray= myTaskArray.map( ( data )=>{
+        return{
+            ...data,order:6
+        }
+    } )
+
+    const mergeResult = [].concat( bulletineArray,observationArray, inspectionArray , auditArray, incidentArray,myTaskArray )
+
+    const groups = mergeResult.reduce( ( groups, item ) => ( {
         ...groups,
         [item.Category]: [ ...( groups[item.Category] || [] ), item ]
     } ), {} );

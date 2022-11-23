@@ -5,15 +5,15 @@ import { IconType } from "./IconTypes"
 
 export const getIconType = ( type: IconType ) => {
     switch ( type ) {
-        case 'feather':
-            return FeatherIcon
-        case 'material':
-            return MaterialIcon
-        case 'fontawesome':
-            return FontAwesome5
-        case 'fontawesome5':
-            return FontAwesome5
-        default:
-            return FeatherIcon
+    case 'feather':
+        return FeatherIcon
+    case 'material':
+        return MaterialIcon
+    case 'fontawesome':
+        return FontAwesome5
+    case 'fontawesome5':
+        return FontAwesome5
+    default:
+        return FeatherIcon
     }
 }

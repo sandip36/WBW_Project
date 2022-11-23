@@ -141,7 +141,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
     const setIcon=( title: string )=> {
         let iconName = { name:'list-alt', type: 'material-icons' }
         switch ( title ) {
-        case 'Inspection':
+        case 'Inspection ':
             iconName = { name:'magnify-scan', type: 'material-community' }
             break
         case 'Profile':
@@ -181,7 +181,7 @@ export const DashboardCard: React.FunctionComponent<DashboardCardProps> = ( prop
             iconName = 'Incidents'
             return iconName
         }
-        if( title.Category ==='Inspection' ){
+        if( title.Category ==='Inspection ' ){
             iconName = 'Inspections'
             return iconName
         }

@@ -226,7 +226,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         case 'Bulletins':
             iconName = 'Bulletins'
             break
-        case 'Inspection':
+        case 'Inspection ':
             iconName = 'Inspections'
             break
         case 'Audit':
@@ -282,7 +282,6 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
                         <Box key={l.id}>
                             <DashboardCard dashboard={l} showTrimName={false}  isChildren={item[0]?.Title === selectedIndex && expanded === true} />
                         </Box>
-                
                     ) )}
                 </ListItem.Accordion>
             )  

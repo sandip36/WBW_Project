@@ -11,8 +11,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		39E0F72C280443E3007D2450 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39E0F72B280443E3007D2450 /* AppCenter-Config.plist */; };
-		39E46368291EC45E00961EF4 /* NunitoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */; };
-		39E46369291EC45E00961EF4 /* NunitoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */; };
 		39FFCA7728AFCE1D001DB740 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39FFCA7628AFCE1C001DB740 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A4B148D367B119F99EC2C2E5 /* libPods-WBW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EADEA568884090C1B008E181 /* libPods-WBW.a */; };
@@ -34,6 +32,7 @@
 		2E0A11FA968E4BB6B2494F77 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		301BE758935A381A571F5B21 /* libPods-WBW-WBWTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WBW-WBWTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B04630CC446F19212E357A /* Pods-WBW-WBWTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WBW-WBWTests.release.xcconfig"; path = "Target Support Files/Pods-WBW-WBWTests/Pods-WBW-WBWTests.release.xcconfig"; sourceTree = "<group>"; };
+		3919E0C6292D2F6C004899B8 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
 		399F7F5527F77B910027A564 /* NunitoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Bold.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Bold.ttf"; sourceTree = "<group>"; };
 		399F7F5627F77B910027A564 /* NunitoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "NunitoSans-Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/NunitoSans-Regular.ttf"; sourceTree = "<group>"; };
 		39AEC24628AFF71C006BE14E /* WBWStaging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WBWStaging.entitlements; path = WBW/WBWStaging.entitlements; sourceTree = "<group>"; };
@@ -93,6 +92,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3919E0C6292D2F6C004899B8 /* libxml2.2.tbd */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				EADEA568884090C1B008E181 /* libPods-WBW.a */,
@@ -231,8 +231,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39E46368291EC45E00961EF4 /* NunitoSans-Bold.ttf in Resources */,
-				39E46369291EC45E00961EF4 /* NunitoSans-Regular.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				39FFCA7728AFCE1D001DB740 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
