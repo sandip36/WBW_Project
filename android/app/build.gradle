@@ -151,8 +151,8 @@ lintOptions {
         applicationId "com.wbw"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
-        versionName "1.0.5"
+        versionCode 12
+        versionName "2.5.0"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     splits {

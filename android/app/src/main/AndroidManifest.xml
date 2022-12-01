@@ -8,7 +8,7 @@
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:node="remove" tools:ignore="QueryAllPackagesPermission" />
-    <supports-screens android:smallScreens="true"
+  <supports-screens android:smallScreens="true"
         android:normalScreens="true"
         android:largeScreens="false"
         android:xlargeScreens="false"/>

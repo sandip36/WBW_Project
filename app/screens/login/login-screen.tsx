@@ -1,6 +1,6 @@
 import React from "react"
 import { Box, Text, Input, SecureInput, Button } from "components"
-import { Dimensions, Image, ImageStyle, ScrollView, StyleProp, ViewStyle } from "react-native"
+import { Dimensions, Image, ImageStyle, Platform, ScrollView, StyleProp, ViewStyle } from "react-native"
 import { makeStyles, useTheme } from "theme"
 import { useFormik } from "formik"
 import { string, object } from 'yup'
@@ -44,9 +44,9 @@ const BUILD_BASE_URL = [
 
 const useStyles = makeStyles<{imageStyle: StyleProp<ImageStyle>, inputContainerStyle: StyleProp<ViewStyle>, contentContainerStyle: StyleProp<ViewStyle>}>( ( theme ) => ( {
     imageStyle: {
-        width: '95%',
+        width: '90%',
         // Without height undefined it won't work
-        height:"50%"
+        height:Platform.OS === 'ios'?'42%':"47%"
         // backgroundColor:"red",
         // figure out your image aspect ratio
         // aspectRatio: 135 / 40,
@@ -140,14 +140,14 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
                         onBlur={handleBlur( "password" )}
                         error={touched.password && errors.password}
                     />
-                    <Box mx="negative8">
+                    {/* <Box mx="negative8">
                         <Dropdown
                             title="Base URL"
                             items={BUILD_BASE_URL}
                             value={AuthStore.baseUrl}
                             onValueChange={( value )=>AuthStore.setBaseUrl( value )}
                         />
-                    </Box>
+                    </Box> */}
                 </Box>
                 <Box mt="medium">
                     <Button 
