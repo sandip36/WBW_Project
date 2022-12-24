@@ -11,7 +11,7 @@
  */
 import "./i18n"
 import "./utils/ignore-warnings"
-import React, { useState, useRef, useCallback } from "react"
+import React, { useState, useRef, useCallback, useEffect } from "react"
 import { NavigationContainerRef } from "@react-navigation/native"
 import { SafeAreaView , ActivityIndicator, StyleSheet, Platform, Alert } from "react-native"
 import {
@@ -32,46 +32,59 @@ import { ThemeProvider } from "@shopify/restyle"
 import { Async } from "react-async"
 import { Box, Text } from "./components"
 import Toast from "react-native-simple-toast"
-
-
+import CheckConnection from "screens/sampleFolder/ConnectivityChecker"
+// import ForegroundHandler from "screens/firbaseConfiguration/ForegroundHandler"
+import { requestUserPermission, notificationListener } from './screens/firbaseConfiguration/notificationhandler';
+import ForegroundHandler from "screens/firbaseConfiguration/ForegroundHandler"
 
 enableScreens()
-PushNotications.configure( {
+requestUserPermission()
+notificationListener()
 
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: async ( token: { token: string } ) => {
-        if ( __DEV__ ) console.log( 'TOKEN:', token )
-        await storage.saveString( 'TOKEN', token.token )          
-    },
+// useEffect( () => {
+//    
 
-    // (required) Called when a remote or local notification is opened or received
-    // onNotification: ( notification ) => {
-    //  dispatch( NotificationActions.addNotification( notification.message ) )
-    // },
+//    
+// }, [] )
 
-    // ANDROID ONLY: (optional) GCM Sender ID.
-    senderID: '399465061043',
+// // ForegroundHandler()
+// PushNotications.configure( {
+    
 
-    // IOS ONLY (optional): default: all - Permissions to register.
-    permissions: {
-        alert: true,
-        badge: true,
-        sound: true
-    },
+//     // (optional) Called when Token is generated (iOS and Android)
+//     onRegister: async ( token: { token: string } ) => {
+//         if ( __DEV__ ) console.log( 'TOKEN:', token )
+//         await storage.saveString( 'TOKEN', token.token )          
+//     },
 
-    // Should the initial notification be popped automatically
-    // default: true
-    // Leave this off unless you have good reason.
-    popInitialNotification: true,
+//     // (required) Called when a remote or local notification is opened or received
+//     // onNotification: ( notification ) => {
+//     //  dispatch( NotificationActions.addNotification( notification.message ) )
+//     // },
 
-    /**
-      * IOS ONLY: (optional) default: true
-      * - Specified if permissions will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      * This example app shows how to best call requestPermissions() later.
-      */
-    requestPermissions: true
-} )
+//     // ANDROID ONLY: (optional) GCM Sender ID.
+//     senderID: '399465061043',
+
+//     // IOS ONLY (optional): default: all - Permissions to register.
+//     permissions: {
+//         alert: true,
+//         badge: true,
+//         sound: true
+//     },
+
+//     // Should the initial notification be popped automatically
+//     // default: true
+//     // Leave this off unless you have good reason.
+//     popInitialNotification: true,
+
+//     /**
+//       * IOS ONLY: (optional) default: true
+//       * - Specified if permissions will requested or not,
+//       * - if not, you must call PushNotificationsHandler.requestPermissions() later
+//       * This example app shows how to best call requestPermissions() later.
+//       */
+//     requestPermissions: true
+// } )
 
 // PushNotications.configure( {
 //     // ! TODO - onRegister method not being called
@@ -146,6 +159,7 @@ function App () {
                 <ThemeProvider {...{ theme }}>
                     <RootStoreProvider value={rootStore}>
                         <SafeAreaView style={styles.rootContainer}>
+                            <ForegroundHandler></ForegroundHandler>
                             <RootNavigator
                                 ref={navigationRef}
                             />
