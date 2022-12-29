@@ -10,6 +10,8 @@ import { checkVersion } from "react-native-check-version"
 import { Avatar, Icon, ListItem } from "react-native-elements"
 import { IuserProfilePayload } from "services/api"
 import { theme } from "theme"
+import DeviceInfo from 'react-native-device-info';
+
 
 export type DashboardHomeScreenProps = {
 
@@ -27,15 +29,15 @@ const styles = StyleSheet.create( {
     } ,
     // eslint-disable-next-line react-native/no-color-literals
     addImageIcon: {
-        borderRadius: 25,
-        height: 30,
-        width: 30,
-        backgroundColor: "#99AAAB",
         alignItems: "center",
+        alignSelf: "flex-end",
+        backgroundColor: "#99AAAB",
+        borderRadius: 25,
+        bottom: 0,
+        height: 30,
         justifyContent: "center",
         position: "absolute", // Here is the trick
-        bottom: 0,
-        alignSelf: "flex-end"
+        width: 30,
     },
     bgPrimary: {
         backgroundColor:theme.colors.transparent ,
@@ -150,22 +152,24 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         // await MediaStore._clear()
         setdashbordData ( await DashboardStore.fetch() )
         fetchUserProfile()
-    //     const version = await checkVersion();
-    //     setInfoVersion( version )
-    //   //  console.log( `App has a ${version} update pending.`,JSON.stringify( version ) );
-    //     if ( version.needsUpdate && AuthStore.user.skipCount < 3 && AuthStore.user.shouldShowUpdateModal() ) {
-    //         console.log( `App has a ${version.updateType} update pending.` );
-    //         setShouldUpdateApplication( true )
-    //         // await ObservationStore._clear()
-    //         // await AuditStore.resetStore()
-    //         // await MediaStore._clear()
-    //         // await DashboardStore.fetch()
-    //     }else{
-    //         await ObservationStore._clear()
-    //         await AuditStore.resetStore()
-    //         await MediaStore._clear()
-    //         await DashboardStore.fetch()
-    //     }
+        const version = await checkVersion();
+        setInfoVersion( version )
+
+
+        const storeversion= version?.version
+        const arrOfTversion = storeversion.split( "." );
+ 
+        const deviceinfo = DeviceInfo.getVersion()
+        const arrOfCurrentDevice = deviceinfo.split( "." )
+        if( arrOfTversion[0] ===  arrOfCurrentDevice[0] && arrOfTversion[1] ===  arrOfCurrentDevice[1] ){
+            console.log( "no update" )
+        }else{
+            setShouldUpdateApplication( true )
+            AuthStore.user.shouldShowUpdateModal()
+           
+        }
+        
+
     }, [] )
 
 

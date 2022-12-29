@@ -9,6 +9,7 @@
 // It's easier just to leave it here.
 import App from "./app/app.tsx"
 import { AppRegistry } from "react-native"
+import messaging from '@react-native-firebase/messaging';
 import codePush from "react-native-code-push";
 
 // AppRegistry.registerComponent( "WBW", () => App )

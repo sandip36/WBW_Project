@@ -96,10 +96,10 @@ export const LoginScreen: React.FunctionComponent<LoginScreenProps> = observer( 
             let TOKEN = await AsyncStorage.getItem( 'fcmToken' )
 
             const deviceId = DeviceInfo.getDeviceId();
-            // let TOKEN = await loadString( "TOKEN" )
+            const TOKENnew = await loadString( "TOKEN" )
 
             if( isEmpty( TOKEN ) ) {
-                TOKEN = "Sample"
+                TOKEN = TOKENnew
             }
             const payload = {
                 UserName: values.username,

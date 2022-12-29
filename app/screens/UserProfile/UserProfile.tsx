@@ -15,6 +15,7 @@ import { Avatar, Icon, ListItem } from "react-native-elements";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react-lite";
 import { ICompanyUserListmodel } from "models/models/user-list-by-company-model/user-list-by-comany-model";
+import DeviceInfo from 'react-native-device-info';
 
 
 
@@ -316,6 +317,10 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                     </Box>
 
                     <Box mx="small">
+                        <AuditDetailsRow 
+                            title= "Version:" 
+                            value={DeviceInfo.getVersion()} // make it dynamic 
+                        />
                   
                         <AuditDetailsRow 
                             title= "User ID:" 
@@ -331,7 +336,7 @@ export const UserProfile: React.FunctionComponent<UserProfileScreenProps> = obse
                         </Box>
                         <Box my={'small'} mb={'small'}>
                             <AuditDetailsRow 
-                                title= "Department :" 
+                                title= "Department:" 
                                 value={UserProfileStore.userData.DepartmentName} 
                             />
 
