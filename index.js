@@ -20,4 +20,9 @@ const RootComponent = codePush( {
     mandatoryInstallMode: codePush.InstallMode.IMMEDIATE
 } )( App )
 
+// Register background handler
+messaging().setBackgroundMessageHandler( async remoteMessage => {
+    console.log( 'Message handled in the background!', remoteMessage );
+} );
+
 AppRegistry.registerComponent( "WBW", () => RootComponent );

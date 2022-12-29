@@ -25,17 +25,22 @@ import { theme } from "theme"
 import codePush from "react-native-code-push"
 import { enableScreens } from "react-native-screens"
 import PushNotications from "react-native-push-notification"
-import * as storage from "./utils/storage"
 
 
 import { ThemeProvider } from "@shopify/restyle"
 import { Async } from "react-async"
 import { Box, Text } from "./components"
 import Toast from "react-native-simple-toast"
+import { notificationListener, requestUserPermission } from "components/NotificationHelper/notificationServices"
+import ForegroundHandler from "components/NotificationHelper/ForegroundHandler"
+import * as storage from "./utils/storage"
 
 
 
 enableScreens()
+requestUserPermission()
+notificationListener()
+
 PushNotications.configure( {
 
     // (optional) Called when Token is generated (iOS and Android)
@@ -44,12 +49,6 @@ PushNotications.configure( {
         await storage.saveString( 'TOKEN', token.token )          
     },
 
-    // (required) Called when a remote or local notification is opened or received
-    // onNotification: ( notification ) => {
-    //  dispatch( NotificationActions.addNotification( notification.message ) )
-    // },
-
-    // ANDROID ONLY: (optional) GCM Sender ID.
     senderID: '399465061043',
 
     // IOS ONLY (optional): default: all - Permissions to register.
@@ -58,35 +57,14 @@ PushNotications.configure( {
         badge: true,
         sound: true
     },
-
-    // Should the initial notification be popped automatically
-    // default: true
-    // Leave this off unless you have good reason.
     popInitialNotification: true,
-
-    /**
-      * IOS ONLY: (optional) default: true
-      * - Specified if permissions will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      * This example app shows how to best call requestPermissions() later.
-      */
     requestPermissions: true
 } )
 
-// PushNotications.configure( {
-//     // ! TODO - onRegister method not being called
-
-//     onRegister: async function ( token ) {
-//         console.log( "token for  device ",token )
-//         // await storage.saveString( 'TOKEN', token.token )
-//     },
-//     popInitialNotification: true,
-//     requestPermissions: Platform.OS === 'ios'
-// } )
 
 PushNotications.createChannel(
     {
-        channelId: "default",
+        channelId: "wbw",
         channelName: "notification-wbw",
         channelDescription: "A channel to categorise your notifications",
         playSound: false,
@@ -149,6 +127,7 @@ function App () {
                             <RootNavigator
                                 ref={navigationRef}
                             />
+                            <ForegroundHandler></ForegroundHandler>
                         </SafeAreaView>
                     </RootStoreProvider>
                 </ThemeProvider>
