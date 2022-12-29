@@ -164,6 +164,7 @@ export const DashboardHomeScreen: React.FunctionComponent<DashboardHomeScreenPro
         if( arrOfTversion[0] ===  arrOfCurrentDevice[0] && arrOfTversion[1] ===  arrOfCurrentDevice[1] ){
             console.log( "no update" )
         }else{
+            console.log( "version",version )
             setShouldUpdateApplication( true )
             AuthStore.user.shouldShowUpdateModal()
            
